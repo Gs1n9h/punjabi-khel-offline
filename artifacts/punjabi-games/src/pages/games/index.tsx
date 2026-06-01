@@ -4,7 +4,7 @@ import { BottomNav } from "@/components/layout/bottom-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import { useGetMyStats } from "@workspace/api-client-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Trophy, Dices, Mic, BrainCircuit } from "lucide-react";
+import { Trophy, Dices, Mic, BrainCircuit, Brain } from "lucide-react";
 import { motion } from "framer-motion";
 
 const games = [
@@ -12,7 +12,7 @@ const games = [
     id: "spinner",
     title: "Charkha",
     subtitle: "Spin the wheel for points!",
-    icon: Dices,
+    emoji: "🎡",
     color: "bg-blue-50 text-blue-600 border-blue-200",
     href: "/games/spinner"
   },
@@ -20,7 +20,7 @@ const games = [
     id: "tongue-twister",
     title: "Boli",
     subtitle: "Read the tongue twister!",
-    icon: Mic,
+    emoji: "🎙️",
     color: "bg-orange-50 text-orange-600 border-orange-200",
     href: "/games/tongue-twister"
   },
@@ -28,9 +28,17 @@ const games = [
     id: "knowledge-test",
     title: "Gyan",
     subtitle: "Test your Punjabi knowledge!",
-    icon: BrainCircuit,
+    emoji: "📚",
     color: "bg-green-50 text-green-600 border-green-200",
     href: "/games/knowledge-test"
+  },
+  {
+    id: "memory",
+    title: "Yaad Khel",
+    subtitle: "Remember the numbers!",
+    emoji: "🧠",
+    color: "bg-purple-50 text-purple-600 border-purple-200",
+    href: "/games/memory"
   }
 ];
 
@@ -70,12 +78,12 @@ export default function GamesHub() {
               key={game.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
+              transition={{ delay: i * 0.08 }}
             >
               <Link href={game.href}>
                 <div className="bg-white border-2 border-orange-100 hover:border-primary rounded-[24px] p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all cursor-pointer">
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center border-2 ${game.color}`}>
-                    <game.icon className="w-8 h-8" />
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center border-2 text-3xl ${game.color}`}>
+                    {game.emoji}
                   </div>
                   <div>
                     <h3 className="text-xl font-black text-foreground">{game.title}</h3>

@@ -16,8 +16,8 @@ router.post("/configs", requireAuth(), async (req, res) => {
   if (!clerkId) return res.status(401).json({ error: "Unauthorized" });
   const user = await getOrCreateUser(clerkId);
   if (!["admin", "moderator"].includes(user.role)) return res.status(403).json({ error: "Forbidden" });
-  const { name, description, items, isActive } = req.body;
-  const [created] = await db.insert(spinnerConfigsTable).values({ name, description, items: items ?? [], isActive: isActive ?? true }).returning();
+  const { name, description, items, isActive, displayMode } = req.body;
+  const [created] = await db.insert(spinnerConfigsTable).values({ name, description, items: items ?? [], isActive: isActive ?? true, displayMode: displayMode ?? "wheel" }).returning();
   res.status(201).json({ ...created, items: created.items as unknown[] });
 });
 
@@ -34,9 +34,9 @@ router.patch("/configs/:id", requireAuth(), async (req, res) => {
   const user = await getOrCreateUser(clerkId);
   if (!["admin", "moderator"].includes(user.role)) return res.status(403).json({ error: "Forbidden" });
   const id = parseInt(req.params.id);
-  const { name, description, items, isActive } = req.body;
+  const { name, description, items, isActive, displayMode } = req.body;
   const [updated] = await db.update(spinnerConfigsTable)
-    .set({ ...(name && { name }), ...(description !== undefined && { description }), ...(items !== undefined && { items }), ...(isActive !== undefined && { isActive }) })
+    .set({ ...(name && { name }), ...(description !== undefined && { description }), ...(items !== undefined && { items }), ...(isActive !== undefined && { isActive }), ...(displayMode !== undefined && { displayMode }) })
     .where(eq(spinnerConfigsTable.id, id)).returning();
   if (!updated) return res.status(404).json({ error: "Not found" });
   res.json({ ...updated, items: updated.items as unknown[] });

@@ -16,6 +16,7 @@ import GamesHub from "@/pages/games";
 import SpinnerGame from "@/pages/games/spinner";
 import TongueTwisterGame from "@/pages/games/tongue-twister";
 import KnowledgeTest from "@/pages/games/knowledge-test";
+import MemoryGame from "@/pages/games/memory";
 import Leaderboard from "@/pages/leaderboard";
 import Profile from "@/pages/profile";
 import AdminDashboard from "@/pages/admin";
@@ -23,6 +24,7 @@ import AdminSpinner from "@/pages/admin/spinner";
 import AdminTongueTwisters from "@/pages/admin/tongue-twisters";
 import AdminKnowledgeTest from "@/pages/admin/knowledge-test";
 import AdminSubmissions from "@/pages/admin/submissions";
+import AdminUsers from "@/pages/admin/users";
 import NotFound from "@/pages/not-found";
 
 const clerkPubKey = publishableKeyFromHost(window.location.hostname, import.meta.env.VITE_CLERK_PUBLISHABLE_KEY);
@@ -89,6 +91,9 @@ function Router() {
       <Route path="/games/knowledge-test">
         <ProtectedRoute component={KnowledgeTest} />
       </Route>
+      <Route path="/games/memory">
+        <ProtectedRoute component={MemoryGame} />
+      </Route>
       
       <Route path="/leaderboard">
         <ProtectedRoute component={Leaderboard} />
@@ -111,6 +116,9 @@ function Router() {
       </Route>
       <Route path="/admin/submissions">
         <ProtectedRoute component={AdminSubmissions} />
+      </Route>
+      <Route path="/admin/users">
+        <ProtectedRoute component={AdminUsers} />
       </Route>
 
       <Route component={NotFound} />

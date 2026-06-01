@@ -22,6 +22,7 @@ import type {
 import type {
   AdminDashboard,
   GetLeaderboardParams,
+  GetMemoryGameLeaderboardParams,
   GetRandomQuizParams,
   HealthStatus,
   KnowledgeQuestion,
@@ -31,6 +32,9 @@ import type {
   ListAdminUsersParams,
   ListKnowledgeTestsParams,
   ListTongueTwisterSubmissionsParams,
+  MemoryGameSession,
+  MemoryGameSubmit,
+  MemoryLeaderboardEntry,
   MyRank,
   PresignRequest,
   PresignResponse,
@@ -2322,6 +2326,161 @@ export const useUpdateUserRole = <TError = ErrorType<unknown>,
       > => {
       return useMutation(getUpdateUserRoleMutationOptions(options));
     }
+
+export const getSubmitMemoryGameSessionUrl = () => {
+
+
+
+
+  return `/api/memory-game/submit`
+}
+
+/**
+ * @summary Submit a completed memory game session
+ */
+export const submitMemoryGameSession = async (memoryGameSubmit: MemoryGameSubmit, options?: RequestInit): Promise<MemoryGameSession> => {
+
+  return customFetch<MemoryGameSession>(getSubmitMemoryGameSessionUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      memoryGameSubmit,)
+  }
+);}
+
+
+
+
+export const getSubmitMemoryGameSessionMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof submitMemoryGameSession>>, TError,{data: BodyType<MemoryGameSubmit>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof submitMemoryGameSession>>, TError,{data: BodyType<MemoryGameSubmit>}, TContext> => {
+
+const mutationKey = ['submitMemoryGameSession'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof submitMemoryGameSession>>, {data: BodyType<MemoryGameSubmit>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  submitMemoryGameSession(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SubmitMemoryGameSessionMutationResult = NonNullable<Awaited<ReturnType<typeof submitMemoryGameSession>>>
+    export type SubmitMemoryGameSessionMutationBody = BodyType<MemoryGameSubmit>
+    export type SubmitMemoryGameSessionMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Submit a completed memory game session
+ */
+export const useSubmitMemoryGameSession = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof submitMemoryGameSession>>, TError,{data: BodyType<MemoryGameSubmit>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof submitMemoryGameSession>>,
+        TError,
+        {data: BodyType<MemoryGameSubmit>},
+        TContext
+      > => {
+      return useMutation(getSubmitMemoryGameSessionMutationOptions(options));
+    }
+
+export const getGetMemoryGameLeaderboardUrl = (params?: GetMemoryGameLeaderboardParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/memory-game/leaderboard?${stringifiedParams}` : `/api/memory-game/leaderboard`
+}
+
+/**
+ * @summary Get memory game leaderboard ranked by best level
+ */
+export const getMemoryGameLeaderboard = async (params?: GetMemoryGameLeaderboardParams, options?: RequestInit): Promise<MemoryLeaderboardEntry[]> => {
+
+  return customFetch<MemoryLeaderboardEntry[]>(getGetMemoryGameLeaderboardUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetMemoryGameLeaderboardQueryKey = (params?: GetMemoryGameLeaderboardParams,) => {
+    return [
+    `/api/memory-game/leaderboard`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetMemoryGameLeaderboardQueryOptions = <TData = Awaited<ReturnType<typeof getMemoryGameLeaderboard>>, TError = ErrorType<unknown>>(params?: GetMemoryGameLeaderboardParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMemoryGameLeaderboard>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetMemoryGameLeaderboardQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMemoryGameLeaderboard>>> = ({ signal }) => getMemoryGameLeaderboard(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMemoryGameLeaderboard>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetMemoryGameLeaderboardQueryResult = NonNullable<Awaited<ReturnType<typeof getMemoryGameLeaderboard>>>
+export type GetMemoryGameLeaderboardQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get memory game leaderboard ranked by best level
+ */
+
+export function useGetMemoryGameLeaderboard<TData = Awaited<ReturnType<typeof getMemoryGameLeaderboard>>, TError = ErrorType<unknown>>(
+ params?: GetMemoryGameLeaderboardParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMemoryGameLeaderboard>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetMemoryGameLeaderboardQueryOptions(params,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
 
 export const getPresignUploadUrl = () => {
 

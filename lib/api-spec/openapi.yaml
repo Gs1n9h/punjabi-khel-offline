@@ -18,6 +18,8 @@ tags:
     description: Tongue twister game
   - name: knowledge-test
     description: Knowledge test / image quiz game
+  - name: memory-game
+    description: Number memory game
   - name: leaderboard
     description: Leaderboard and scoring
   - name: admin
@@ -596,6 +598,47 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
 
+  # ─── MEMORY GAME ─────────────────────────────────────────────
+  /memory-game/submit:
+    post:
+      operationId: submitMemoryGameSession
+      tags: [memory-game]
+      summary: Submit a completed memory game session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemoryGameSubmit"
+      responses:
+        "200":
+          description: Session saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemoryGameSession"
+
+  /memory-game/leaderboard:
+    get:
+      operationId: getMemoryGameLeaderboard
+      tags: [memory-game]
+      summary: Get memory game leaderboard ranked by best level
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Memory game leaderboard
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MemoryLeaderboardEntry"
+
   # ─── UPLOADS ─────────────────────────────────────────────────
   /uploads/presign:
     post:
@@ -734,6 +777,9 @@ components:
             $ref: "#/components/schemas/SpinnerItem"
         isActive:
           type: boolean
+        displayMode:
+          type: string
+          enum: [wheel, slot-vertical, slot-horizontal, flash]
         createdAt:
           type: string
           format: date-time
@@ -752,6 +798,9 @@ components:
             $ref: "#/components/schemas/SpinnerItem"
         isActive:
           type: boolean
+        displayMode:
+          type: string
+          enum: [wheel, slot-vertical, slot-horizontal, flash]
 
     SpinnerConfigUpdate:
       type: object
@@ -766,6 +815,9 @@ components:
             $ref: "#/components/schemas/SpinnerItem"
         isActive:
           type: boolean
+        displayMode:
+          type: string
+          enum: [wheel, slot-vertical, slot-horizontal, flash]
 
     SpinResult:
       type: object
@@ -1077,6 +1129,51 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/LeaderboardEntry"
+
+    # ─── MEMORY GAME ────────────────────────────────────────────
+    MemoryGameSubmit:
+      type: object
+      required: [maxLevel, pointsEarned]
+      properties:
+        maxLevel:
+          type: integer
+        pointsEarned:
+          type: integer
+
+    MemoryGameSession:
+      type: object
+      required: [id, userId, maxLevel, pointsEarned, createdAt]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        maxLevel:
+          type: integer
+        pointsEarned:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    MemoryLeaderboardEntry:
+      type: object
+      required: [rank, userId, username, bestLevel, gamesPlayed]
+      properties:
+        rank:
+          type: integer
+        userId:
+          type: integer
+        username:
+          type: string
+        displayName:
+          type: ["string", "null"]
+        avatarUrl:
+          type: ["string", "null"]
+        bestLevel:
+          type: integer
+        gamesPlayed:
+          type: integer
 
     # ─── UPLOADS ────────────────────────────────────────────────
     PresignRequest:

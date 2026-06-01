@@ -7,6 +7,7 @@ import knowledgeTestRouter from "./knowledge-test";
 import leaderboardRouter from "./leaderboard";
 import adminRouter from "./admin";
 import uploadsRouter from "./uploads";
+import memoryGameRouter from "./memory-game";
 
 const router: IRouter = Router();
 
@@ -18,5 +19,6 @@ router.use("/knowledge-tests", knowledgeTestRouter);
 router.use("/leaderboard", leaderboardRouter);
 router.use("/admin", adminRouter);
 router.use("/uploads", uploadsRouter);
+router.use("/memory-game", memoryGameRouter);
 
 export default router;

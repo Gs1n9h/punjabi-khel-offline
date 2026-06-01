@@ -9,6 +9,7 @@ export const spinnerConfigsTable = pgTable("spinner_configs", {
   description: text("description"),
   items: jsonb("items").notNull().default([]),
   isActive: boolean("is_active").notNull().default(true),
+  displayMode: text("display_mode").notNull().default("wheel"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });

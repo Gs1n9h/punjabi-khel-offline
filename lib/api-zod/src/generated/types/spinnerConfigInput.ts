@@ -5,6 +5,7 @@
  * Punjabi Kids Gamification API
  * OpenAPI spec version: 0.1.0
  */
+import type { SpinnerConfigInputDisplayMode } from './spinnerConfigInputDisplayMode';
 import type { SpinnerItem } from './spinnerItem';
 
 export interface SpinnerConfigInput {
@@ -12,4 +13,5 @@ export interface SpinnerConfigInput {
   description?: string;
   items: SpinnerItem[];
   isActive?: boolean;
+  displayMode?: SpinnerConfigInputDisplayMode;
 }

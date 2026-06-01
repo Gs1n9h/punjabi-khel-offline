@@ -85,6 +85,7 @@ export const ListSpinnerConfigsResponseItem = zod.object({
   "weight": zod.number().nullish()
 })),
   "isActive": zod.boolean().optional(),
+  "displayMode": zod.enum(['wheel', 'slot-vertical', 'slot-horizontal', 'flash']).optional(),
   "createdAt": zod.coerce.date()
 })
 export const ListSpinnerConfigsResponse = zod.array(ListSpinnerConfigsResponseItem)
@@ -103,7 +104,8 @@ export const CreateSpinnerConfigBody = zod.object({
   "color": zod.string().nullish(),
   "weight": zod.number().nullish()
 })),
-  "isActive": zod.boolean().optional()
+  "isActive": zod.boolean().optional(),
+  "displayMode": zod.enum(['wheel', 'slot-vertical', 'slot-horizontal', 'flash']).optional()
 })
 
 
@@ -126,6 +128,7 @@ export const GetSpinnerConfigResponse = zod.object({
   "weight": zod.number().nullish()
 })),
   "isActive": zod.boolean().optional(),
+  "displayMode": zod.enum(['wheel', 'slot-vertical', 'slot-horizontal', 'flash']).optional(),
   "createdAt": zod.coerce.date()
 })
 
@@ -147,7 +150,8 @@ export const UpdateSpinnerConfigBody = zod.object({
   "color": zod.string().nullish(),
   "weight": zod.number().nullish()
 })).optional(),
-  "isActive": zod.boolean().optional()
+  "isActive": zod.boolean().optional(),
+  "displayMode": zod.enum(['wheel', 'slot-vertical', 'slot-horizontal', 'flash']).optional()
 })
 
 export const UpdateSpinnerConfigResponse = zod.object({
@@ -162,6 +166,7 @@ export const UpdateSpinnerConfigResponse = zod.object({
   "weight": zod.number().nullish()
 })),
   "isActive": zod.boolean().optional(),
+  "displayMode": zod.enum(['wheel', 'slot-vertical', 'slot-horizontal', 'flash']).optional(),
   "createdAt": zod.coerce.date()
 })
 
@@ -602,6 +607,44 @@ export const UpdateUserRoleResponse = zod.object({
   "totalPoints": zod.number(),
   "createdAt": zod.coerce.date()
 })
+
+
+/**
+ * @summary Submit a completed memory game session
+ */
+export const SubmitMemoryGameSessionBody = zod.object({
+  "maxLevel": zod.number(),
+  "pointsEarned": zod.number()
+})
+
+export const SubmitMemoryGameSessionResponse = zod.object({
+  "id": zod.number(),
+  "userId": zod.number(),
+  "maxLevel": zod.number(),
+  "pointsEarned": zod.number(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Get memory game leaderboard ranked by best level
+ */
+export const getMemoryGameLeaderboardQueryLimitDefault = 20;
+
+export const GetMemoryGameLeaderboardQueryParams = zod.object({
+  "limit": zod.coerce.number().default(getMemoryGameLeaderboardQueryLimitDefault)
+})
+
+export const GetMemoryGameLeaderboardResponseItem = zod.object({
+  "rank": zod.number(),
+  "userId": zod.number(),
+  "username": zod.string(),
+  "displayName": zod.string().nullish(),
+  "avatarUrl": zod.string().nullish(),
+  "bestLevel": zod.number(),
+  "gamesPlayed": zod.number()
+})
+export const GetMemoryGameLeaderboardResponse = zod.array(GetMemoryGameLeaderboardResponseItem)
 
 
 /**

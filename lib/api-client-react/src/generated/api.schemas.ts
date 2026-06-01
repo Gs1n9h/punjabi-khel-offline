@@ -95,6 +95,16 @@ export interface SpinnerItem {
   weight?: number | null;
 }
 
+export type SpinnerConfigDisplayMode = typeof SpinnerConfigDisplayMode[keyof typeof SpinnerConfigDisplayMode];
+
+
+export const SpinnerConfigDisplayMode = {
+  wheel: 'wheel',
+  'slot-vertical': 'slot-vertical',
+  'slot-horizontal': 'slot-horizontal',
+  flash: 'flash',
+} as const;
+
 export interface SpinnerConfig {
   id: number;
   name: string;
@@ -102,21 +112,44 @@ export interface SpinnerConfig {
   description?: string | null;
   items: SpinnerItem[];
   isActive?: boolean;
+  displayMode?: SpinnerConfigDisplayMode;
   createdAt: string;
 }
+
+export type SpinnerConfigInputDisplayMode = typeof SpinnerConfigInputDisplayMode[keyof typeof SpinnerConfigInputDisplayMode];
+
+
+export const SpinnerConfigInputDisplayMode = {
+  wheel: 'wheel',
+  'slot-vertical': 'slot-vertical',
+  'slot-horizontal': 'slot-horizontal',
+  flash: 'flash',
+} as const;
 
 export interface SpinnerConfigInput {
   name: string;
   description?: string;
   items: SpinnerItem[];
   isActive?: boolean;
+  displayMode?: SpinnerConfigInputDisplayMode;
 }
+
+export type SpinnerConfigUpdateDisplayMode = typeof SpinnerConfigUpdateDisplayMode[keyof typeof SpinnerConfigUpdateDisplayMode];
+
+
+export const SpinnerConfigUpdateDisplayMode = {
+  wheel: 'wheel',
+  'slot-vertical': 'slot-vertical',
+  'slot-horizontal': 'slot-horizontal',
+  flash: 'flash',
+} as const;
 
 export interface SpinnerConfigUpdate {
   name?: string;
   description?: string;
   items?: SpinnerItem[];
   isActive?: boolean;
+  displayMode?: SpinnerConfigUpdateDisplayMode;
 }
 
 export interface SpinResult {
@@ -355,6 +388,31 @@ export interface AdminDashboard {
   topPlayers: LeaderboardEntry[];
 }
 
+export interface MemoryGameSubmit {
+  maxLevel: number;
+  pointsEarned: number;
+}
+
+export interface MemoryGameSession {
+  id: number;
+  userId: number;
+  maxLevel: number;
+  pointsEarned: number;
+  createdAt: string;
+}
+
+export interface MemoryLeaderboardEntry {
+  rank: number;
+  userId: number;
+  username: string;
+  /** @nullable */
+  displayName?: string | null;
+  /** @nullable */
+  avatarUrl?: string | null;
+  bestLevel: number;
+  gamesPlayed: number;
+}
+
 export interface PresignRequest {
   filename: string;
   contentType: string;
@@ -436,4 +494,8 @@ export const ListAdminUsersRole = {
   admin: 'admin',
   moderator: 'moderator',
 } as const;
+
+export type GetMemoryGameLeaderboardParams = {
+limit?: number;
+};
 

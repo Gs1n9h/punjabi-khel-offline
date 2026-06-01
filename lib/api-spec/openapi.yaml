@@ -3,20 +3,34 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Punjabi Kids Gamification API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: users
+    description: User account operations
+  - name: spinner
+    description: Spinner wheel configuration and sessions
+  - name: tongue-twister
+    description: Tongue twister game
+  - name: knowledge-test
+    description: Knowledge test / image quiz game
+  - name: leaderboard
+    description: Leaderboard and scoring
+  - name: admin
+    description: Admin dashboard operations
+  - name: uploads
+    description: File upload operations
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +38,584 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ─── USERS ───────────────────────────────────────────────────
+  /users/me:
+    get:
+      operationId: getMe
+      tags: [users]
+      summary: Get current user profile
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    patch:
+      operationId: updateMe
+      tags: [users]
+      summary: Update current user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/me/stats:
+    get:
+      operationId: getMyStats
+      tags: [users]
+      summary: Get current user's game statistics
+      responses:
+        "200":
+          description: User stats summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserStats"
+
+  # ─── SPINNER ─────────────────────────────────────────────────
+  /spinner/configs:
+    get:
+      operationId: listSpinnerConfigs
+      tags: [spinner]
+      summary: List all spinner configurations
+      responses:
+        "200":
+          description: List of spinner configs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SpinnerConfig"
+    post:
+      operationId: createSpinnerConfig
+      tags: [spinner]
+      summary: Create a spinner configuration (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SpinnerConfigInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpinnerConfig"
+
+  /spinner/configs/{id}:
+    get:
+      operationId: getSpinnerConfig
+      tags: [spinner]
+      summary: Get a spinner configuration by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Spinner config
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpinnerConfig"
+    patch:
+      operationId: updateSpinnerConfig
+      tags: [spinner]
+      summary: Update a spinner configuration (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SpinnerConfigUpdate"
+      responses:
+        "200":
+          description: Updated config
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpinnerConfig"
+    delete:
+      operationId: deleteSpinnerConfig
+      tags: [spinner]
+      summary: Delete a spinner configuration (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /spinner/spin:
+    post:
+      operationId: recordSpin
+      tags: [spinner]
+      summary: Record a spin result and award points
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SpinResult"
+      responses:
+        "200":
+          description: Spin recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpinRecord"
+
+  # ─── TONGUE TWISTER ──────────────────────────────────────────
+  /tongue-twisters:
+    get:
+      operationId: listTongueTwisters
+      tags: [tongue-twister]
+      summary: List all tongue twisters
+      responses:
+        "200":
+          description: List of tongue twisters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TongueTwister"
+    post:
+      operationId: createTongueTwister
+      tags: [tongue-twister]
+      summary: Create a tongue twister (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TongueTwisterInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TongueTwister"
+
+  /tongue-twisters/{id}:
+    get:
+      operationId: getTongueTwister
+      tags: [tongue-twister]
+      summary: Get a tongue twister by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Tongue twister
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TongueTwister"
+    patch:
+      operationId: updateTongueTwister
+      tags: [tongue-twister]
+      summary: Update a tongue twister (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TongueTwisterUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TongueTwister"
+    delete:
+      operationId: deleteTongueTwister
+      tags: [tongue-twister]
+      summary: Delete a tongue twister (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /tongue-twisters/submissions:
+    get:
+      operationId: listTongueTwisterSubmissions
+      tags: [tongue-twister]
+      summary: List voice recording submissions (admin can see all, user sees own)
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, approved, rejected]
+        - name: userId
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of submissions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TongueTwisterSubmission"
+
+  /tongue-twisters/{id}/submit:
+    post:
+      operationId: submitTongueTwisterRecording
+      tags: [tongue-twister]
+      summary: Submit a voice recording for a tongue twister
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TongueTwisterRecordingInput"
+      responses:
+        "201":
+          description: Submission created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TongueTwisterSubmission"
+
+  /tongue-twisters/submissions/{id}/review:
+    patch:
+      operationId: reviewTongueTwisterSubmission
+      tags: [tongue-twister]
+      summary: Admin reviews and scores a submission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmissionReview"
+      responses:
+        "200":
+          description: Reviewed submission
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TongueTwisterSubmission"
+
+  # ─── KNOWLEDGE TEST ──────────────────────────────────────────
+  /knowledge-tests:
+    get:
+      operationId: listKnowledgeTests
+      tags: [knowledge-test]
+      summary: List all knowledge test questions
+      parameters:
+        - name: difficulty
+          in: query
+          schema:
+            type: string
+            enum: [easy, medium, hard]
+      responses:
+        "200":
+          description: List of questions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/KnowledgeQuestion"
+    post:
+      operationId: createKnowledgeQuestion
+      tags: [knowledge-test]
+      summary: Create a knowledge test question (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeQuestionInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeQuestion"
+
+  /knowledge-tests/{id}:
+    get:
+      operationId: getKnowledgeQuestion
+      tags: [knowledge-test]
+      summary: Get a knowledge question by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Question
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeQuestion"
+    patch:
+      operationId: updateKnowledgeQuestion
+      tags: [knowledge-test]
+      summary: Update a knowledge question (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KnowledgeQuestionUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KnowledgeQuestion"
+    delete:
+      operationId: deleteKnowledgeQuestion
+      tags: [knowledge-test]
+      summary: Delete a knowledge question (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /knowledge-tests/quiz/random:
+    get:
+      operationId: getRandomQuiz
+      tags: [knowledge-test]
+      summary: Get a random set of questions for a quiz session
+      parameters:
+        - name: count
+          in: query
+          schema:
+            type: integer
+            default: 5
+        - name: difficulty
+          in: query
+          schema:
+            type: string
+            enum: [easy, medium, hard]
+      responses:
+        "200":
+          description: Random quiz questions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/KnowledgeQuestion"
+
+  /knowledge-tests/submit:
+    post:
+      operationId: submitQuizAnswers
+      tags: [knowledge-test]
+      summary: Submit quiz answers and get score
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuizSubmission"
+      responses:
+        "200":
+          description: Quiz result with score
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizResult"
+
+  # ─── LEADERBOARD ─────────────────────────────────────────────
+  /leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags: [leaderboard]
+      summary: Get global leaderboard
+      parameters:
+        - name: game
+          in: query
+          schema:
+            type: string
+            enum: [all, spinner, tongue-twister, knowledge-test]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Leaderboard entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
+
+  /leaderboard/me:
+    get:
+      operationId: getMyRank
+      tags: [leaderboard]
+      summary: Get current user's rank and nearby players
+      responses:
+        "200":
+          description: User rank info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MyRank"
+
+  # ─── ADMIN ───────────────────────────────────────────────────
+  /admin/dashboard:
+    get:
+      operationId: getAdminDashboard
+      tags: [admin]
+      summary: Get admin dashboard summary stats
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminDashboard"
+
+  /admin/users:
+    get:
+      operationId: listAdminUsers
+      tags: [admin]
+      summary: List all users (admin)
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum: [user, admin, moderator]
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /admin/users/{id}/role:
+    patch:
+      operationId: updateUserRole
+      tags: [admin]
+      summary: Update a user's role (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoleUpdate"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  # ─── UPLOADS ─────────────────────────────────────────────────
+  /uploads/presign:
+    post:
+      operationId: presignUpload
+      tags: [uploads]
+      summary: Get presigned URL for file upload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PresignRequest"
+      responses:
+        "200":
+          description: Presigned upload info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PresignResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +623,480 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    # ─── USER ───────────────────────────────────────────────────
+    User:
+      type: object
+      required: [id, clerkId, username, role, totalPoints, createdAt]
+      properties:
+        id:
+          type: integer
+        clerkId:
+          type: string
+        username:
+          type: string
+        displayName:
+          type: ["string", "null"]
+        avatarUrl:
+          type: ["string", "null"]
+        role:
+          type: string
+          enum: [user, admin, moderator]
+        totalPoints:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    UserUpdate:
+      type: object
+      properties:
+        username:
+          type: string
+        displayName:
+          type: string
+        avatarUrl:
+          type: string
+
+    UserStats:
+      type: object
+      required: [totalPoints, spinsPlayed, tongueTwisterSubmissions, quizzesCompleted, rank]
+      properties:
+        totalPoints:
+          type: integer
+        spinsPlayed:
+          type: integer
+        tongueTwisterSubmissions:
+          type: integer
+        quizzesCompleted:
+          type: integer
+        rank:
+          type: integer
+        recentActivity:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActivityItem"
+
+    ActivityItem:
+      type: object
+      required: [type, points, createdAt]
+      properties:
+        type:
+          type: string
+          enum: [spin, tongue-twister, quiz]
+        points:
+          type: integer
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    RoleUpdate:
+      type: object
+      required: [role]
+      properties:
+        role:
+          type: string
+          enum: [user, admin, moderator]
+
+    # ─── SPINNER ────────────────────────────────────────────────
+    SpinnerItem:
+      type: object
+      required: [label, type]
+      properties:
+        label:
+          type: string
+        type:
+          type: string
+          enum: [text, image, number]
+        imageUrl:
+          type: ["string", "null"]
+        color:
+          type: ["string", "null"]
+        weight:
+          type: ["integer", "null"]
+
+    SpinnerConfig:
+      type: object
+      required: [id, name, items, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/SpinnerItem"
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    SpinnerConfigInput:
+      type: object
+      required: [name, items]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/SpinnerItem"
+        isActive:
+          type: boolean
+
+    SpinnerConfigUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/SpinnerItem"
+        isActive:
+          type: boolean
+
+    SpinResult:
+      type: object
+      required: [configId, resultLabel]
+      properties:
+        configId:
+          type: integer
+        resultLabel:
+          type: string
+
+    SpinRecord:
+      type: object
+      required: [id, configId, resultLabel, pointsEarned, createdAt]
+      properties:
+        id:
+          type: integer
+        configId:
+          type: integer
+        resultLabel:
+          type: string
+        pointsEarned:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    # ─── TONGUE TWISTER ─────────────────────────────────────────
+    TongueTwister:
+      type: object
+      required: [id, text, transliteration, difficulty, createdAt]
+      properties:
+        id:
+          type: integer
+        text:
+          type: string
+        transliteration:
+          type: ["string", "null"]
+        translation:
+          type: ["string", "null"]
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    TongueTwisterInput:
+      type: object
+      required: [text, difficulty]
+      properties:
+        text:
+          type: string
+        transliteration:
+          type: string
+        translation:
+          type: string
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+        isActive:
+          type: boolean
+
+    TongueTwisterUpdate:
+      type: object
+      properties:
+        text:
+          type: string
+        transliteration:
+          type: string
+        translation:
+          type: string
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+        isActive:
+          type: boolean
+
+    TongueTwisterRecordingInput:
+      type: object
+      required: [audioUrl]
+      properties:
+        audioUrl:
+          type: string
+        durationSeconds:
+          type: ["number", "null"]
+
+    TongueTwisterSubmission:
+      type: object
+      required: [id, tongueTwisterId, userId, audioUrl, status, createdAt]
+      properties:
+        id:
+          type: integer
+        tongueTwisterId:
+          type: integer
+        userId:
+          type: integer
+        username:
+          type: string
+        audioUrl:
+          type: string
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        score:
+          type: ["integer", "null"]
+        feedback:
+          type: ["string", "null"]
+        pointsEarned:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        reviewedAt:
+          type: ["string", "null"]
+          format: date-time
+
+    SubmissionReview:
+      type: object
+      required: [status, score]
+      properties:
+        status:
+          type: string
+          enum: [approved, rejected]
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        feedback:
+          type: string
+
+    # ─── KNOWLEDGE TEST ─────────────────────────────────────────
+    KnowledgeQuestion:
+      type: object
+      required: [id, question, options, correctAnswer, difficulty, createdAt]
+      properties:
+        id:
+          type: integer
+        question:
+          type: string
+        imageUrl:
+          type: ["string", "null"]
+        options:
+          type: array
+          items:
+            type: string
+        correctAnswer:
+          type: string
+        explanation:
+          type: ["string", "null"]
+        category:
+          type: ["string", "null"]
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    KnowledgeQuestionInput:
+      type: object
+      required: [question, options, correctAnswer, difficulty]
+      properties:
+        question:
+          type: string
+        imageUrl:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+        correctAnswer:
+          type: string
+        explanation:
+          type: string
+        category:
+          type: string
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+        isActive:
+          type: boolean
+
+    KnowledgeQuestionUpdate:
+      type: object
+      properties:
+        question:
+          type: string
+        imageUrl:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+        correctAnswer:
+          type: string
+        explanation:
+          type: string
+        category:
+          type: string
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+        isActive:
+          type: boolean
+
+    QuizSubmission:
+      type: object
+      required: [answers]
+      properties:
+        answers:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuizAnswer"
+
+    QuizAnswer:
+      type: object
+      required: [questionId, selectedAnswer]
+      properties:
+        questionId:
+          type: integer
+        selectedAnswer:
+          type: string
+
+    QuizResult:
+      type: object
+      required: [score, totalQuestions, correctAnswers, pointsEarned, breakdown]
+      properties:
+        score:
+          type: integer
+        totalQuestions:
+          type: integer
+        correctAnswers:
+          type: integer
+        pointsEarned:
+          type: integer
+        breakdown:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuizAnswerResult"
+
+    QuizAnswerResult:
+      type: object
+      required: [questionId, correct, correctAnswer]
+      properties:
+        questionId:
+          type: integer
+        correct:
+          type: boolean
+        selectedAnswer:
+          type: ["string", "null"]
+        correctAnswer:
+          type: string
+
+    # ─── LEADERBOARD ────────────────────────────────────────────
+    LeaderboardEntry:
+      type: object
+      required: [rank, userId, username, totalPoints]
+      properties:
+        rank:
+          type: integer
+        userId:
+          type: integer
+        username:
+          type: string
+        displayName:
+          type: ["string", "null"]
+        avatarUrl:
+          type: ["string", "null"]
+        totalPoints:
+          type: integer
+        gamesPlayed:
+          type: integer
+
+    MyRank:
+      type: object
+      required: [rank, totalPoints, nearbyPlayers]
+      properties:
+        rank:
+          type: integer
+        totalPoints:
+          type: integer
+        nearbyPlayers:
+          type: array
+          items:
+            $ref: "#/components/schemas/LeaderboardEntry"
+
+    # ─── ADMIN DASHBOARD ────────────────────────────────────────
+    AdminDashboard:
+      type: object
+      required: [totalUsers, activeUsers, pendingSubmissions, totalGamesPlayed, recentSubmissions, topPlayers]
+      properties:
+        totalUsers:
+          type: integer
+        activeUsers:
+          type: integer
+        pendingSubmissions:
+          type: integer
+        totalGamesPlayed:
+          type: integer
+        recentSubmissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/TongueTwisterSubmission"
+        topPlayers:
+          type: array
+          items:
+            $ref: "#/components/schemas/LeaderboardEntry"
+
+    # ─── UPLOADS ────────────────────────────────────────────────
+    PresignRequest:
+      type: object
+      required: [filename, contentType]
+      properties:
+        filename:
+          type: string
+        contentType:
+          type: string
+        folder:
+          type: string
+
+    PresignResponse:
+      type: object
+      required: [uploadUrl, publicUrl, key]
+      properties:
+        uploadUrl:
+          type: string
+        publicUrl:
+          type: string
+        key:
+          type: string

@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Punjabi Games"
+version = "1.0.0"
+id = "artifacts/punjabi-games"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25187
+
+[services.development]
+run = "pnpm --filter @workspace/punjabi-games run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/punjabi-games", "run", "build" ]
+publicDir = "artifacts/punjabi-games/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25187"
+BASE_PATH = "/"

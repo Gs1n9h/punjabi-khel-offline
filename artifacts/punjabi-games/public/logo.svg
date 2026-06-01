@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF9933" />
+      <stop offset="100%" stop-color="#E8721A" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.2" />
+    </filter>
+  </defs>
+  <rect width="400" height="400" rx="100" fill="url(#bg)" />
+  <circle cx="200" cy="200" r="140" fill="none" stroke="#FFF8F0" stroke-width="12" stroke-dasharray="24 16" />
+  
+  <g fill="#FFF8F0" filter="url(#shadow)">
+    <path d="M 200,90 C 220,130 260,170 310,180 C 260,190 220,230 200,270 C 180,230 140,190 90,180 C 140,170 180,130 200,90 Z" />
+    <circle cx="200" cy="200" r="30" fill="#1A56E8" />
+    <path d="M 200,185 L 210,215 L 190,215 Z" fill="#FFF8F0" />
+  </g>
+  <text x="200" y="340" font-family="sans-serif" font-weight="900" font-size="42" fill="#FFF8F0" text-anchor="middle" letter-spacing="2">PUNJABI KHEL</text>
+</svg>

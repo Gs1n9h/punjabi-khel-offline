@@ -2,9 +2,9 @@ import { Link } from "wouter";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { PageHeader } from "@/components/ui/page-header";
-import { useGetMyStats } from "@/lib/offline-api";
+import { useGetMyStats, useResetScores } from "@/lib/offline-api";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Trophy, Dices, Mic, BrainCircuit, Brain } from "lucide-react";
+import { Trophy, Dices, Mic, BrainCircuit, Brain, RotateCcw } from "lucide-react";
 import { motion } from "framer-motion";
 
 const games = [
@@ -36,6 +36,7 @@ const games = [
 
 export default function GamesHub() {
   const { data: stats, isLoading } = useGetMyStats();
+  const resetScores = useResetScores();
 
   return (
     <MobileContainer withBottomNav className="bg-[radial-gradient(circle_at_top,#FFE8B8_0%,#FFF8F0_42%,#FFE4D2_100%)]">
@@ -50,17 +51,22 @@ export default function GamesHub() {
             <Trophy className="w-24 h-24" />
           </div>
           <div className="relative z-10">
-            <p className="text-primary-foreground/90 font-black mb-1 uppercase tracking-wide text-xs">ਤੁਹਾਡੇ ਅੰਕ</p>
-            {isLoading ? (
-              <Skeleton className="h-10 w-24 bg-white/20" />
-            ) : (
-              <h2 className="text-5xl font-black drop-shadow-sm">{stats?.totalPoints || 0} pts</h2>
-            )}
-            <div className="mt-4 flex gap-4">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-bold opacity-80 uppercase">ਦਰਜਾ</p>
-                <p className="text-lg font-bold">#{stats?.rank || "--"}</p>
+                <p className="text-primary-foreground/90 font-black mb-1 uppercase tracking-wide text-xs">ਸਿਖਰ ਅੰਕ</p>
+                {isLoading ? (
+                  <Skeleton className="h-10 w-24 bg-white/20" />
+                ) : (
+                  <h2 className="text-5xl font-black drop-shadow-sm">{stats?.topScore || 0}</h2>
+                )}
               </div>
+              <button
+                onClick={() => { if (confirm("ਕੀ ਤੁਸੀਂ ਸਾਰੇ ਅੰਕ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?")) resetScores.mutate({}); }}
+                className="bg-white/20 hover:bg-white/30 text-white rounded-xl px-3 py-2 text-xs font-bold transition-all flex items-center gap-1"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                ਮੁੜ ਸੈਟ
+              </button>
             </div>
           </div>
         </div>

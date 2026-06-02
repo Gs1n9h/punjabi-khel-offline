@@ -15,13 +15,13 @@ type DisplayMode = "wheel" | "slot-vertical" | "slot-horizontal" | "flash";
 const DEFAULT_COLORS = ["#E8721A", "#1A56E8", "#FFB300", "#4CAF50", "#E91E63", "#9C27B0", "#00BCD4", "#FF5722"];
 
 // ─── Wheel Mode ───────────────────────────────────────────────────
-function WheelDisplay({ items, isSpinning, result, onSpin }: { items: any[], isSpinning: boolean, result: string | null, onSpin: () => void }) {
+function WheelDisplay({ items, isSpinning, result, onSpin, targetIndex }: { items: any[], isSpinning: boolean, result: string | null, onSpin: () => void, targetIndex: number }) {
   const [rotation, setRotation] = useState(0);
   const controls = useAnimationControls();
 
-  const spin = async (selectedIndex: number) => {
+  const spin = async (idx: number) => {
     const sliceAngle = 360 / items.length;
-    const targetAngle = 360 - (selectedIndex * sliceAngle) - (sliceAngle / 2);
+    const targetAngle = 360 - (idx * sliceAngle) - (sliceAngle / 2);
     const extraSpins = 5 * 360;
     const finalRotation = rotation + extraSpins + (targetAngle - (rotation % 360));
     await controls.start({ rotate: finalRotation, transition: { duration: 4, ease: [0.2, 0.8, 0.2, 1] } });
@@ -29,13 +29,7 @@ function WheelDisplay({ items, isSpinning, result, onSpin }: { items: any[], isS
   };
 
   useEffect(() => {
-    if (isSpinning) {
-      const totalWeight = items.reduce((s: number, i: any) => s + (i.weight || 1), 0);
-      let r = Math.random() * totalWeight;
-      let idx = 0;
-      for (let i = 0; i < items.length; i++) { r -= (items[i].weight || 1); if (r <= 0) { idx = i; break; } }
-      spin(idx);
-    }
+    if (isSpinning) spin(targetIndex);
   }, [isSpinning]);
 
   return (
@@ -45,7 +39,7 @@ function WheelDisplay({ items, isSpinning, result, onSpin }: { items: any[], isS
         <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20">
           <div className="w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[26px] border-t-primary drop-shadow-lg" style={{ filter: 'drop-shadow(0 3px 4px rgba(0,0,0,0.35))' }} />
         </div>
-        <motion.div animate={controls} className="relative w-64 h-64 sm:w-80 sm:h-80 rounded-full border-8 border-white shadow-2xl overflow-hidden" style={{ transformOrigin: "center center" }}>
+        <motion.div animate={controls} className="relative w-72 h-72 sm:w-96 sm:h-96 md:w-[28rem] md:h-[28rem] rounded-full border-8 border-white shadow-2xl overflow-hidden" style={{ transformOrigin: "center center" }}>
         {items.map((item: any, index: number) => {
           const angle = 360 / items.length;
           const rotate = index * angle;
@@ -65,27 +59,25 @@ function WheelDisplay({ items, isSpinning, result, onSpin }: { items: any[], isS
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full border-4 border-primary shadow-inner z-10" />
       </motion.div>
       </div>
-      <SpinResult result={result} isSpinning={isSpinning} onSpin={onSpin} label="SPIN!" />
+      <div className="mt-8">
+        <SpinResult result={result} isSpinning={isSpinning} onSpin={onSpin} label="SPIN!" />
+      </div>
     </div>
   );
 }
 
 // ─── Slot Vertical ────────────────────────────────────────────────
-function SlotVerticalDisplay({ items, isSpinning, result, onSpin }: { items: any[], isSpinning: boolean, result: string | null, onSpin: () => void }) {
-  const ITEM_H = 80;
+function SlotVerticalDisplay({ items, isSpinning, result, onSpin, targetIndex }: { items: any[], isSpinning: boolean, result: string | null, onSpin: () => void, targetIndex: number }) {
+  const ITEM_H = 96;
   const [offset, setOffset] = useState(0);
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!isSpinning) return;
-    const totalWeight = items.reduce((s: number, i: any) => s + (i.weight || 1), 0);
-    let r = Math.random() * totalWeight, targetIdx = 0;
-    for (let i = 0; i < items.length; i++) { r -= (items[i].weight || 1); if (r <= 0) { targetIdx = i; break; } }
-
     const duration = 3500;
     const start = performance.now();
     const loops = 4;
-    const targetOffset = -(targetIdx * ITEM_H + loops * items.length * ITEM_H);
+    const targetOffset = -(targetIndex * ITEM_H + loops * items.length * ITEM_H);
 
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / duration);
@@ -100,37 +92,35 @@ function SlotVerticalDisplay({ items, isSpinning, result, onSpin }: { items: any
   const tripled = [...items, ...items, ...items, ...items, ...items];
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
-      <div className="w-52 overflow-hidden rounded-2xl border-4 border-primary shadow-2xl bg-white" style={{ height: ITEM_H }}>
+    <div className="flex-1 flex flex-col items-center justify-center p-6">
+      <div className="w-60 sm:w-72 overflow-hidden rounded-2xl border-4 border-primary shadow-2xl bg-white" style={{ height: ITEM_H }}>
         <div style={{ transform: `translateY(${offset}px)` }} className="transition-none">
           {tripled.map((item: any, i: number) => (
-            <div key={i} className="flex items-center justify-center font-black text-2xl" style={{ height: ITEM_H, backgroundColor: item.color || DEFAULT_COLORS[i % items.length % DEFAULT_COLORS.length], color: "white" }}>
+            <div key={i} className="flex items-center justify-center font-black text-3xl sm:text-4xl" style={{ height: ITEM_H, backgroundColor: item.color || DEFAULT_COLORS[i % items.length % DEFAULT_COLORS.length], color: "white" }}>
               {item.label}
             </div>
           ))}
         </div>
       </div>
-      <SpinResult result={result} isSpinning={isSpinning} onSpin={onSpin} label="▼ SPIN ▼" />
+      <div className="mt-8">
+        <SpinResult result={result} isSpinning={isSpinning} onSpin={onSpin} label="▼ SPIN ▼" />
+      </div>
     </div>
   );
 }
 
 // ─── Slot Horizontal ─────────────────────────────────────────────
-function SlotHorizontalDisplay({ items, isSpinning, result, onSpin }: { items: any[], isSpinning: boolean, result: string | null, onSpin: () => void }) {
-  const ITEM_W = 120;
+function SlotHorizontalDisplay({ items, isSpinning, result, onSpin, targetIndex }: { items: any[], isSpinning: boolean, result: string | null, onSpin: () => void, targetIndex: number }) {
+  const ITEM_W = 144;
   const [offset, setOffset] = useState(0);
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!isSpinning) return;
-    const totalWeight = items.reduce((s: number, i: any) => s + (i.weight || 1), 0);
-    let r = Math.random() * totalWeight, targetIdx = 0;
-    for (let i = 0; i < items.length; i++) { r -= (items[i].weight || 1); if (r <= 0) { targetIdx = i; break; } }
-
     const duration = 3500;
     const start = performance.now();
     const loops = 4;
-    const targetOffset = -(targetIdx * ITEM_W + loops * items.length * ITEM_W);
+    const targetOffset = -(targetIndex * ITEM_W + loops * items.length * ITEM_W);
 
     const tick = (now: number) => {
       const t = Math.min(1, (now - start) / duration);
@@ -145,32 +135,30 @@ function SlotHorizontalDisplay({ items, isSpinning, result, onSpin }: { items: a
   const tripled = [...items, ...items, ...items, ...items, ...items];
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
-      <div className="overflow-hidden rounded-2xl border-4 border-primary shadow-2xl bg-white" style={{ width: ITEM_W, height: 80 }}>
+    <div className="flex-1 flex flex-col items-center justify-center p-6">
+      <div className="overflow-hidden rounded-2xl border-4 border-primary shadow-2xl bg-white" style={{ width: ITEM_W, height: 96 }}>
         <div style={{ transform: `translateX(${offset}px)`, display: "flex" }} className="transition-none">
           {tripled.map((item: any, i: number) => (
-            <div key={i} className="flex items-center justify-center font-black text-2xl shrink-0" style={{ width: ITEM_W, height: 80, backgroundColor: item.color || DEFAULT_COLORS[i % items.length % DEFAULT_COLORS.length], color: "white" }}>
+            <div key={i} className="flex items-center justify-center font-black text-3xl sm:text-4xl shrink-0" style={{ width: ITEM_W, height: 96, backgroundColor: item.color || DEFAULT_COLORS[i % items.length % DEFAULT_COLORS.length], color: "white" }}>
               {item.label}
             </div>
           ))}
         </div>
       </div>
-      <SpinResult result={result} isSpinning={isSpinning} onSpin={onSpin} label="◄► SPIN" />
+      <div className="mt-8">
+        <SpinResult result={result} isSpinning={isSpinning} onSpin={onSpin} label="◄► SPIN" />
+      </div>
     </div>
   );
 }
 
 // ─── Flash Mode ───────────────────────────────────────────────────
-function FlashDisplay({ items, isSpinning, result, onSpin }: { items: any[], isSpinning: boolean, result: string | null, onSpin: () => void }) {
+function FlashDisplay({ items, isSpinning, result, onSpin, targetIndex }: { items: any[], isSpinning: boolean, result: string | null, onSpin: () => void, targetIndex: number }) {
   const [flashIdx, setFlashIdx] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!isSpinning) return;
-    const totalWeight = items.reduce((s: number, i: any) => s + (i.weight || 1), 0);
-    let r = Math.random() * totalWeight, targetIdx = 0;
-    for (let i = 0; i < items.length; i++) { r -= (items[i].weight || 1); if (r <= 0) { targetIdx = i; break; } }
-
     let delay = 80;
     let idx = 0;
     const startTime = Date.now();
@@ -185,7 +173,7 @@ function FlashDisplay({ items, isSpinning, result, onSpin }: { items: any[], isS
       if (elapsed < totalDuration) {
         intervalRef.current = setTimeout(tick, delay);
       } else {
-        setFlashIdx(targetIdx);
+        setFlashIdx(targetIndex);
       }
     };
     intervalRef.current = setTimeout(tick, delay);
@@ -196,17 +184,19 @@ function FlashDisplay({ items, isSpinning, result, onSpin }: { items: any[], isS
   const color = item?.color || DEFAULT_COLORS[flashIdx % DEFAULT_COLORS.length];
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
+    <div className="flex-1 flex flex-col items-center justify-center p-6">
       <motion.div
         key={flashIdx}
         initial={{ scale: 0.85, opacity: 0.7 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="w-52 h-52 rounded-3xl border-8 border-white shadow-2xl flex items-center justify-center"
+        className="w-60 h-60 sm:w-72 sm:h-72 rounded-3xl border-8 border-white shadow-2xl flex items-center justify-center"
         style={{ backgroundColor: color }}
       >
-        <span className="text-5xl font-black text-white drop-shadow-lg">{item?.label}</span>
+        <span className="text-6xl sm:text-7xl font-black text-white drop-shadow-lg">{item?.label}</span>
       </motion.div>
-      <SpinResult result={result} isSpinning={isSpinning} onSpin={onSpin} label="⚡ FLASH!" />
+      <div className="mt-8">
+        <SpinResult result={result} isSpinning={isSpinning} onSpin={onSpin} label="⚡ FLASH!" />
+      </div>
     </div>
   );
 }
@@ -220,7 +210,7 @@ function SpinResult({ result, isSpinning, onSpin, label }: { result: string | nu
       </Button>
       {result && !isSpinning && (
         <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-2xl p-6 text-center border-4 border-orange-100 shadow-xl">
-          <p className="text-sm font-bold text-muted-foreground uppercase mb-1">You got</p>
+          <p className="text-sm font-bold text-muted-foreground uppercase mb-1">ਤੁਹਾਡਾ ਅੱਖਰ</p>
           <p className="text-3xl font-black text-primary">{result}</p>
         </motion.div>
       )}
@@ -234,8 +224,9 @@ export default function SpinnerGame() {
   const recordSpin = useRecordSpin();
   const [isSpinning, setIsSpinning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-  const [activeConfigId, setActiveConfigId] = useState<number | null>(null);
+  const [activeConfigId] = useState<number | null>(null);
   const [overrideDisplayMode, setOverrideDisplayMode] = useState<DisplayMode | null>(null);
+  const [targetIndex, setTargetIndex] = useState(0);
 
   const allConfigs = configs ?? [];
   const activeConfig = allConfigs.find(c => c.id === activeConfigId) || allConfigs.find(c => c.isActive) || allConfigs[0];
@@ -251,6 +242,7 @@ export default function SpinnerGame() {
     const totalWeight = items.reduce((s: number, i: any) => s + (i.weight || 1), 0);
     let r = Math.random() * totalWeight, selectedIndex = 0;
     for (let i = 0; i < items.length; i++) { r -= (items[i].weight || 1); if (r <= 0) { selectedIndex = i; break; } }
+    setTargetIndex(selectedIndex);
     const selectedItem = items[selectedIndex];
 
     const spinDuration = (displayMode === "wheel") ? 4200 : 3700;
@@ -278,23 +270,11 @@ export default function SpinnerGame() {
     );
   }
 
-  const displayProps = { items: activeConfig.items as any[], isSpinning, result, onSpin: handleSpin };
+  const displayProps = { items: activeConfig.items as any[], isSpinning, result, onSpin: handleSpin, targetIndex };
 
   return (
     <MobileContainer className="bg-gradient-to-b from-[#FFF8F0] to-orange-100">
-      <PageHeader title="Charkha" subtitle={activeConfig.name} showBack />
-
-      {/* Config selector */}
-      {allConfigs.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto px-4 py-2 no-scrollbar">
-          {allConfigs.map(c => (
-            <button key={c.id} onClick={() => { setActiveConfigId(c.id); setResult(null); }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap border-2 transition-all ${activeConfig.id === c.id ? "bg-primary text-white border-primary" : "bg-white border-orange-200 text-muted-foreground"}`}>
-              {c.name}
-            </button>
-          ))}
-        </div>
-      )}
+      <PageHeader title="Charkha" showBack />
 
       {/* Display mode selector */}
       <div className="flex justify-center py-1">
@@ -323,10 +303,12 @@ export default function SpinnerGame() {
         </Popover>
       </div>
 
-      {displayMode === "wheel" && <WheelDisplay {...displayProps} />}
-      {displayMode === "slot-vertical" && <SlotVerticalDisplay {...displayProps} />}
-      {displayMode === "slot-horizontal" && <SlotHorizontalDisplay {...displayProps} />}
-      {displayMode === "flash" && <FlashDisplay {...displayProps} />}
+      <div className="flex-1 flex flex-col">
+        {displayMode === "wheel" && <WheelDisplay {...displayProps} />}
+        {displayMode === "slot-vertical" && <SlotVerticalDisplay {...displayProps} />}
+        {displayMode === "slot-horizontal" && <SlotHorizontalDisplay {...displayProps} />}
+        {displayMode === "flash" && <FlashDisplay {...displayProps} />}
+      </div>
     </MobileContainer>
   );
 }

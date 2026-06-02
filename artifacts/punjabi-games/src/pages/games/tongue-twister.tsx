@@ -65,7 +65,7 @@ export default function TongueTwisterGame() {
       mediaRecorder.start();
       setIsRecording(true);
     } catch (err) {
-      toast({ title: "Microphone access denied", variant: "destructive" });
+      toast({ title: "ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਪਹੁੰਚ ਨਾਮੰਜ਼ੂਰ", variant: "destructive" });
     }
   };
 
@@ -87,10 +87,10 @@ export default function TongueTwisterGame() {
         data: { audioUrl: audioUrl || "", durationSeconds: 0 }
       });
 
-      toast({ title: "Saved locally! Great practice." });
+      toast({ title: "ਸਥਾਨਕ ਤੌਰ 'ਤੇ ਸੰਭਾਲਿਆ! ਵਧੀਆ ਅਭਿਆਸ।" });
       handleNext();
     } catch (err) {
-      toast({ title: "Could not save recording", variant: "destructive" });
+      toast({ title: "ਰਿਕਾਰਡਿੰਗ ਸੰਭਾਲ ਨਹੀਂ ਸਕੀ", variant: "destructive" });
     } finally {
       setIsUploading(false);
     }
@@ -99,7 +99,7 @@ export default function TongueTwisterGame() {
   if (isLoading) {
     return (
       <MobileContainer>
-        <PageHeader title="Boli" showBack />
+        <PageHeader title="ਬੋਲੀ" showBack />
         <div className="p-4 space-y-4">
           <Skeleton className="h-40 w-full rounded-2xl" />
         </div>
@@ -110,9 +110,9 @@ export default function TongueTwisterGame() {
   if (!activeTwister) {
     return (
       <MobileContainer>
-        <PageHeader title="Boli" showBack />
+        <PageHeader title="ਬੋਲੀ" showBack />
         <div className="p-4 flex flex-col items-center justify-center h-64 text-center">
-          <p className="font-bold text-muted-foreground text-xl">You've finished all tongue twisters!</p>
+          <p className="font-bold text-muted-foreground text-xl">ਤੁਸੀਂ ਸਾਰੀਆਂ ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ ਕੀਤੀਆਂ!</p>
         </div>
       </MobileContainer>
     );
@@ -120,7 +120,7 @@ export default function TongueTwisterGame() {
 
   return (
     <MobileContainer className="bg-gradient-to-b from-[#FFF8F0] to-orange-50">
-      <PageHeader title="Boli" subtitle="Tongue Twisters" showBack />
+      <PageHeader title="ਬੋਲੀ" subtitle="ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ" showBack />
 
       <div className="flex-1 flex flex-col p-6">
         <motion.div 
@@ -164,7 +164,7 @@ export default function TongueTwisterGame() {
                 {isRecording ? <Square className="w-10 h-10 text-white fill-white" /> : <Mic className="w-12 h-12 text-white" />}
               </Button>
               <p className="mt-4 font-bold text-muted-foreground uppercase tracking-widest text-sm">
-                {isRecording ? "Recording..." : "Tap to Record"}
+                {isRecording ? "ਰਿਕਾਰਡਿੰਗ…" : "ਰਿਕਾਰਡ ਕਰਨ ਲਈ ਛੂਹੋ"}
               </p>
             </div>
           ) : (
@@ -178,17 +178,17 @@ export default function TongueTwisterGame() {
                   className="rounded-xl border-2 hover:bg-orange-50"
                   disabled={isUploading}
                 >
-                  Retry
+                  ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼
                 </Button>
                 <Button 
                   onClick={handleSubmit}
                   className="rounded-xl bg-primary text-white shadow-md"
                   disabled={isUploading}
                 >
-                  {isUploading ? "Submitting..." : (
+                  {isUploading ? "ਜਮ੍ਹਾਂ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ…" : (
                     <>
                       <UploadCloud className="w-4 h-4 mr-2" />
-                      Submit
+                      ਜਮ੍ਹਾਂ ਕਰੋ
                     </>
                   )}
                 </Button>

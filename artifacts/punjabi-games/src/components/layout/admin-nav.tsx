@@ -8,7 +8,6 @@ export function AdminNav() {
     { href: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
     { href: "/admin/spinner", label: "Spinner", icon: Dices },
     { href: "/admin/tongue-twisters", label: "Boli", icon: Mic },
-    { href: "/admin/knowledge-test", label: "Gyan", icon: BookOpen },
     { href: "/admin/submissions", label: "Reviews", icon: Headphones },
     { href: "/admin/users", label: "Users", icon: Users },
   ];

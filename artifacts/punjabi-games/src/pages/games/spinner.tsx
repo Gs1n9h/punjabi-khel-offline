@@ -211,7 +211,7 @@ function SpinResult({ result, isSpinning, onSpin, label }: { result: string | nu
   return (
     <div className="w-full max-w-sm space-y-4 px-4">
       <Button onClick={onSpin} disabled={isSpinning} className="w-full h-16 text-xl rounded-2xl bg-primary hover:bg-[#D4600E] text-white shadow-lg shadow-orange-200 border-b-4 border-[#C25000] active:border-b-0 active:translate-y-1 transition-all">
-        {isSpinning ? "Spinning…" : label}
+        {isSpinning ? "ਘੁੰਮ ਰਿਹਾ ਹੈ…" : label}
       </Button>
       <div className="min-h-[120px] flex items-center justify-center">
         {result && !isSpinning && (
@@ -272,7 +272,7 @@ export default function SpinnerGame() {
   if (!activeConfig || activeConfig.items.length === 0) {
     return (
       <MobileContainer><PageHeader title="Charkha" showBack />
-        <div className="flex-1 flex items-center justify-center p-4"><p className="text-muted-foreground font-bold">No spinner configured.</p></div>
+        <div className="flex-1 flex items-center justify-center p-4"><p className="text-muted-foreground font-bold">ਕੋਈ ਚਰਖਾ ਸਥਾਪਤ ਨਹੀਂ।</p></div>
       </MobileContainer>
     );
   }
@@ -295,7 +295,7 @@ export default function SpinnerGame() {
                 : "bg-white text-muted-foreground border-orange-200 hover:border-orange-300"
             }`}
           >
-            {mode === "wheel" ? "🎡 Wheel" : "⚡ Flash"}
+            {mode === "wheel" ? "🎡 ਚਰਖਾ" : "⚡ ਝਪਕੀ"}
           </button>
         ))}
       </div>
@@ -307,7 +307,7 @@ export default function SpinnerGame() {
         {displayMode === "flash" && <FlashDisplay items={activeConfig.items as any[]} isSpinning={isSpinning} targetIndex={targetIndex} />}
       </div>
       <div className="pb-6 pt-2 flex justify-center">
-        <SpinResult result={result} isSpinning={isSpinning} onSpin={handleSpin} label={displayMode === "wheel" ? "SPIN!" : displayMode === "slot-vertical" ? "▼ SPIN ▼" : displayMode === "slot-horizontal" ? "◄► SPIN" : "⚡ FLASH!"} />
+        <SpinResult result={result} isSpinning={isSpinning} onSpin={handleSpin} label={displayMode === "wheel" ? "ਘੁੰਮਾਓ!" : displayMode === "slot-vertical" ? "▼ ਘੁੰਮਾਓ ▼" : displayMode === "slot-horizontal" ? "◄► ਘੁੰਮਾਓ" : "⚡ ਝਪਕੀ!"} />
       </div>
     </MobileContainer>
   );

@@ -169,10 +169,10 @@ export default function MemoryGame() {
   if (showLeaderboard) {
     return (
       <MobileContainer className="bg-gradient-to-b from-purple-50 to-blue-50">
-        <PageHeader title="Yaad Khel" subtitle="Best Memory Players" showBack backHref="/games" />
+        <PageHeader title="ਯਾਦ ਖੇਡ" subtitle="ਸਭ ਤੋਂ ਵਧੀਆ ਯਾਦ ਰੱਖਣ ਵਾਲੇ" showBack backHref="/games" />
         <div className="p-4 space-y-3">
           {leaderboard?.length === 0 && (
-            <div className="text-center py-12 text-muted-foreground font-bold">No entries yet — be first!</div>
+            <div className="text-center py-12 text-muted-foreground font-bold">ਕੋਈ ਐਂਟਰੀ ਨਹੀਂ — ਪਹਿਲੇ ਬਣੋ!</div>
           )}
           {leaderboard?.map((entry, i) => (
             <div key={entry.userId} className="flex items-center gap-3 bg-white rounded-2xl p-3 border-2 border-purple-100 shadow-sm">
@@ -203,7 +203,7 @@ export default function MemoryGame() {
 
   return (
     <MobileContainer className="bg-gradient-to-b from-purple-50 to-blue-50">
-      <PageHeader title="Yaad Khel" subtitle="Number Memory Game" showBack />
+      <PageHeader title="ਯਾਦ ਖੇਡ" subtitle="ਨੰਬਰ ਯਾਦ ਕਰਨ ਦੀ ਖੇਡ" showBack />
 
       <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
         <AnimatePresence mode="wait">
@@ -219,18 +219,18 @@ export default function MemoryGame() {
               </div>
               <div>
                 <h2 className="text-3xl font-black text-purple-700 mb-2">ਯਾਦ ਖੇਡ</h2>
-                <p className="text-muted-foreground font-medium">A number flashes briefly — remember it and type it!</p>
+                <p className="text-muted-foreground font-medium">ਇੱਕ ਨੰਬਰ ਥੋੜ੍ਹੀ ਦੇਰ ਲਈ ਦਿਖਾਈ ਦਿੰਦਾ ਹੈ — ਇਸ ਨੂੰ ਯਾਦ ਰੱਖੋ!</p>
               </div>
               <div className="bg-white rounded-2xl p-4 border-2 border-purple-100 w-full text-left space-y-2 shadow-sm">
-                <p className="font-bold text-sm text-purple-700">How it works:</p>
-                <p className="text-xs text-muted-foreground">• A number appears on screen for a moment</p>
-                <p className="text-xs text-muted-foreground">• Remember it — then type what you saw</p>
-                <p className="text-xs text-muted-foreground">• Each level adds one more digit</p>
-                <p className="text-xs text-muted-foreground">• Earn 10×level points per correct answer</p>
+                <p className="font-bold text-sm text-purple-700">ਇਹ ਕਿਵੇਂ ਕੰਮ ਕਰਦਾ ਹੈ:</p>
+                <p className="text-xs text-muted-foreground">• ਇੱਕ ਨੰਬਰ ਸਕ੍ਰੀਨ 'ਤੇ ਥੋੜ੍ਹੀ ਦੇਰ ਲਈ ਆਉਂਦਾ ਹੈ</p>
+                <p className="text-xs text-muted-foreground">• ਇਸ ਨੂੰ ਯਾਦ ਰੱਖੋ — ਫਿਰ ਦਾਖਲ ਕਰੋ</p>
+                <p className="text-xs text-muted-foreground">• ਹਰ ਪੱਧਰ ਵਿੱਚ ਇੱਕ ਹੋਰ ਅੰਕ ਜੁੜਦਾ ਹੈ</p>
+                <p className="text-xs text-muted-foreground">• ਹਰ ਸਹੀ ਜਵਾਬ 'ਤੇ 10×ਪੱਧਰ ਅੰਕ</p>
               </div>
               <div className="flex gap-3 w-full">
                 <Button onClick={handleStart} className="flex-1 h-14 text-xl rounded-2xl bg-purple-600 hover:bg-purple-700 text-white shadow-lg border-b-4 border-purple-800 active:border-b-0 active:translate-y-1 transition-all">
-                  Start!
+                  ਸ਼ੁਰੂ ਕਰੋ!
                 </Button>
                 <Button variant="outline" onClick={() => setShowLeaderboard(true)} className="h-14 w-14 rounded-2xl border-2 border-purple-200">
                   <Trophy className="w-6 h-6 text-purple-600" />
@@ -243,8 +243,8 @@ export default function MemoryGame() {
           {phase === "showing" && (
             <motion.div key="showing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-6 w-full max-w-xs">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-purple-600 uppercase tracking-wide">Level {level}</span>
-                <span className="text-sm text-muted-foreground">— {level} digit{level !== 1 ? "s" : ""}</span>
+                <span className="text-sm font-bold text-purple-600 uppercase tracking-wide">ਪੱਧਰ {level}</span>
+                <span className="text-sm text-muted-foreground">— {level} ਅੰਕ{level !== 1 ? "" : ""}</span>
               </div>
 
               {/* Progress bar */}
@@ -280,7 +280,7 @@ export default function MemoryGame() {
                 </div>
               </div>
 
-              <p className="text-sm text-muted-foreground font-medium">Memorise this number!</p>
+              <p className="text-sm text-muted-foreground font-medium">ਇਹ ਨੰਬਰ ਯਾਦ ਕਰੋ!</p>
             </motion.div>
           )}
 
@@ -291,8 +291,8 @@ export default function MemoryGame() {
               <ElapsedTimer active={phase === "hiding"} hideStartRef={hideStartRef} />
               <div className="bg-gradient-to-b from-purple-500 to-blue-500 rounded-3xl p-5 text-center shadow-xl w-full">
                 <div className="text-5xl mb-2">🤚</div>
-                <p className="text-white font-black text-lg">What did you see?</p>
-                <p className="text-white/70 text-sm mt-1">Level {level} — {level} digit{level !== 1 ? "s" : ""}</p>
+                <p className="text-white font-black text-lg">ਤੁਸੀਂ ਕੀ ਵੇਖਿਆ?</p>
+                <p className="text-white/70 text-sm mt-1">ਪੱਧਰ {level} — {level} ਅੰਕ{level !== 1 ? "" : ""}</p>
               </div>
 
               {/* Display area */}
@@ -329,7 +329,7 @@ export default function MemoryGame() {
               </div>
 
               <div className="text-center">
-                <p className="text-xs text-muted-foreground">Points so far: <span className="font-black text-purple-700">{totalPoints}</span></p>
+                <p className="text-xs text-muted-foreground">ਕੁੱਲ ਅੰਕ: <span className="font-black text-purple-700">{totalPoints}</span></p>
               </div>
             </motion.div>
           )}
@@ -338,16 +338,16 @@ export default function MemoryGame() {
           {phase === "correct" && (
             <motion.div key="correct" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center gap-4 text-center">
               <div className="text-7xl">🎉</div>
-              <h2 className="text-3xl font-black text-green-600">Correct!</h2>
+              <h2 className="text-3xl font-black text-green-600">ਸਹੀ!</h2>
               {lastTime !== null && (
                 <div className="bg-green-50 border-2 border-green-200 rounded-2xl px-6 py-2">
-                  <p className="text-xs text-green-600 font-bold uppercase">Time</p>
+                  <p className="text-xs text-green-600 font-bold uppercase">ਸਮਾਂ</p>
                   <p className="text-2xl font-black text-green-700">{(lastTime / 1000).toFixed(2)}s</p>
-                  {bestTime > 0 && bestTime === lastTime && <p className="text-[10px] text-green-600 font-bold">New best!</p>}
+                  {bestTime > 0 && bestTime === lastTime && <p className="text-[10px] text-green-600 font-bold">ਨਵਾਂ ਰਿਕਾਰਡ!</p>}
                 </div>
               )}
-              <p className="text-muted-foreground font-bold">+{level * 10} points</p>
-              <p className="text-sm font-bold text-purple-700">Level {level + 1} coming up…</p>
+              <p className="text-muted-foreground font-bold">+{level * 10} ਅੰਕ</p>
+              <p className="text-sm font-bold text-purple-700">ਪੱਧਰ {level + 1} ਆ ਰਿਹਾ ਹੈ…</p>
             </motion.div>
           )}
 
@@ -355,8 +355,8 @@ export default function MemoryGame() {
           {phase === "wrong" && (
             <motion.div key="wrong" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center gap-4 text-center">
               <div className="text-7xl">😬</div>
-              <h2 className="text-3xl font-black text-red-500">Oops!</h2>
-              <p className="text-muted-foreground font-bold">The number was <span className="font-black text-foreground text-2xl">{toPunjabi(currentNumber)}</span></p>
+              <h2 className="text-3xl font-black text-red-500">ਓਹੋ!</h2>
+              <p className="text-muted-foreground font-bold">ਨੰਬਰ ਸੀ <span className="font-black text-foreground text-2xl">{toPunjabi(currentNumber)}</span></p>
             </motion.div>
           )}
 
@@ -365,29 +365,29 @@ export default function MemoryGame() {
             <motion.div key="gameover" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center gap-6 text-center w-full max-w-xs">
               <div className="text-7xl">🧠</div>
               <div>
-                <h2 className="text-3xl font-black text-purple-700">Game Over!</h2>
-                <p className="text-muted-foreground mt-1">You reached</p>
+                <h2 className="text-3xl font-black text-purple-700">ਖੇਡ ਖਤਮ!</h2>
+                <p className="text-muted-foreground mt-1">ਤੁਸੀਂ ਪਹੁੰਚੇ</p>
               </div>
 
               <div className="grid grid-cols-3 gap-3 w-full">
                 <div className="bg-purple-50 border-2 border-purple-200 rounded-2xl p-4 text-center">
                   <p className="text-3xl font-black text-purple-700">{Math.max(1, level - 1)}</p>
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1">Best Level</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1">ਸਭ ਤੋਂ ਵਧੀਆ ਪੱਧਰ</p>
                 </div>
                 <div className="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-4 text-center">
                   <Star className="w-5 h-5 text-yellow-500 mx-auto mb-1" />
                   <p className="text-2xl font-black text-yellow-700">{totalPoints}</p>
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase">Points</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase">ਅੰਕ</p>
                 </div>
                 <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-4 text-center">
                   <p className="text-2xl font-black text-green-700">{bestTime ? (bestTime / 1000).toFixed(2) : "—"}s</p>
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1">Best Time</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1">ਸਭ ਤੋਂ ਵਧੀਆ ਸਮਾਂ</p>
                 </div>
               </div>
 
               <div className="flex gap-3 w-full">
                 <Button onClick={handleStart} className="flex-1 h-14 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white shadow-lg border-b-4 border-purple-800">
-                  <RotateCcw className="w-5 h-5 mr-2" /> Play Again
+                  <RotateCcw className="w-5 h-5 mr-2" /> ਦੁਬਾਰਾ ਖੇਡੋ
                 </Button>
                 <Button variant="outline" onClick={() => setShowLeaderboard(true)} className="h-14 w-14 rounded-2xl border-2 border-purple-200">
                   <Trophy className="w-6 h-6 text-purple-600" />

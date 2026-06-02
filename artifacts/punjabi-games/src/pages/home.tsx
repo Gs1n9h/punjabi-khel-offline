@@ -15,7 +15,7 @@ export function Home() {
             className="mb-8 relative"
           >
             <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
-            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`} alt="Punjabi Khel Logo" className="w-48 h-48 drop-shadow-2xl relative z-10" />
+            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`} alt="ਪੰਜਾਬੀ ਖੇਡ ਮੈਦਾਨ" className="w-48 h-48 drop-shadow-2xl relative z-10" />
           </motion.div>
           
           <motion.div
@@ -24,12 +24,12 @@ export function Home() {
             transition={{ delay: 0.2 }}
             className="text-center space-y-4 mb-12"
           >
-            <h1 className="text-5xl font-black text-primary drop-shadow-sm tracking-tight leading-none">
-              Punjabi<br />
-              <span className="text-secondary">Khel</span>
+            <h1 className="text-4xl font-black text-primary drop-shadow-sm tracking-tight leading-none">
+              ਪੰਜਾਬੀ<br />
+              <span className="text-secondary">ਖੇਡ ਮੈਦਾਨ</span>
             </h1>
             <p className="text-lg text-muted-foreground font-medium px-4">
-              Learn, play, and celebrate Punjabi culture together!
+              ਪੰਜਾਬੀ ਸਭਿਆਚਾਰ ਨੂੰ ਸਿੱਖੋ, ਖੇਡੋ ਅਤੇ ਮਨਾਓ!
             </p>
           </motion.div>
 
@@ -41,12 +41,12 @@ export function Home() {
           >
             <Link href="/sign-up">
               <Button size="lg" className="w-full h-16 text-xl rounded-2xl bg-primary hover:bg-[#D4600E] text-white shadow-lg shadow-orange-200 border-b-4 border-[#C25000] active:border-b-0 active:translate-y-1 transition-all">
-                Play Now
+                ਖੇਡੋ
               </Button>
             </Link>
             <Link href="/sign-in">
-              <Button size="lg" variant="outline" className="w-full h-16 text-xl rounded-2xl bg-white text-primary border-2 border-orange-200 hover:bg-orange-50 hover:border-primary shadow-sm border-b-4 active:border-b-2 active:translate-y-0.5 transition-all">
-                I already have an account
+              <Button size="lg" variant="outline" className="w-full h-16 text-lg rounded-2xl bg-white text-primary border-2 border-orange-200 hover:bg-orange-50 hover:border-primary shadow-sm border-b-4 active:border-b-2 active:translate-y-0.5 transition-all">
+                ਮੇਰਾ ਖਾਤਾ ਹੈ
               </Button>
             </Link>
           </motion.div>

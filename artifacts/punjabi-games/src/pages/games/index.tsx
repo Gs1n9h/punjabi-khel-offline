@@ -11,7 +11,7 @@ const games = [
   {
     id: "spinner",
     title: "Charkha",
-    subtitle: "Spin the wheel for points!",
+    subtitle: "ਚਰਖਾ ਘੁੰਮਾਓ ਅਤੇ ਅੱਖਰ ਜੁੱਤੋ!",
     emoji: "🎡",
     color: "bg-blue-50 text-blue-600 border-blue-200",
     href: "/games/spinner"
@@ -19,23 +19,15 @@ const games = [
   {
     id: "tongue-twister",
     title: "Boli",
-    subtitle: "Read the tongue twister!",
+    subtitle: "ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ ਪੜ੍ਹੋ!",
     emoji: "🎙️",
     color: "bg-orange-50 text-orange-600 border-orange-200",
     href: "/games/tongue-twister"
   },
   {
-    id: "knowledge-test",
-    title: "Gyan",
-    subtitle: "Test your Punjabi knowledge!",
-    emoji: "📚",
-    color: "bg-green-50 text-green-600 border-green-200",
-    href: "/games/knowledge-test"
-  },
-  {
     id: "memory",
     title: "Yaad Khel",
-    subtitle: "Remember the numbers!",
+    subtitle: "ਨੰਬਰ ਯਾਦ ਕਰੋ!",
     emoji: "🧠",
     color: "bg-purple-50 text-purple-600 border-purple-200",
     href: "/games/memory"
@@ -47,7 +39,7 @@ export default function GamesHub() {
 
   return (
     <MobileContainer withBottomNav className="bg-[radial-gradient(circle_at_top,#FFE8B8_0%,#FFF8F0_42%,#FFE4D2_100%)]">
-      <PageHeader title="Punjabi Khel" subtitle="Pick a game and start playing!" />
+      <PageHeader title="ਪੰਜਾਬੀ ਖੇਡ ਮੈਦਾਨ" subtitle="ਇੱਕ ਖੇਡ ਚੁਣੋ ਅਤੇ ਖੇਡਣਾ ਸ਼ੁਰੂ ਕਰੋ!" />
       
       <div className="p-4 space-y-6">
         {/* Stats Card */}
@@ -58,7 +50,7 @@ export default function GamesHub() {
             <Trophy className="w-24 h-24" />
           </div>
           <div className="relative z-10">
-            <p className="text-primary-foreground/90 font-black mb-1 uppercase tracking-wide text-xs">Your Score</p>
+            <p className="text-primary-foreground/90 font-black mb-1 uppercase tracking-wide text-xs">ਤੁਹਾਡੇ ਅੰਕ</p>
             {isLoading ? (
               <Skeleton className="h-10 w-24 bg-white/20" />
             ) : (
@@ -66,7 +58,7 @@ export default function GamesHub() {
             )}
             <div className="mt-4 flex gap-4">
               <div>
-                <p className="text-xs font-bold opacity-80 uppercase">RANK</p>
+                <p className="text-xs font-bold opacity-80 uppercase">ਦਰਜਾ</p>
                 <p className="text-lg font-bold">#{stats?.rank || "--"}</p>
               </div>
             </div>

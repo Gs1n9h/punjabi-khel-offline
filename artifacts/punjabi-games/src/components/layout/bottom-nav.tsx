@@ -7,13 +7,13 @@ export function BottomNav() {
   const { data: user } = useGetMe();
 
   const navItems = [
-    { href: "/games", icon: Home, label: "Games" },
-    { href: "/leaderboard", icon: Trophy, label: "Rankings" },
-    { href: "/profile", icon: User, label: "Profile" },
+    { href: "/games", icon: Home, label: "ਖੇਡਾਂ" },
+    { href: "/leaderboard", icon: Trophy, label: "ਦਰਜਾਬੰਦੀ" },
+    { href: "/profile", icon: User, label: "ਪ੍ਰੋਫਾਈਲ" },
   ];
 
   if (user?.role === "admin" || user?.role === "moderator") {
-    navItems.push({ href: "/admin", icon: Shield, label: "Admin" });
+    navItems.push({ href: "/admin", icon: Shield, label: "ਪ੍ਰਬੰਧਕ" });
   }
 
   return (

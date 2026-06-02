@@ -14,7 +14,6 @@ export default function AdminDashboard() {
   const sections = [
     { href: "/admin/spinner", label: "Spinner Configs", sub: "Display modes, items, colors", icon: Dices, color: "bg-blue-50 border-blue-100 text-blue-600" },
     { href: "/admin/tongue-twisters", label: "Boli (Tongue Twisters)", sub: "Add, edit, toggle active", icon: Mic, color: "bg-orange-50 border-orange-100 text-orange-600" },
-    { href: "/admin/knowledge-test", label: "Gyan (Quiz Questions)", sub: "Manage question bank", icon: BookOpen, color: "bg-green-50 border-green-100 text-green-600" },
     { href: "/admin/submissions", label: "Voice Reviews", sub: "Listen & score recordings", icon: Mic, color: "bg-yellow-50 border-yellow-100 text-yellow-600" },
     { href: "/admin/users", label: "User Management", sub: "View users, assign roles", icon: Users, color: "bg-purple-50 border-purple-100 text-purple-600" },
   ];

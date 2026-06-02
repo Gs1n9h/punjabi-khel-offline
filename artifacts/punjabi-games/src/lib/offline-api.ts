@@ -16,10 +16,24 @@ const now = () => new Date().toISOString();
 const keys = { user: "pk_user", spinner: "pk_spinner", twisters: "pk_twisters", questions: "pk_questions", sessions: "pk_sessions", submissions: "pk_submissions" };
 
 const seedUser: User = { id: 1, clerkId: "local", username: "little-player", displayName: "Little Player", avatarUrl: null, role: "admin", totalPoints: 0, createdAt: now() };
+const PUNJABI_35_COLORS = [
+  "#E8721A","#1A56E8","#FFB300","#4CAF50","#E91E63","#9C27B0","#00BCD4","#FF5722",
+  "#3F51B5","#8BC34A","#FF9800","#009688","#F44336","#673AB7","#CDDC39","#2196F3",
+  "#FFEB3B","#795548","#607D8B","#E91E8C","#03A9F4","#8E24AA","#FFC107","#4CAF50",
+  "#F06292","#5E35B1","#FF7043","#29B6F6","#AB47BC","#FFA726","#66BB6A","#EF5350",
+  "#42A5F5","#7CB342","#D81B60"
+];
+
+const PUNJABI_35_LETTERS = [
+  "ੳ","ਅ","ੲ","ਸ","ਹ","ਕ","ਖ","ਗ","ਘ","ਙ","ਚ","ਛ","ਜ","ਝ","ਞ",
+  "ਟ","ਠ","ਡ","ਢ","ਣ","ਤ","ਥ","ਦ","ਧ","ਨ","ਪ","ਫ","ਬ","ਭ","ਮ",
+  "ਯ","ਰ","ਲ","ਵ","ੜ"
+];
+
 const seedSpinner: SpinnerConfig[] = [
-  { id: 1, name: "Punjabi Letters", description: "Spin and say the letter out loud", isActive: true, displayMode: "wheel", createdAt: now(), items: [
-    { label: "ਅ", type: "text", color: "#E8721A", weight: 1 }, { label: "ਆ", type: "text", color: "#1A56E8", weight: 1 }, { label: "ਇ", type: "text", color: "#FFB300", weight: 1 }, { label: "ਸ", type: "text", color: "#4CAF50", weight: 1 }, { label: "ਹ", type: "text", color: "#E91E63", weight: 1 }, { label: "ਕ", type: "text", color: "#9C27B0", weight: 1 }
-  ]},
+  { id: 1, name: "ਪੈਂਤੀ ਅੱਖਰ (35 Letters)", description: "Spin and say the letter out loud! All 35 Punjabi letters.", isActive: true, displayMode: "wheel", createdAt: now(), items:
+    PUNJABI_35_LETTERS.map((letter, i) => ({ label: letter, type: "text" as const, color: PUNJABI_35_COLORS[i], weight: 1 }))
+  },
   { id: 2, name: "Fun Actions", description: "Do the action you land on", isActive: true, displayMode: "flash", createdAt: now(), items: [
     { label: "Clap", type: "text", color: "#E8721A", weight: 1 }, { label: "Jump", type: "text", color: "#1A56E8", weight: 1 }, { label: "Dance", type: "text", color: "#4CAF50", weight: 1 }, { label: "Roar", type: "text", color: "#E91E63", weight: 1 }
   ]}
@@ -52,9 +66,15 @@ function read<T>(key: string, fallback: T): T {
 function write<T>(key: string, value: T) { localStorage.setItem(key, JSON.stringify(value)); window.dispatchEvent(new Event("pk-local-change")); }
 function nextId(items: { id: number }[]) { return Math.max(0, ...items.map(i => i.id)) + 1; }
 function sessions() { return read<Session[]>(keys.sessions, []); }
-function saveSession(session: Omit<Session, "id" | "createdAt">) { const next = [...sessions(), { id: nextId(sessions()), createdAt: now(), ...session }]; write(keys.sessions, next); syncUserPoints(); return next[next.length - 1]; }
+function saveSession(session: Omit<Session, "id" | "createdAt">) {
+  const newSession: Session = { id: nextId(sessions()), createdAt: now(), ...session } as Session;
+  const next = [...sessions(), newSession];
+  write(keys.sessions, next);
+  syncUserPoints();
+  return newSession;
+}
 function syncUserPoints() { const user = read(keys.user, seedUser); user.totalPoints = sessions().reduce((sum, s) => sum + Number(s.pointsEarned || 0), 0); write(keys.user, user); }
-function useVersion() { const [v, setV] = useState(0); useEffect(() => { const h = () => setV(x => x + 1); window.addEventListener("pk-local-change", h); return () => window.removeEventListener("pk-local-change", h); }, []); return v; }
+function useVersion() { const [v, setV] = useState(0); useEffect(() => { const h = () => setV((x: number) => x + 1); window.addEventListener("pk-local-change", h); return () => window.removeEventListener("pk-local-change", h); }, []); return v; }
 function mutation<TArgs, TResult>(fn: (args: TArgs) => TResult) { return { isPending: false, mutate: (args: TArgs, opts?: { onSuccess?: (r: TResult) => void; onError?: () => void }) => { try { const r = fn(args); opts?.onSuccess?.(r); } catch { opts?.onError?.(); } }, mutateAsync: async (args: TArgs) => fn(args) }; }
 
 export function useGetMe() { useVersion(); return { data: read<User>(keys.user, seedUser), isLoading: false }; }

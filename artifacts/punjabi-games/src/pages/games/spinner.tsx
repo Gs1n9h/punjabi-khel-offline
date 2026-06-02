@@ -46,9 +46,10 @@ function WheelDisplay({ items, isSpinning, result, onSpin }: { items: any[], isS
           const angle = 360 / items.length;
           const rotate = index * angle;
           const color = item.color || DEFAULT_COLORS[index % DEFAULT_COLORS.length];
+          const fontSize = items.length > 20 ? "text-[10px]" : items.length > 10 ? "text-xs" : "text-sm sm:text-lg";
           return (
             <div key={index} className="absolute inset-0 w-full h-full origin-center" style={{ transform: `rotate(${rotate}deg)`, clipPath: `polygon(50% 50%, 50% 0%, ${50 + 50 * Math.tan((angle * Math.PI) / 180)}% 0%)`, backgroundColor: color }}>
-              <div className="absolute top-4 left-1/2 -translate-x-1/2 origin-bottom font-bold text-white uppercase tracking-wider drop-shadow-md text-sm sm:text-lg" style={{ transform: `rotate(${angle / 2}deg) translateX(-50%)`, transformOrigin: "bottom center", height: "50%", width: "100%", textAlign: "center" }}>
+              <div className={`absolute top-2 sm:top-4 left-1/2 -translate-x-1/2 origin-bottom font-bold text-white uppercase tracking-wider drop-shadow-md ${fontSize}`} style={{ transform: `rotate(${angle / 2}deg) translateX(-50%)`, transformOrigin: "bottom center", height: "50%", width: "100%", textAlign: "center" }}>
                 {item.label}
               </div>
             </div>

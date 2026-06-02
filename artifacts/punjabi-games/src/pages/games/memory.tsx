@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSubmitMemoryGameSession, useGetMemoryGameLeaderboard } from "@/lib/offline-api";
 import confetti from "canvas-confetti";
@@ -17,6 +16,12 @@ function getShowDuration(level: number): number {
   return 1000;
 }
 
+const PUNJABI_DIGITS = ["੦","੧","੨","੩","੪","੫","੬","੭","੮","੯"];
+
+function toPunjabi(numStr: string): string {
+  return numStr.split("").map(d => PUNJABI_DIGITS[Number(d)] || d).join("");
+}
+
 function generateNumber(digits: number): string {
   if (digits === 1) return String(Math.floor(Math.random() * 9) + 1);
   let num = String(Math.floor(Math.random() * 9) + 1);
@@ -29,12 +34,12 @@ export default function MemoryGame() {
   const [level, setLevel] = useState(1);
   const [currentNumber, setCurrentNumber] = useState("");
   const [userInput, setUserInput] = useState("");
+  const [inputDisplay, setInputDisplay] = useState(""); // Punjabi display
   const [totalPoints, setTotalPoints] = useState(0);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [progress, setProgress] = useState(100);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const progressRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
   const submitSession = useSubmitMemoryGameSession();
   const { data: leaderboard } = useGetMemoryGameLeaderboard({ params: { limit: 10 } });
 
@@ -47,6 +52,7 @@ export default function MemoryGame() {
     const num = generateNumber(lvl);
     setCurrentNumber(num);
     setUserInput("");
+    setInputDisplay("");
     setProgress(100);
     setPhase("showing");
 
@@ -63,25 +69,44 @@ export default function MemoryGame() {
       clearInterval(progressRef.current!);
       setProgress(0);
       setPhase("hiding");
-      setTimeout(() => inputRef.current?.focus(), 100);
     }, duration);
   }, []);
 
   const handleStart = () => {
     setLevel(1);
     setTotalPoints(0);
+    setUserInput("");
+    setInputDisplay("");
     startLevel(1);
   };
 
-  const handleCheck = () => {
+  const handleKeyPress = (arabicDigit: string) => {
+    if (phase !== "hiding") return;
+    const next = userInput + arabicDigit;
+    setUserInput(next);
+    setInputDisplay(toPunjabi(next));
+    if (next.length >= currentNumber.length) {
+      handleCheck(next);
+    }
+  };
+
+  const handleBackspace = () => {
+    if (phase !== "hiding") return;
+    const next = userInput.slice(0, -1);
+    setUserInput(next);
+    setInputDisplay(toPunjabi(next));
+  };
+
+  const handleCheck = (input?: string) => {
     clearTimers();
-    if (userInput.trim() === currentNumber) {
+    const val = input ?? userInput;
+    if (val.trim() === currentNumber) {
       const pts = level * 10;
-      setTotalPoints((p) => p + pts);
+      setTotalPoints((p: number) => p + pts);
       setPhase("correct");
       confetti({ particleCount: 60, spread: 60, origin: { y: 0.6 }, colors: ["#E8721A", "#FFD700", "#4CAF50"] });
       setTimeout(() => {
-        setLevel((l) => l + 1);
+        setLevel((l: number) => l + 1);
         startLevel(level + 1);
       }, 1200);
     } else {
@@ -101,7 +126,7 @@ export default function MemoryGame() {
   if (showLeaderboard) {
     return (
       <MobileContainer className="bg-gradient-to-b from-purple-50 to-blue-50">
-        <PageHeader title="Yaad Khel" subtitle="Best Memory Players" showBack onBack={() => setShowLeaderboard(false)} />
+        <PageHeader title="Yaad Khel" subtitle="Best Memory Players" showBack backHref="/games" />
         <div className="p-4 space-y-3">
           {leaderboard?.length === 0 && (
             <div className="text-center py-12 text-muted-foreground font-bold">No entries yet — be first!</div>
@@ -190,7 +215,7 @@ export default function MemoryGame() {
                   🤚
                 </motion.div>
                 <div className="bg-white rounded-3xl border-4 border-purple-200 shadow-xl px-12 py-8 flex items-center justify-center min-h-[120px] w-full">
-                  <span className="text-6xl font-black tracking-widest text-purple-700 select-none">{currentNumber}</span>
+                  <span className="text-6xl font-black tracking-widest text-purple-700 select-none">{toPunjabi(currentNumber)}</span>
                 </div>
               </div>
 
@@ -198,35 +223,40 @@ export default function MemoryGame() {
             </motion.div>
           )}
 
-          {/* HIDING — user types */}
+          {/* HIDING — user types with Punjabi keypad */}
           {phase === "hiding" && (
-            <motion.div key="hiding" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-6 w-full max-w-xs">
-              <div className="bg-gradient-to-b from-purple-500 to-blue-500 rounded-3xl p-6 text-center shadow-xl w-full">
-                <div className="text-6xl mb-3">🤚</div>
-                <p className="text-white font-black text-xl">What did you see?</p>
+            <motion.div key="hiding" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-4 w-full max-w-xs">
+              <div className="bg-gradient-to-b from-purple-500 to-blue-500 rounded-3xl p-5 text-center shadow-xl w-full">
+                <div className="text-5xl mb-2">🤚</div>
+                <p className="text-white font-black text-lg">What did you see?</p>
                 <p className="text-white/70 text-sm mt-1">Level {level} — {level} digit{level !== 1 ? "s" : ""}</p>
               </div>
 
-              <div className="w-full space-y-3">
-                <Input
-                  ref={inputRef}
-                  type="number"
-                  inputMode="numeric"
-                  placeholder="Type the number…"
-                  value={userInput}
-                  onChange={(e) => setUserInput(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && userInput && handleCheck()}
-                  className="h-16 text-center text-2xl font-black border-2 border-purple-200 focus:border-purple-500 rounded-2xl"
-                  autoFocus
-                />
-                <Button
-                  onClick={handleCheck}
-                  disabled={!userInput}
-                  className="w-full h-14 text-lg rounded-2xl bg-purple-600 hover:bg-purple-700 text-white shadow-lg border-b-4 border-purple-800 active:border-b-0 active:translate-y-1 transition-all"
-                >
-                  Check!
-                </Button>
+              {/* Display area */}
+              <div className="w-full h-16 bg-white border-2 border-purple-200 rounded-2xl flex items-center justify-center shadow-sm">
+                <span className="text-4xl font-black text-purple-700 tracking-[0.2em] select-none">
+                  {inputDisplay || <span className="text-purple-200">?</span>}
+                </span>
               </div>
+
+              {/* Punjabi keypad */}
+              <div className="w-full grid grid-cols-5 gap-2">
+                {PUNJABI_DIGITS.map((pd, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleKeyPress(String(i))}
+                    className="h-14 bg-white border-2 border-purple-200 rounded-xl text-2xl font-black text-purple-700 shadow-sm active:bg-purple-50 active:scale-95 transition-all"
+                  >
+                    {pd}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={handleBackspace}
+                className="w-full h-12 bg-purple-50 border-2 border-purple-200 rounded-xl text-sm font-bold text-purple-700 shadow-sm active:bg-purple-100 active:scale-95 transition-all"
+              >
+                ← Backspace
+              </button>
 
               <div className="text-center">
                 <p className="text-xs text-muted-foreground">Points so far: <span className="font-black text-purple-700">{totalPoints}</span></p>
@@ -249,7 +279,7 @@ export default function MemoryGame() {
             <motion.div key="wrong" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center gap-4 text-center">
               <div className="text-7xl">😬</div>
               <h2 className="text-3xl font-black text-red-500">Oops!</h2>
-              <p className="text-muted-foreground font-bold">The number was <span className="font-black text-foreground">{currentNumber}</span></p>
+              <p className="text-muted-foreground font-bold">The number was <span className="font-black text-foreground text-2xl">{toPunjabi(currentNumber)}</span></p>
             </motion.div>
           )}
 

@@ -263,7 +263,7 @@ export default function SpinnerGame() {
 
   if (isLoading) {
     return (
-      <MobileContainer><PageHeader title="Charkha" showBack />
+      <MobileContainer><PageHeader title="ਚਰਖਾ" showBack />
         <div className="flex-1 flex items-center justify-center p-4"><Skeleton className="w-64 h-64 rounded-full" /></div>
       </MobileContainer>
     );
@@ -271,7 +271,7 @@ export default function SpinnerGame() {
 
   if (!activeConfig || activeConfig.items.length === 0) {
     return (
-      <MobileContainer><PageHeader title="Charkha" showBack />
+      <MobileContainer><PageHeader title="ਚਰਖਾ" showBack />
         <div className="flex-1 flex items-center justify-center p-4"><p className="text-muted-foreground font-bold">ਕੋਈ ਚਰਖਾ ਸਥਾਪਤ ਨਹੀਂ।</p></div>
       </MobileContainer>
     );
@@ -281,7 +281,7 @@ export default function SpinnerGame() {
 
   return (
     <MobileContainer className="bg-gradient-to-b from-[#FFF8F0] to-orange-100">
-      <PageHeader title="Charkha" showBack />
+      <PageHeader title="ਚਰਖਾ" showBack />
 
       {/* Display mode selector — visible buttons */}
       <div className="flex justify-center gap-2 py-2 px-4">

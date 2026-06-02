@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 const games = [
   {
     id: "spinner",
-    title: "Charkha",
+    title: "ਚਰਖਾ",
     subtitle: "ਚਰਖਾ ਘੁੰਮਾਓ ਅਤੇ ਅੱਖਰ ਜੁੱਤੋ!",
     emoji: "🎡",
     color: "bg-blue-50 text-blue-600 border-blue-200",
@@ -18,7 +18,7 @@ const games = [
   },
   {
     id: "tongue-twister",
-    title: "Boli",
+    title: "ਬੋਲੀ",
     subtitle: "ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ ਪੜ੍ਹੋ!",
     emoji: "🎙️",
     color: "bg-orange-50 text-orange-600 border-orange-200",
@@ -26,7 +26,7 @@ const games = [
   },
   {
     id: "memory",
-    title: "Yaad Khel",
+    title: "ਯਾਦ ਖੇਡ",
     subtitle: "ਨੰਬਰ ਯਾਦ ਕਰੋ!",
     emoji: "🧠",
     color: "bg-purple-50 text-purple-600 border-purple-200",

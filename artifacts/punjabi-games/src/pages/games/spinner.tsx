@@ -283,31 +283,21 @@ export default function SpinnerGame() {
     <MobileContainer className="bg-gradient-to-b from-[#FFF8F0] to-orange-100">
       <PageHeader title="Charkha" showBack />
 
-      {/* Display mode selector */}
-      <div className="flex justify-center py-1">
-        <Popover>
-          <PopoverTrigger asChild>
-            <button className="flex items-center gap-1.5 text-[10px] uppercase font-bold px-2.5 py-1 bg-orange-100 text-primary rounded-full tracking-widest hover:bg-orange-200 transition-colors">
-              {displayMode === "wheel" ? "Wheel" : "Flash ⚡"}
-              <MoreVertical className="w-3 h-3" />
-            </button>
-          </PopoverTrigger>
-          <PopoverContent className="w-40 p-2" align="center">
-            <div className="space-y-1">
-              {(["wheel", "flash"] as DisplayMode[]).map((mode) => (
-                <button
-                  key={mode}
-                  onClick={() => setOverrideDisplayMode(mode === configDisplayMode ? null : mode)}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-bold transition-colors ${
-                    displayMode === mode ? "bg-primary text-white" : "hover:bg-orange-50 text-foreground"
-                  }`}
-                >
-                  {mode === "wheel" ? "🎡 Wheel" : "⚡ Flash"}
-                </button>
-              ))}
-            </div>
-          </PopoverContent>
-        </Popover>
+      {/* Display mode selector — visible buttons */}
+      <div className="flex justify-center gap-2 py-2 px-4">
+        {(["wheel", "flash"] as DisplayMode[]).map((mode) => (
+          <button
+            key={mode}
+            onClick={() => setOverrideDisplayMode(mode === configDisplayMode ? null : mode)}
+            className={`flex-1 max-w-[140px] py-2 rounded-xl text-sm font-bold transition-all border-2 ${
+              displayMode === mode
+                ? "bg-primary text-white border-primary shadow-md"
+                : "bg-white text-muted-foreground border-orange-200 hover:border-orange-300"
+            }`}
+          >
+            {mode === "wheel" ? "🎡 Wheel" : "⚡ Flash"}
+          </button>
+        ))}
       </div>
 
       <div className="flex-1 flex flex-col">

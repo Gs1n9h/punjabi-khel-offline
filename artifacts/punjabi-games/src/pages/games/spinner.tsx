@@ -49,21 +49,23 @@ function WheelDisplay({ items, isSpinning, result, onSpin, targetIndex }: { item
               <div key={`w-${index}`} className="absolute inset-0 w-full h-full origin-center" style={{ transform: `rotate(${rotate}deg)`, clipPath: `polygon(50% 50%, 50% 0%, ${50 + 50 * Math.tan((angle * Math.PI) / 180)}% 0%)`, backgroundColor: color }} />
             );
           })}
-          {/* Text labels — polar positioned, not clipped */}
+          {/* Text labels — each in a full-size rotated wrapper, text placed near top rim */}
           {items.map((item: any, index: number) => {
             const angle = 360 / items.length;
             const rotate = index * angle;
-            const fontSize = items.length > 30 ? 8 : items.length > 20 ? 10 : items.length > 10 ? 12 : 16;
-            const radiusPct = items.length > 20 ? 38 : 34; // % from center toward edge
+            const fontSize = items.length > 30 ? 9 : items.length > 20 ? 11 : items.length > 10 ? 13 : 16;
             return (
-              <div key={`l-${index}`} className="absolute top-1/2 left-1/2 font-bold text-white pointer-events-none select-none" style={{
-                transform: `rotate(${rotate + angle / 2}deg) translateY(-${radiusPct}%) rotate(${-(rotate + angle / 2)}deg) translate(-50%, -50%)`,
-                fontSize: `${fontSize}px`,
-                lineHeight: 1,
-                textShadow: '0 1px 3px rgba(0,0,0,0.7)',
-                zIndex: 5
-              }}>
-                {item.label}
+              <div key={`l-${index}`} className="absolute inset-0 pointer-events-none select-none" style={{ transform: `rotate(${rotate + angle / 2}deg)` }}>
+                <div className="absolute top-[13%] left-1/2 font-bold text-white text-center whitespace-nowrap"
+                     style={{
+                       transform: 'translateX(-50%)',
+                       fontSize: `${fontSize}px`,
+                       lineHeight: 1,
+                       textShadow: '0 1px 3px rgba(0,0,0,0.8)',
+                       zIndex: 5
+                     }}>
+                  {item.label}
+                </div>
               </div>
             );
           })}
@@ -283,13 +285,13 @@ export default function SpinnerGame() {
         <Popover>
           <PopoverTrigger asChild>
             <button className="flex items-center gap-1.5 text-[10px] uppercase font-bold px-2.5 py-1 bg-orange-100 text-primary rounded-full tracking-widest hover:bg-orange-200 transition-colors">
-              {displayMode === "wheel" ? "Wheel" : displayMode === "slot-vertical" ? "Slot ↕" : displayMode === "slot-horizontal" ? "Slot ↔" : "Flash ⚡"}
+              {displayMode === "wheel" ? "Wheel" : "Flash ⚡"}
               <MoreVertical className="w-3 h-3" />
             </button>
           </PopoverTrigger>
           <PopoverContent className="w-40 p-2" align="center">
             <div className="space-y-1">
-              {(["wheel", "slot-vertical", "slot-horizontal", "flash"] as DisplayMode[]).map((mode) => (
+              {(["wheel", "flash"] as DisplayMode[]).map((mode) => (
                 <button
                   key={mode}
                   onClick={() => setOverrideDisplayMode(mode === configDisplayMode ? null : mode)}
@@ -297,7 +299,7 @@ export default function SpinnerGame() {
                     displayMode === mode ? "bg-primary text-white" : "hover:bg-orange-50 text-foreground"
                   }`}
                 >
-                  {mode === "wheel" ? "🎡 Wheel" : mode === "slot-vertical" ? "↕ Slot Vertical" : mode === "slot-horizontal" ? "↔ Slot Horizontal" : "⚡ Flash"}
+                  {mode === "wheel" ? "🎡 Wheel" : "⚡ Flash"}
                 </button>
               ))}
             </div>

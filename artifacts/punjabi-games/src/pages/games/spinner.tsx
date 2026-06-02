@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
-import { useListSpinnerConfigs, useRecordSpin } from "@workspace/api-client-react";
+import { useListSpinnerConfigs, useRecordSpin } from "@/lib/offline-api";
 import { Button } from "@/components/ui/button";
 import { motion, useAnimationControls } from "framer-motion";
 import confetti from "canvas-confetti";

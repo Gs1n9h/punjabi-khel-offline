@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { PageHeader } from "@/components/ui/page-header";
-import { useGetMyStats } from "@workspace/api-client-react";
+import { useGetMyStats } from "@/lib/offline-api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Trophy, Dices, Mic, BrainCircuit, Brain } from "lucide-react";
 import { motion } from "framer-motion";
@@ -46,21 +46,23 @@ export default function GamesHub() {
   const { data: stats, isLoading } = useGetMyStats();
 
   return (
-    <MobileContainer withBottomNav>
-      <PageHeader title="Games Hub" subtitle="Pick a game to play!" />
+    <MobileContainer withBottomNav className="bg-[radial-gradient(circle_at_top,#FFE8B8_0%,#FFF8F0_42%,#FFE4D2_100%)]">
+      <PageHeader title="Punjabi Khel" subtitle="Pick a game and start playing!" />
       
       <div className="p-4 space-y-6">
         {/* Stats Card */}
-        <div className="bg-primary text-primary-foreground rounded-[24px] p-6 shadow-lg relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-4 opacity-20">
+        <div className="bg-gradient-to-br from-primary via-[#F59E0B] to-[#1A56E8] text-primary-foreground rounded-[32px] p-6 shadow-xl shadow-orange-200/70 relative overflow-hidden border-4 border-white">
+          <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/20" />
+          <div className="absolute -bottom-10 -left-10 w-36 h-36 rounded-full bg-yellow-300/20" />
+          <div className="absolute top-0 right-0 p-4 opacity-25">
             <Trophy className="w-24 h-24" />
           </div>
           <div className="relative z-10">
-            <p className="text-primary-foreground/80 font-bold mb-1">Your Score</p>
+            <p className="text-primary-foreground/90 font-black mb-1 uppercase tracking-wide text-xs">Your Score</p>
             {isLoading ? (
               <Skeleton className="h-10 w-24 bg-white/20" />
             ) : (
-              <h2 className="text-4xl font-black">{stats?.totalPoints || 0} pts</h2>
+              <h2 className="text-5xl font-black drop-shadow-sm">{stats?.totalPoints || 0} pts</h2>
             )}
             <div className="mt-4 flex gap-4">
               <div>
@@ -81,13 +83,13 @@ export default function GamesHub() {
               transition={{ delay: i * 0.08 }}
             >
               <Link href={game.href}>
-                <div className="bg-white border-2 border-orange-100 hover:border-primary rounded-[24px] p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-all cursor-pointer">
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center border-2 text-3xl ${game.color}`}>
+                <div className="bg-white/95 border-4 border-white hover:border-primary rounded-[28px] p-4 flex items-center gap-4 shadow-lg shadow-orange-100/70 hover:shadow-xl hover:-translate-y-1 active:translate-y-0 transition-all cursor-pointer">
+                  <div className={`w-20 h-20 rounded-[24px] flex items-center justify-center border-4 text-4xl shadow-inner ${game.color}`}>
                     {game.emoji}
                   </div>
                   <div>
-                    <h3 className="text-xl font-black text-foreground">{game.title}</h3>
-                    <p className="text-sm font-medium text-muted-foreground">{game.subtitle}</p>
+                    <h3 className="text-2xl font-black text-foreground leading-tight">{game.title}</h3>
+                    <p className="text-sm font-bold text-muted-foreground mt-1">{game.subtitle}</p>
                   </div>
                 </div>
               </Link>

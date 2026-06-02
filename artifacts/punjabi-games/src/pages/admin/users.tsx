@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
 import { AdminNav } from "@/components/layout/admin-nav";
-import { useListAdminUsers, useUpdateUserRole } from "@workspace/api-client-react";
+import { useListAdminUsers, useUpdateUserRole } from "@/lib/offline-api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";

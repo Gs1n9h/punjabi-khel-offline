@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { Home, LayoutDashboard, User, Trophy, Shield } from "lucide-react";
-import { useGetMe } from "@workspace/api-client-react";
+import { useGetMe } from "@/lib/offline-api";
 
 export function BottomNav() {
   const [location] = useLocation();

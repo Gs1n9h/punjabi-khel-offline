@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
-import { useGetRandomQuiz, useSubmitQuizAnswers } from "@workspace/api-client-react";
+import { useGetRandomQuiz, useSubmitQuizAnswers } from "@/lib/offline-api";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion, AnimatePresence } from "framer-motion";

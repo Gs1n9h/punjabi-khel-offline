@@ -3,7 +3,7 @@ import { MobileContainer } from "@/components/layout/mobile-container";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import { AdminNav } from "@/components/layout/admin-nav";
-import { useGetAdminDashboard } from "@workspace/api-client-react";
+import { useGetAdminDashboard } from "@/lib/offline-api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Users, Gamepad2, AlertCircle, Dices, Mic, BookOpen, Brain, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";

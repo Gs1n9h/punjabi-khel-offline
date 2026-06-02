@@ -2,13 +2,12 @@ import { useState } from "react";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { PageHeader } from "@/components/ui/page-header";
-import { useGetMe, useGetMyStats, useUpdateMe } from "@workspace/api-client-react";
-import { useClerk } from "@clerk/react";
+import { useGetMe, useGetMyStats, useUpdateMe } from "@/lib/offline-api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogOut, Trophy, Check } from "lucide-react";
+import { Trophy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -16,7 +15,6 @@ export default function Profile() {
   const { data: user, isLoading: isUserLoading } = useGetMe();
   const { data: stats, isLoading: isStatsLoading } = useGetMyStats();
   const updateMe = useUpdateMe();
-  const { signOut } = useClerk();
   const { toast } = useToast();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -50,15 +48,6 @@ export default function Profile() {
 
       <div className="p-4 space-y-6">
         <div className="bg-white rounded-3xl p-6 border-2 border-orange-100 shadow-sm text-center relative">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="absolute top-4 right-4 text-muted-foreground hover:text-destructive"
-            onClick={() => signOut({ redirectUrl: "/" })}
-          >
-            <LogOut className="w-5 h-5" />
-          </Button>
-
           <div className="flex justify-center mb-4">
             {isUserLoading ? (
               <Skeleton className="w-24 h-24 rounded-full" />

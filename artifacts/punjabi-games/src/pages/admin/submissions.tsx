@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
 import { AdminNav } from "@/components/layout/admin-nav";
-import { useListTongueTwisterSubmissions, useReviewTongueTwisterSubmission } from "@workspace/api-client-react";
+import { useListTongueTwisterSubmissions, useReviewTongueTwisterSubmission } from "@/lib/offline-api";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";

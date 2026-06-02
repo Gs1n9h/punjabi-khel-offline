@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSubmitMemoryGameSession, useGetMemoryGameLeaderboard } from "@workspace/api-client-react";
+import { useSubmitMemoryGameSession, useGetMemoryGameLeaderboard } from "@/lib/offline-api";
 import confetti from "canvas-confetti";
 import { Brain, Trophy, Star, RotateCcw, Medal } from "lucide-react";
 

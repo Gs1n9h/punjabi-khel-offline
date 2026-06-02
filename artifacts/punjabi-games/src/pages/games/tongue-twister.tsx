@@ -1,18 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
-import { useListTongueTwisters, usePresignUpload, useSubmitTongueTwisterRecording } from "@workspace/api-client-react";
+import { useListTongueTwisters, useSubmitTongueTwisterRecording } from "@/lib/offline-api";
 import { Button } from "@/components/ui/button";
-import { Mic, Square, Play, UploadCloud } from "lucide-react";
+import { Mic, Square, UploadCloud } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
-import { customFetch } from "@workspace/api-client-react/src/custom-fetch";
 
 export default function TongueTwisterGame() {
   const { data: twisters, isLoading } = useListTongueTwisters();
   const submitRecording = useSubmitTongueTwisterRecording();
-  const presignUpload = usePresignUpload();
   const { toast } = useToast();
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -84,32 +82,15 @@ export default function TongueTwisterGame() {
 
     setIsUploading(true);
     try {
-      // 1. Get presigned URL
-      const { uploadUrl, publicUrl, key } = await presignUpload.mutateAsync({
-        data: {
-          filename: `tt-${activeTwister.id}-${Date.now()}.webm`,
-          contentType: 'audio/webm',
-          folder: 'submissions'
-        }
-      });
-
-      // 2. Upload to S3 directly
-      await fetch(uploadUrl, {
-        method: 'PUT',
-        body: audioBlob,
-        headers: { 'Content-Type': 'audio/webm' }
-      });
-
-      // 3. Submit recording record
       await submitRecording.mutateAsync({
         id: activeTwister.id,
-        data: { audioUrl: publicUrl, durationSeconds: 0 }
+        data: { audioUrl: audioUrl || "", durationSeconds: 0 }
       });
 
-      toast({ title: "Submitted successfully! Wait for review." });
+      toast({ title: "Saved locally! Great practice." });
       handleNext();
     } catch (err) {
-      toast({ title: "Upload failed", variant: "destructive" });
+      toast({ title: "Could not save recording", variant: "destructive" });
     } finally {
       setIsUploading(false);
     }

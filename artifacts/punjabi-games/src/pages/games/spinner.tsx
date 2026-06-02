@@ -49,19 +49,23 @@ function WheelDisplay({ items, isSpinning, result, onSpin, targetIndex }: { item
               <div key={`w-${index}`} className="absolute inset-0 w-full h-full origin-center" style={{ transform: `rotate(${rotate}deg)`, clipPath: `polygon(50% 50%, 50% 0%, ${50 + 50 * Math.tan((angle * Math.PI) / 180)}% 0%)`, backgroundColor: color }} />
             );
           })}
-          {/* Text labels — each in a full-size rotated wrapper, text placed near top rim */}
+          {/* Text labels — math-placed at outer rim */}
           {items.map((item: any, index: number) => {
             const angle = 360 / items.length;
             const rotate = index * angle;
-            const fontSize = items.length > 30 ? 9 : items.length > 20 ? 11 : items.length > 10 ? 13 : 16;
+            // Arc width at ~90% radius: 2π·r·(angle/360)
+            // For 35 slices on 288px wheel: arc ≈ 23px. Single Gurmukhi char ≈ fontSize×0.7.
+            // Max fontSize with 30% side padding: arc×0.7 / 0.7
+            const fontSize = items.length > 30 ? 13 : items.length > 20 ? 15 : items.length > 10 ? 18 : 22;
             return (
               <div key={`l-${index}`} className="absolute inset-0 pointer-events-none select-none" style={{ transform: `rotate(${rotate + angle / 2}deg)` }}>
-                <div className="absolute top-[13%] left-1/2 font-bold text-white text-center whitespace-nowrap"
+                <div className="absolute left-1/2 font-bold text-white text-center whitespace-nowrap"
                      style={{
+                       top: '6%',            // ~17-27px from rim depending on wheel size
                        transform: 'translateX(-50%)',
                        fontSize: `${fontSize}px`,
                        lineHeight: 1,
-                       textShadow: '0 1px 3px rgba(0,0,0,0.8)',
+                       textShadow: '0 2px 4px rgba(0,0,0,0.9)',
                        zIndex: 5
                      }}>
                   {item.label}

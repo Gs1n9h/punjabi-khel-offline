@@ -263,8 +263,18 @@ export default function MemoryGame() {
                 >
                   🤚
                 </motion.div>
-                <div className="bg-white rounded-3xl border-4 border-purple-200 shadow-xl px-12 py-8 flex items-center justify-center min-h-[120px] w-full">
+                <div className="relative bg-white rounded-3xl border-4 border-purple-200 shadow-xl px-12 py-8 flex items-center justify-center min-h-[120px] w-full">
                   <span className="text-6xl font-black tracking-widest text-purple-700 select-none">{toPunjabi(currentNumber)}</span>
+                  {/* Countdown badge */}
+                  <motion.div
+                    key={progress > 66 ? "3" : progress > 33 ? "2" : "1"}
+                    initial={{ scale: 1.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.25 }}
+                    className="absolute top-2 right-2 w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center text-xl font-black shadow-lg border-2 border-white"
+                  >
+                    {progress > 66 ? "3" : progress > 33 ? "2" : "1"}
+                  </motion.div>
                 </div>
               </div>
 

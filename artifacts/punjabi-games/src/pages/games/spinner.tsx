@@ -40,24 +40,36 @@ function WheelDisplay({ items, isSpinning, result, onSpin, targetIndex }: { item
           <div className="w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[26px] border-t-primary drop-shadow-lg" style={{ filter: 'drop-shadow(0 3px 4px rgba(0,0,0,0.35))' }} />
         </div>
         <motion.div animate={controls} className="relative w-72 h-72 sm:w-96 sm:h-96 md:w-[28rem] md:h-[28rem] rounded-full border-8 border-white shadow-2xl overflow-hidden" style={{ transformOrigin: "center center" }}>
-        {items.map((item: any, index: number) => {
-          const angle = 360 / items.length;
-          const rotate = index * angle;
-          const color = item.color || DEFAULT_COLORS[index % DEFAULT_COLORS.length];
-          const fontSize = items.length > 30 ? "text-[10px]" : items.length > 20 ? "text-xs" : items.length > 10 ? "text-sm" : "text-base sm:text-lg";
-          const topPos = items.length > 20 ? "top-[24%]" : "top-3 sm:top-5";
-          const textHeight = items.length > 20 ? "42%" : "50%";
-          return (
-            <div key={index} className="absolute inset-0 w-full h-full origin-center" style={{ transform: `rotate(${rotate}deg)`, clipPath: `polygon(50% 50%, 50% 0%, ${50 + 50 * Math.tan((angle * Math.PI) / 180)}% 0%)`, backgroundColor: color }}>
-              <div className={`absolute ${topPos} left-1/2 -translate-x-1/2 origin-bottom font-bold text-white uppercase tracking-wider drop-shadow-md ${fontSize}`} style={{ transform: `rotate(${angle / 2}deg) translateX(-50%)`, transformOrigin: "bottom center", height: textHeight, width: "100%", textAlign: "center" }}>
+          {/* Color wedges */}
+          {items.map((item: any, index: number) => {
+            const angle = 360 / items.length;
+            const rotate = index * angle;
+            const color = item.color || DEFAULT_COLORS[index % DEFAULT_COLORS.length];
+            return (
+              <div key={`w-${index}`} className="absolute inset-0 w-full h-full origin-center" style={{ transform: `rotate(${rotate}deg)`, clipPath: `polygon(50% 50%, 50% 0%, ${50 + 50 * Math.tan((angle * Math.PI) / 180)}% 0%)`, backgroundColor: color }} />
+            );
+          })}
+          {/* Text labels — polar positioned, not clipped */}
+          {items.map((item: any, index: number) => {
+            const angle = 360 / items.length;
+            const rotate = index * angle;
+            const fontSize = items.length > 30 ? 8 : items.length > 20 ? 10 : items.length > 10 ? 12 : 16;
+            const radiusPct = items.length > 20 ? 38 : 34; // % from center toward edge
+            return (
+              <div key={`l-${index}`} className="absolute top-1/2 left-1/2 font-bold text-white pointer-events-none select-none" style={{
+                transform: `rotate(${rotate + angle / 2}deg) translateY(-${radiusPct}%) rotate(${-(rotate + angle / 2)}deg) translate(-50%, -50%)`,
+                fontSize: `${fontSize}px`,
+                lineHeight: 1,
+                textShadow: '0 1px 3px rgba(0,0,0,0.7)',
+                zIndex: 5
+              }}>
                 {item.label}
               </div>
-            </div>
-          );
-        })}
-        <div className="absolute inset-0 rounded-full border-[16px] border-black/10 pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full border-4 border-primary shadow-inner z-10" />
-      </motion.div>
+            );
+          })}
+          <div className="absolute inset-0 rounded-full border-[16px] border-black/10 pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full border-4 border-primary shadow-inner z-10" />
+        </motion.div>
       </div>
     </div>
   );

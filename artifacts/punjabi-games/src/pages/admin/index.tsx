@@ -12,15 +12,15 @@ export default function AdminDashboard() {
   const { data: dashboard, isLoading } = useGetAdminDashboard();
 
   const sections = [
-    { href: "/admin/spinner", label: "Spinner Configs", sub: "Display modes, items, colors", icon: Dices, color: "bg-blue-50 border-blue-100 text-blue-600" },
-    { href: "/admin/tongue-twisters", label: "Boli (Tongue Twisters)", sub: "Add, edit, toggle active", icon: Mic, color: "bg-orange-50 border-orange-100 text-orange-600" },
-    { href: "/admin/submissions", label: "Voice Reviews", sub: "Listen & score recordings", icon: Mic, color: "bg-yellow-50 border-yellow-100 text-yellow-600" },
-    { href: "/admin/users", label: "User Management", sub: "View users, assign roles", icon: Users, color: "bg-purple-50 border-purple-100 text-purple-600" },
+    { href: "/admin/spinner", label: "ਚਰਖਾ ਸੈਟਿੰਗਾਂ", sub: "ਡਿਸਪਲੇਅ ਮੋਡ, ਆਈਟਮ, ਰੰਗ", icon: Dices, color: "bg-blue-50 border-blue-100 text-blue-600" },
+    { href: "/admin/tongue-twisters", label: "ਬੋਲੀ (ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ)", sub: "ਸ਼ਾਮਲ ਕਰੋ, ਸੋਧੋ, ਚਾਲੂ/ਬੰਦ", icon: Mic, color: "bg-orange-50 border-orange-100 text-orange-600" },
+    { href: "/admin/submissions", label: "ਆਵਾਜ਼ ਪੰਛੀਤੀ", sub: "ਰਿਕਾਰਡਿੰਗ ਸੁਣੋ ਅਤੇ ਅੰਕ ਦਿਓ", icon: Mic, color: "bg-yellow-50 border-yellow-100 text-yellow-600" },
+    { href: "/admin/users", label: "ਉਪਯੋਗਕਰਤਾ ਪ੍ਰਬੰਧ", sub: "ਉਪਯੋਗਕਰਤਾ ਵੇਖੋ, ਭੂਮਿਕਾ ਨਿਯੁਕਤ ਕਰੋ", icon: Users, color: "bg-purple-50 border-purple-100 text-purple-600" },
   ];
 
   return (
     <MobileContainer withBottomNav>
-      <PageHeader title="Admin" subtitle="Dashboard Overview" />
+      <PageHeader title="ਪ੍ਰਬੰਧਕ" subtitle="ਡੈਸ਼ਬੋਰਡ ਸਾਰਾਂਸ਼" />
       <AdminNav />
 
       <div className="p-4 space-y-5">
@@ -29,7 +29,7 @@ export default function AdminDashboard() {
           <div className="bg-white border-2 border-orange-100 rounded-2xl p-4">
             <div className="flex items-center gap-2 text-muted-foreground mb-2">
               <Users className="w-4 h-4" />
-              <span className="font-bold text-xs uppercase">Users</span>
+              <span className="font-bold text-xs uppercase">ਉਪਯੋਗਕਰਤਾ</span>
             </div>
             {isLoading ? <Skeleton className="h-8 w-12" /> : (
               <div>
@@ -41,7 +41,7 @@ export default function AdminDashboard() {
           <div className="bg-white border-2 border-orange-100 rounded-2xl p-4">
             <div className="flex items-center gap-2 text-muted-foreground mb-2">
               <Gamepad2 className="w-4 h-4" />
-              <span className="font-bold text-xs uppercase">Games</span>
+              <span className="font-bold text-xs uppercase">ਖੇਡਾਂ</span>
             </div>
             {isLoading ? <Skeleton className="h-8 w-12" /> : (
               <p className="text-3xl font-black">{dashboard?.totalGamesPlayed ?? 0}</p>
@@ -58,8 +58,8 @@ export default function AdminDashboard() {
                   <AlertCircle className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="font-black text-red-900 text-sm">Pending Reviews</p>
-                  <p className="text-xs text-red-700">Voice submissions waiting</p>
+                  <p className="font-black text-red-900 text-sm">ਬਕਾਇਆ ਪੰਛੀਤੀ</p>
+                  <p className="text-xs text-red-700">ਆਵਾਜ਼ ਦਾਖਲੇ ਦੀ ਉਡੀਕ</p>
                 </div>
               </div>
               {isLoading ? <Skeleton className="h-8 w-12" /> : (
@@ -71,7 +71,7 @@ export default function AdminDashboard() {
 
         {/* Quick Nav Sections */}
         <div>
-          <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-3">Manage Content</p>
+          <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-3">ਸਮੱਗਰੀ ਦਾ ਪ੍ਰਬੰਧ</p>
           <div className="space-y-2">
             {sections.map((s, i) => (
               <motion.div key={s.href} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}>
@@ -95,7 +95,7 @@ export default function AdminDashboard() {
         {/* Top Players */}
         {!isLoading && dashboard?.topPlayers && dashboard.topPlayers.length > 0 && (
           <div>
-            <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-3">Top Players</p>
+            <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-3">ਸਿਖਰ ਖਿਡਾਰੀ</p>
             <div className="space-y-2">
               {dashboard.topPlayers.map((p, i) => (
                 <div key={p.userId} className="flex items-center gap-3 p-3 bg-white border-2 border-slate-100 rounded-xl">

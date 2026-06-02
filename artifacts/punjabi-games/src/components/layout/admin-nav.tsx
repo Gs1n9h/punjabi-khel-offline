@@ -5,11 +5,11 @@ export function AdminNav() {
   const [location] = useLocation();
 
   const adminLinks = [
-    { href: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
-    { href: "/admin/spinner", label: "Spinner", icon: Dices },
-    { href: "/admin/tongue-twisters", label: "Boli", icon: Mic },
-    { href: "/admin/submissions", label: "Reviews", icon: Headphones },
-    { href: "/admin/users", label: "Users", icon: Users },
+    { href: "/admin", label: "ਸਾਰਾਂਸ਼", icon: LayoutDashboard, exact: true },
+    { href: "/admin/spinner", label: "ਚਰਖਾ", icon: Dices },
+    { href: "/admin/tongue-twisters", label: "ਬੋਲੀ", icon: Mic },
+    { href: "/admin/submissions", label: "ਪੰਛੀਤੀ", icon: Headphones },
+    { href: "/admin/users", label: "ਉਪਯੋਗਕਰਤਾ", icon: Users },
   ];
 
   return (

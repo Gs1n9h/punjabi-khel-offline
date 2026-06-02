@@ -17,20 +17,20 @@ const games = [
     href: "/games/spinner"
   },
   {
-    id: "tongue-twister",
-    title: "ਬੋਲੀ",
-    subtitle: "ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ ਪੜ੍ਹੋ!",
-    emoji: "🎙️",
-    color: "bg-orange-50 text-orange-600 border-orange-200",
-    href: "/games/tongue-twister"
-  },
-  {
     id: "memory",
     title: "ਯਾਦ ਖੇਡ",
     subtitle: "ਨੰਬਰ ਯਾਦ ਕਰੋ!",
     emoji: "🧠",
     color: "bg-purple-50 text-purple-600 border-purple-200",
     href: "/games/memory"
+  },
+  {
+    id: "tongue-twister",
+    title: "ਬੋਲੀ",
+    subtitle: "ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ ਪੜ੍ਹੋ!",
+    emoji: "🎙️",
+    color: "bg-orange-50 text-orange-600 border-orange-200",
+    href: "/games/tongue-twister"
   }
 ];
 

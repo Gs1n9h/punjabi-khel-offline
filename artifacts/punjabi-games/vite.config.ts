@@ -34,9 +34,9 @@ export default defineConfig({
         ]
       },
       manifest: {
-        name: 'Punjabi Khel',
-        short_name: 'PunjabiKhel',
-        description: 'Fun Punjabi games for kids',
+        name: 'ਪੰਜਾਬੀ ਖੇਡ ਮੈਦਾਨ',
+        short_name: 'PunjabiKhelMaidaan',
+        description: 'ਪੰਜਾਬੀ ਸਭਿਆਚਾਰ ਨੂੰ ਸਿੱਖੋ, ਖੇਡੋ ਅਤੇ ਮਨਾਓ!',
         theme_color: '#E8721A',
         background_color: '#FFF8F0',
         display: 'standalone',

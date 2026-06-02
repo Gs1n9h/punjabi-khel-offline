@@ -265,20 +265,9 @@ export default function MemoryGame() {
                 </div>
               </motion.div>
 
-              {/* Hand reveal */}
-              <div className="relative w-full flex items-center justify-center">
-                <motion.div
-                  key="cover-hand"
-                  initial={{ y: 0 }}
-                  animate={{ y: "-110%" }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                  className="absolute inset-0 z-10 bg-gradient-to-b from-purple-500 to-blue-500 rounded-3xl flex items-center justify-center text-7xl shadow-2xl"
-                >
-                  🤚
-                </motion.div>
-                <div className="relative bg-white rounded-3xl border-4 border-purple-200 shadow-xl px-12 py-10 flex items-center justify-center min-h-[140px] w-full">
-                  <span className="text-6xl font-black tracking-widest text-purple-700 select-none">{toPunjabi(currentNumber)}</span>
-                </div>
+              {/* Number display */}
+              <div className="bg-white rounded-3xl border-4 border-purple-200 shadow-xl px-12 py-10 flex items-center justify-center min-h-[140px] w-full">
+                <span className="text-6xl font-black tracking-widest text-purple-700 select-none">{toPunjabi(currentNumber)}</span>
               </div>
 
               <p className="text-sm text-muted-foreground font-medium">ਇਹ ਨੰਬਰ ਯਾਦ ਕਰੋ!</p>

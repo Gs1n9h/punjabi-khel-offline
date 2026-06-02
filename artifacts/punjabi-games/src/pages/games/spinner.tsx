@@ -37,11 +37,13 @@ function WheelDisplay({ items, isSpinning, result, onSpin }: { items: any[], isS
   }, [isSpinning]);
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[140px] z-20 w-8 h-12 bg-primary flex items-center justify-center drop-shadow-md rounded-b-full">
-        <div className="w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-[16px] border-t-white absolute -bottom-3" />
-      </div>
-      <motion.div animate={controls} className="relative w-64 h-64 sm:w-80 sm:h-80 rounded-full border-8 border-white shadow-2xl overflow-hidden" style={{ transformOrigin: "center center" }}>
+    <div className="flex-1 flex flex-col items-center justify-center p-6">
+      <div className="relative">
+        {/* Needle */}
+        <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-20">
+          <div className="w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[26px] border-t-primary drop-shadow-lg" style={{ filter: 'drop-shadow(0 3px 4px rgba(0,0,0,0.35))' }} />
+        </div>
+        <motion.div animate={controls} className="relative w-64 h-64 sm:w-80 sm:h-80 rounded-full border-8 border-white shadow-2xl overflow-hidden" style={{ transformOrigin: "center center" }}>
         {items.map((item: any, index: number) => {
           const angle = 360 / items.length;
           const rotate = index * angle;
@@ -58,6 +60,7 @@ function WheelDisplay({ items, isSpinning, result, onSpin }: { items: any[], isS
         <div className="absolute inset-0 rounded-full border-[16px] border-black/10 pointer-events-none" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full border-4 border-primary shadow-inner z-10" />
       </motion.div>
+      </div>
       <SpinResult result={result} isSpinning={isSpinning} onSpin={onSpin} label="SPIN!" />
     </div>
   );

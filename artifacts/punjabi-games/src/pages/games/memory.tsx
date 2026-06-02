@@ -239,24 +239,31 @@ export default function MemoryGame() {
                 </span>
               </div>
 
-              {/* Punjabi keypad */}
-              <div className="w-full grid grid-cols-5 gap-2">
-                {PUNJABI_DIGITS.map((pd, i) => (
+              {/* Punjabi keypad — standard phone layout */}
+              <div className="w-full grid grid-cols-3 gap-2">
+                {[1,2,3,4,5,6,7,8,9].map(i => (
                   <button
                     key={i}
                     onClick={() => handleKeyPress(String(i))}
-                    className="h-14 bg-white border-2 border-purple-200 rounded-xl text-2xl font-black text-purple-700 shadow-sm active:bg-purple-50 active:scale-95 transition-all"
+                    className="h-16 bg-white border-2 border-purple-200 rounded-2xl text-3xl font-black text-purple-700 shadow-sm active:bg-purple-50 active:scale-95 transition-all"
                   >
-                    {pd}
+                    {PUNJABI_DIGITS[i]}
                   </button>
                 ))}
+                <div /> {/* empty cell */}
+                <button
+                  onClick={() => handleKeyPress("0")}
+                  className="h-16 bg-white border-2 border-purple-200 rounded-2xl text-3xl font-black text-purple-700 shadow-sm active:bg-purple-50 active:scale-95 transition-all"
+                >
+                  {PUNJABI_DIGITS[0]}
+                </button>
+                <button
+                  onClick={handleBackspace}
+                  className="h-16 bg-purple-50 border-2 border-purple-200 rounded-2xl text-lg font-bold text-purple-700 shadow-sm active:bg-purple-100 active:scale-95 transition-all flex items-center justify-center"
+                >
+                  ←
+                </button>
               </div>
-              <button
-                onClick={handleBackspace}
-                className="w-full h-12 bg-purple-50 border-2 border-purple-200 rounded-xl text-sm font-bold text-purple-700 shadow-sm active:bg-purple-100 active:scale-95 transition-all"
-              >
-                ← Backspace
-              </button>
 
               <div className="text-center">
                 <p className="text-xs text-muted-foreground">Points so far: <span className="font-black text-purple-700">{totalPoints}</span></p>

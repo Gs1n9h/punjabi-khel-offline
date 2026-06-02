@@ -29,6 +29,29 @@ function generateNumber(digits: number): string {
   return num;
 }
 
+function ElapsedTimer({ active, hideStartRef }: { active: boolean; hideStartRef: { current: number } }) {
+  const [ms, setMs] = useState(0);
+  const raf = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!active) return;
+    const tick = () => {
+      setMs(Date.now() - hideStartRef.current);
+      raf.current = requestAnimationFrame(tick);
+    };
+    raf.current = requestAnimationFrame(tick);
+    return () => { if (raf.current) cancelAnimationFrame(raf.current); };
+  }, [active]);
+
+  const s = (ms / 1000).toFixed(2);
+  return (
+    <div className="bg-white border-2 border-purple-200 rounded-2xl px-6 py-2 shadow-sm">
+      <p className="text-[10px] text-muted-foreground font-bold uppercase text-center">Time</p>
+      <p className="text-2xl font-black text-purple-700 tabular-nums text-center">{s}s</p>
+    </div>
+  );
+}
+
 export default function MemoryGame() {
   const [phase, setPhase] = useState<Phase>("idle");
   const [level, setLevel] = useState(1);
@@ -38,8 +61,16 @@ export default function MemoryGame() {
   const [totalPoints, setTotalPoints] = useState(0);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [progress, setProgress] = useState(100);
+  const [elapsedMs, setElapsedMs] = useState(0);
+  const [lastTime, setLastTime] = useState<number | null>(null);
+  const [bestTime, setBestTime] = useState<number>(() => {
+    const raw = localStorage.getItem("yaad-best-time");
+    return raw ? Number(raw) : 0;
+  });
+  const [levelTimes, setLevelTimes] = useState<number[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const progressRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const hideStartRef = useRef<number>(0);
   const submitSession = useSubmitMemoryGameSession();
   const { data: leaderboard } = useGetMemoryGameLeaderboard({ params: { limit: 10 } });
 
@@ -57,10 +88,10 @@ export default function MemoryGame() {
     setPhase("showing");
 
     const duration = getShowDuration(lvl);
-    const startTime = Date.now();
+    const showStart = Date.now();
 
     progressRef.current = setInterval(() => {
-      const elapsed = Date.now() - startTime;
+      const elapsed = Date.now() - showStart;
       const pct = Math.max(0, 100 - (elapsed / duration) * 100);
       setProgress(pct);
     }, 50);
@@ -68,6 +99,8 @@ export default function MemoryGame() {
     timerRef.current = setTimeout(() => {
       clearInterval(progressRef.current!);
       setProgress(0);
+      hideStartRef.current = Date.now();
+      setElapsedMs(0);
       setPhase("hiding");
     }, duration);
   }, []);
@@ -86,7 +119,9 @@ export default function MemoryGame() {
     setUserInput(next);
     setInputDisplay(toPunjabi(next));
     if (next.length >= currentNumber.length) {
-      handleCheck(next);
+      const t = Date.now() - hideStartRef.current;
+      setElapsedMs(t);
+      handleCheck(next, t);
     }
   };
 
@@ -97,10 +132,17 @@ export default function MemoryGame() {
     setInputDisplay(toPunjabi(next));
   };
 
-  const handleCheck = (input?: string) => {
+  const handleCheck = (input?: string, timeMs?: number) => {
     clearTimers();
     const val = input ?? userInput;
     if (val.trim() === currentNumber) {
+      const t = timeMs ?? elapsedMs;
+      const newTimes = [...levelTimes, t];
+      setLevelTimes(newTimes);
+      const newBest = bestTime === 0 ? t : Math.min(bestTime, t);
+      setBestTime(newBest);
+      localStorage.setItem("yaad-best-time", String(newBest));
+      setLastTime(t);
       const pts = level * 10;
       setTotalPoints((p: number) => p + pts);
       setPhase("correct");
@@ -117,7 +159,8 @@ export default function MemoryGame() {
 
   useEffect(() => {
     if (phase === "gameover" && level > 1) {
-      submitSession.mutate({ data: { maxLevel: level - 1, pointsEarned: totalPoints } });
+      const avg = levelTimes.length ? Math.round(levelTimes.reduce((a: number, b: number) => a + b, 0) / levelTimes.length) : 0;
+      submitSession.mutate({ data: { maxLevel: level - 1, pointsEarned: totalPoints, bestTime, avgTime: avg } });
     }
   }, [phase]);
 
@@ -145,6 +188,12 @@ export default function MemoryGame() {
                 <p className="font-black text-purple-700">Lvl {entry.bestLevel}</p>
                 <p className="text-[10px] text-muted-foreground uppercase font-bold">best</p>
               </div>
+              {entry.bestTime ? (
+                <div className="text-right min-w-[60px]">
+                  <p className="font-black text-green-700">{(entry.bestTime / 1000).toFixed(2)}s</p>
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold">time</p>
+                </div>
+              ) : null}
             </div>
           ))}
         </div>
@@ -226,6 +275,8 @@ export default function MemoryGame() {
           {/* HIDING — user types with Punjabi keypad */}
           {phase === "hiding" && (
             <motion.div key="hiding" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-4 w-full max-w-xs">
+              {/* Timer during hiding */}
+              <ElapsedTimer active={phase === "hiding"} hideStartRef={hideStartRef} />
               <div className="bg-gradient-to-b from-purple-500 to-blue-500 rounded-3xl p-5 text-center shadow-xl w-full">
                 <div className="text-5xl mb-2">🤚</div>
                 <p className="text-white font-black text-lg">What did you see?</p>
@@ -276,6 +327,13 @@ export default function MemoryGame() {
             <motion.div key="correct" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center gap-4 text-center">
               <div className="text-7xl">🎉</div>
               <h2 className="text-3xl font-black text-green-600">Correct!</h2>
+              {lastTime !== null && (
+                <div className="bg-green-50 border-2 border-green-200 rounded-2xl px-6 py-2">
+                  <p className="text-xs text-green-600 font-bold uppercase">Time</p>
+                  <p className="text-2xl font-black text-green-700">{(lastTime / 1000).toFixed(2)}s</p>
+                  {bestTime > 0 && bestTime === lastTime && <p className="text-[10px] text-green-600 font-bold">New best!</p>}
+                </div>
+              )}
               <p className="text-muted-foreground font-bold">+{level * 10} points</p>
               <p className="text-sm font-bold text-purple-700">Level {level + 1} coming up…</p>
             </motion.div>
@@ -299,15 +357,19 @@ export default function MemoryGame() {
                 <p className="text-muted-foreground mt-1">You reached</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 w-full">
+              <div className="grid grid-cols-3 gap-3 w-full">
                 <div className="bg-purple-50 border-2 border-purple-200 rounded-2xl p-4 text-center">
-                  <p className="text-4xl font-black text-purple-700">{Math.max(1, level - 1)}</p>
-                  <p className="text-xs font-bold text-muted-foreground uppercase mt-1">Best Level</p>
+                  <p className="text-3xl font-black text-purple-700">{Math.max(1, level - 1)}</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1">Best Level</p>
                 </div>
                 <div className="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-4 text-center">
-                  <Star className="w-6 h-6 text-yellow-500 mx-auto mb-1" />
-                  <p className="text-4xl font-black text-yellow-700">{totalPoints}</p>
-                  <p className="text-xs font-bold text-muted-foreground uppercase">Points</p>
+                  <Star className="w-5 h-5 text-yellow-500 mx-auto mb-1" />
+                  <p className="text-2xl font-black text-yellow-700">{totalPoints}</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase">Points</p>
+                </div>
+                <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-4 text-center">
+                  <p className="text-2xl font-black text-green-700">{bestTime ? (bestTime / 1000).toFixed(2) : "—"}s</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1">Best Time</p>
                 </div>
               </div>
 

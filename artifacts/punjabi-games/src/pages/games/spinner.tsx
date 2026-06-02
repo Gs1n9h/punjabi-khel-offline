@@ -7,6 +7,8 @@ import { motion, useAnimationControls } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Skeleton } from "@/components/ui/skeleton";
 import { queryClient } from "@/lib/queryClient";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { MoreVertical } from "lucide-react";
 
 type DisplayMode = "wheel" | "slot-vertical" | "slot-horizontal" | "flash";
 
@@ -48,10 +50,12 @@ function WheelDisplay({ items, isSpinning, result, onSpin }: { items: any[], isS
           const angle = 360 / items.length;
           const rotate = index * angle;
           const color = item.color || DEFAULT_COLORS[index % DEFAULT_COLORS.length];
-          const fontSize = items.length > 20 ? "text-[10px]" : items.length > 10 ? "text-xs" : "text-sm sm:text-lg";
+          const fontSize = items.length > 30 ? "text-[8px]" : items.length > 20 ? "text-[10px]" : items.length > 10 ? "text-xs" : "text-sm sm:text-lg";
+          const topPos = items.length > 20 ? "top-[26%]" : "top-2 sm:top-4";
+          const textHeight = items.length > 20 ? "38%" : "50%";
           return (
             <div key={index} className="absolute inset-0 w-full h-full origin-center" style={{ transform: `rotate(${rotate}deg)`, clipPath: `polygon(50% 50%, 50% 0%, ${50 + 50 * Math.tan((angle * Math.PI) / 180)}% 0%)`, backgroundColor: color }}>
-              <div className={`absolute top-2 sm:top-4 left-1/2 -translate-x-1/2 origin-bottom font-bold text-white uppercase tracking-wider drop-shadow-md ${fontSize}`} style={{ transform: `rotate(${angle / 2}deg) translateX(-50%)`, transformOrigin: "bottom center", height: "50%", width: "100%", textAlign: "center" }}>
+              <div className={`absolute ${topPos} left-1/2 -translate-x-1/2 origin-bottom font-bold text-white uppercase tracking-wider drop-shadow-md ${fontSize}`} style={{ transform: `rotate(${angle / 2}deg) translateX(-50%)`, transformOrigin: "bottom center", height: textHeight, width: "100%", textAlign: "center" }}>
                 {item.label}
               </div>
             </div>
@@ -231,10 +235,12 @@ export default function SpinnerGame() {
   const [isSpinning, setIsSpinning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [activeConfigId, setActiveConfigId] = useState<number | null>(null);
+  const [overrideDisplayMode, setOverrideDisplayMode] = useState<DisplayMode | null>(null);
 
   const allConfigs = configs ?? [];
   const activeConfig = allConfigs.find(c => c.id === activeConfigId) || allConfigs.find(c => c.isActive) || allConfigs[0];
-  const displayMode: DisplayMode = (activeConfig?.displayMode as DisplayMode) || "wheel";
+  const configDisplayMode: DisplayMode = (activeConfig?.displayMode as DisplayMode) || "wheel";
+  const displayMode = overrideDisplayMode ?? configDisplayMode;
 
   const handleSpin = () => {
     if (!activeConfig || isSpinning || activeConfig.items.length === 0) return;
@@ -290,11 +296,31 @@ export default function SpinnerGame() {
         </div>
       )}
 
-      {/* Display mode badge */}
+      {/* Display mode selector */}
       <div className="flex justify-center py-1">
-        <span className="text-[10px] uppercase font-bold px-2 py-0.5 bg-orange-100 text-primary rounded-full tracking-widest">
-          {displayMode === "wheel" ? "Wheel" : displayMode === "slot-vertical" ? "Slot ↕" : displayMode === "slot-horizontal" ? "Slot ↔" : "Flash ⚡"}
-        </span>
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="flex items-center gap-1.5 text-[10px] uppercase font-bold px-2.5 py-1 bg-orange-100 text-primary rounded-full tracking-widest hover:bg-orange-200 transition-colors">
+              {displayMode === "wheel" ? "Wheel" : displayMode === "slot-vertical" ? "Slot ↕" : displayMode === "slot-horizontal" ? "Slot ↔" : "Flash ⚡"}
+              <MoreVertical className="w-3 h-3" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-40 p-2" align="center">
+            <div className="space-y-1">
+              {(["wheel", "slot-vertical", "slot-horizontal", "flash"] as DisplayMode[]).map((mode) => (
+                <button
+                  key={mode}
+                  onClick={() => setOverrideDisplayMode(mode === configDisplayMode ? null : mode)}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-bold transition-colors ${
+                    displayMode === mode ? "bg-primary text-white" : "hover:bg-orange-50 text-foreground"
+                  }`}
+                >
+                  {mode === "wheel" ? "🎡 Wheel" : mode === "slot-vertical" ? "↕ Slot Vertical" : mode === "slot-horizontal" ? "↔ Slot Horizontal" : "⚡ Flash"}
+                </button>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {displayMode === "wheel" && <WheelDisplay {...displayProps} />}

@@ -53,15 +53,14 @@ function WheelDisplay({ items, isSpinning, result, onSpin, targetIndex }: { item
           {items.map((item: any, index: number) => {
             const angle = 360 / items.length;
             const rotate = index * angle;
-            // Arc width at ~90% radius: 2π·r·(angle/360)
-            // For 35 slices on 288px wheel: arc ≈ 23px. Single Gurmukhi char ≈ fontSize×0.7.
-            // Max fontSize with 30% side padding: arc×0.7 / 0.7
-            const fontSize = items.length > 30 ? 13 : items.length > 20 ? 15 : items.length > 10 ? 18 : 22;
+            // Arc width at ~95% radius: 2π·r·(angle/360)
+            // For 35 slices on 288px wheel: arc ≈ 24px. Single Gurmukhi char ≈ fontSize×0.7.
+            const fontSize = items.length > 30 ? 15 : items.length > 20 ? 18 : items.length > 10 ? 22 : 26;
             return (
               <div key={`l-${index}`} className="absolute inset-0 pointer-events-none select-none" style={{ transform: `rotate(${rotate + angle / 2}deg)` }}>
                 <div className="absolute left-1/2 font-bold text-white text-center whitespace-nowrap"
                      style={{
-                       top: '6%',            // ~17-27px from rim depending on wheel size
+                       top: '3%',            // ~9-13px from rim
                        transform: 'translateX(-50%)',
                        fontSize: `${fontSize}px`,
                        lineHeight: 1,

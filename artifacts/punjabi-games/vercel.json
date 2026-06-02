@@ -1,6 +1,6 @@
 {
   "framework": "vite",
-  "outputDirectory": "artifacts/punjabi-games/dist/public",
+  "outputDirectory": "dist/public",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]

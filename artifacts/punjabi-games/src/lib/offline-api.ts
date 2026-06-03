@@ -63,7 +63,7 @@ const seedPictures: PictureQuestion[] = [
   { id: 3, imageUrl: "", imageEmoji: "🌻", answer: "ਫੁੱਲ", options: ["ਰੁੱਖ", "ਪੱਤਾ", "ਫੁੱਲ", "ਘਾਹ"], isActive: true, createdAt: now() },
   { id: 4, imageUrl: "", imageEmoji: "🏠", answer: "ਘਰ", options: ["ਸਕੂਲ", "ਘਰ", "ਦੁਕਾਨ", "ਖੇਤ"], isActive: true, createdAt: now() }
 ];
-const seedSettings: EventSettings = { attempts: { spinner: 3, memory: 3, "tongue-twister": 2, picture: 3, quiz: 3 } };
+const seedSettings: EventSettings = { attempts: { spin: 3, memory: 3, "tongue-twister": 1, picture: 3, quiz: 3 } };
 
 function read<T>(key: string, fallback: T): T {
   try {

@@ -149,7 +149,7 @@ export default function GamesHub() {
                 {isLoading ? (
                   <Skeleton className="h-10 w-24 bg-white/20" />
                 ) : (
-                  <h2 className="text-5xl font-black drop-shadow-sm">{stats?.topScore || 0}</h2>
+                  <h2 className="text-5xl font-black drop-shadow-sm">{stats?.totalPoints || 0}</h2>
                 )}
               </div>
               <button

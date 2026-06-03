@@ -232,15 +232,15 @@ export default function SpinnerGame() {
   const { data: configs, isLoading } = useListSpinnerConfigs();
   const { data: progress } = useGetGameProgress("spin");
   const recordSpin = useRecordSpin();
-  const [isSpinning, setIsSpinning] = useState(false);
+
+  type Phase = "idle" | "spinning" | "result" | "scoring" | "saved";
+  const [phase, setPhase] = useState<Phase>("idle");
   const [result, setResult] = useState<string | null>(null);
   const [activeConfigId] = useState<number | null>(null);
   const [overrideDisplayMode, setOverrideDisplayMode] = useState<DisplayMode | null>(null);
   const [targetIndex, setTargetIndex] = useState(0);
-  const [spinsDone, setSpinsDone] = useState(0);
-  const [showScoreEntry, setShowScoreEntry] = useState(false);
+  const [spinsThisGame, setSpinsThisGame] = useState(0);
   const [adminPoints, setAdminPoints] = useState<number | null>(null);
-  const [gameSaved, setGameSaved] = useState(false);
 
   const SPINS_PER_GAME = 3;
   const allConfigs = configs ?? [];
@@ -248,9 +248,14 @@ export default function SpinnerGame() {
   const configDisplayMode: DisplayMode = (activeConfig?.displayMode as DisplayMode) || "wheel";
   const displayMode = overrideDisplayMode ?? configDisplayMode;
 
+  const isSpinning = phase === "spinning";
+  const showScoreEntry = phase === "scoring";
+  const gameSaved = phase === "saved";
+
   const handleSpin = () => {
-    if (!activeConfig || isSpinning || activeConfig.items.length === 0 || showScoreEntry || gameSaved) return;
-    setIsSpinning(true);
+    if (!activeConfig || phase === "spinning" || activeConfig.items.length === 0 || phase === "scoring" || phase === "saved") return;
+    if (progress?.isComplete) return;
+    setPhase("spinning");
     setResult(null);
 
     const items = activeConfig.items as any[];
@@ -263,31 +268,31 @@ export default function SpinnerGame() {
     const spinDuration = (displayMode === "wheel") ? 4200 : 3700;
     setTimeout(() => {
       setResult(selectedItem.label);
-      setIsSpinning(false);
+      const newCount = spinsThisGame + 1;
+      setSpinsThisGame(newCount);
+      if (newCount >= SPINS_PER_GAME) {
+        setPhase("scoring");
+      } else {
+        setPhase("result");
+      }
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ["#1a237e", "#ffd700", "#f4c430"] });
-      setSpinsDone((prev: number) => {
-        const next = prev + 1;
-        if (next >= SPINS_PER_GAME) {
-          setShowScoreEntry(true);
-        }
-        return next;
-      });
     }, spinDuration);
   };
 
   const handleAdminScore = (points: number) => {
-    if (!activeConfig || gameSaved) return;
+    if (!activeConfig || phase !== "scoring") return;
     setAdminPoints(points);
     recordSpin.mutate({ data: { configId: activeConfig.id, resultLabel: result || "", pointsEarned: points } });
-    setGameSaved(true);
+    setPhase("saved");
+    // Auto-redirect to games after 2.5s
+    setTimeout(() => navigate("/games"), 2500);
   };
 
   const handlePlayAgain = () => {
-    setSpinsDone(0);
-    setShowScoreEntry(false);
+    setSpinsThisGame(0);
     setAdminPoints(null);
-    setGameSaved(false);
     setResult(null);
+    setPhase("idle");
   };
 
   if (isLoading) {
@@ -312,7 +317,7 @@ export default function SpinnerGame() {
     <MobileContainer className="bg-gradient-to-b from-[#FAF6EE] to-[#E8E0D0]">
       <PageHeader title="ਚਰਖਾ" subtitle={`ਬਾਕੀ ਮੌਕੇ: ${progress?.remaining ?? 0}/${progress?.limit ?? 0}`} showBack />
 
-      {/* Display mode selector — visible buttons */}
+      {/* Display mode selector */}
       <div className="flex justify-center gap-2 py-2 px-4">
         {(["wheel", "flash"] as DisplayMode[]).map((mode) => (
           <button
@@ -335,9 +340,17 @@ export default function SpinnerGame() {
         {displayMode === "slot-horizontal" && <SlotHorizontalDisplay items={activeConfig.items as any[]} isSpinning={isSpinning} targetIndex={targetIndex} />}
         {displayMode === "flash" && <FlashDisplay items={activeConfig.items as any[]} isSpinning={isSpinning} targetIndex={targetIndex} />}
       </div>
+
       <div className="pb-6 pt-2 flex justify-center flex-col items-center gap-3">
+        {/* Spin counter indicator during play */}
+        {(phase === "idle" || phase === "result" || phase === "spinning") && (
+          <p className="text-sm font-bold text-muted-foreground">
+            {spinsThisGame}/{SPINS_PER_GAME} ਘੁੰਮਾਅ
+          </p>
+        )}
+
         {/* Admin score entry after all spins */}
-        {showScoreEntry && !gameSaved && (
+        {showScoreEntry && (
           <div className="w-full max-w-sm px-4 space-y-4">
             <div className="bg-white rounded-2xl border-4 border-[#e8e0d0] shadow-xl p-5 text-center">
               <div className="text-5xl mb-2">⭐</div>
@@ -358,13 +371,14 @@ export default function SpinnerGame() {
           </div>
         )}
 
-        {/* Game saved / done state */}
+        {/* Saved state — auto-redirects in 2.5s */}
         {gameSaved && (
           <div className="w-full max-w-sm px-4 space-y-4">
             <div className="bg-green-50 rounded-2xl border-4 border-green-200 shadow-xl p-5 text-center">
               <div className="text-5xl mb-2">🎉</div>
               <h3 className="text-xl font-black text-green-700 mb-1">ਸੇਵ ਹੋ ਗਏ!</h3>
               <p className="text-2xl font-black text-primary mb-1">{adminPoints} ਅੰਕ</p>
+              <p className="text-sm text-muted-foreground">ਖੇਡਾਂ ਵੱਲ ਵਾਪਸ ਜਾ ਰਹੇ ਹਾਂ…</p>
               <div className="flex gap-2 mt-4">
                 {!progress?.isComplete && (
                   <Button onClick={handlePlayAgain} className="flex-1 h-12 rounded-xl bg-primary text-white">

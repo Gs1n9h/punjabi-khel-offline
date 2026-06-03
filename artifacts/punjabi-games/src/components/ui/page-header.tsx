@@ -16,14 +16,14 @@ export function PageHeader({ title, subtitle, showBack, backHref, action, classN
   const [, setLocation] = useLocation();
 
   return (
-    <div className={`px-6 py-6 bg-white border-b-2 border-orange-100 z-10 sticky top-0 ${className}`}>
+    <div className={`px-6 py-6 bg-white border-b-2 border-[#e8e0d0] z-10 sticky top-0 ${className}`}>
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-3">
           {showBack && (
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-10 w-10 rounded-full bg-orange-50 text-primary hover:bg-orange-100 hover:text-primary -ml-2 shrink-0"
+              className="h-10 w-10 rounded-full bg-[#f5f0e0] text-primary hover:bg-[#ebe5d0] hover:text-primary -ml-2 shrink-0"
               onClick={() => backHref ? setLocation(backHref) : window.history.back()}
             >
               <ChevronLeft className="w-6 h-6" />

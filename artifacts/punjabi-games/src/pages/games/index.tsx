@@ -40,7 +40,17 @@ export default function GamesHub() {
 
   return (
     <MobileContainer withBottomNav className="bg-[radial-gradient(circle_at_top,#FFF8E1_0%,#FAF6EE_42%,#F0EBE0_100%)]">
-      <PageHeader title="Gurmukhi Vehda" subtitle="ਇੱਕ ਖੇਡ ਚੁਣੋ ਅਤੇ ਖੇਡਣਾ ਸ਼ੁਰੂ ਕਰੋ!" />
+      <PageHeader
+        title="ਗੁਰਮੁਖੀ ਵੇਹੜਾ"
+        subtitle="ਇੱਕ ਖੇਡ ਚੁਣੋ ਅਤੇ ਖੇਡਣਾ ਸ਼ੁਰੂ ਕਰੋ!"
+        action={
+          <img
+            src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.png`}
+            alt="ਗੁਰਮੁਖੀ ਵੇਹੜਾ"
+            className="w-10 h-10 rounded-full border-2 border-primary shadow-sm"
+          />
+        }
+      />
       
       <div className="p-4 space-y-6">
         {/* Stats Card */}

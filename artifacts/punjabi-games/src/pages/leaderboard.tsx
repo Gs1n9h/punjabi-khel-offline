@@ -13,7 +13,7 @@ export default function Leaderboard() {
 
   return (
     <MobileContainer withBottomNav>
-      <PageHeader title="Leaderboard" subtitle="Top players in Gurmukhi Vehda" />
+      <PageHeader title="ਦਰਜਾਬੰਦੀ" subtitle="ਗੁਰਮੁਖੀ ਵੇਹੜਾ ਦੇ ਸਿਖਰ ਖਿਡਾਰੀ" />
 
       <div className="p-4 flex-1 overflow-y-auto">
         {isAllTimeLoading ? (

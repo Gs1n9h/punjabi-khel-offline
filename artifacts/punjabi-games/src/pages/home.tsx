@@ -6,7 +6,16 @@ import { motion } from "framer-motion";
 export function Home() {
   return (
     <MobileContainer className="bg-gradient-to-b from-[#FAF6EE] to-[#E8E0D0]">
-      <div className="flex-1 flex flex-col px-6 pt-12 pb-8">
+      <div className="flex-1 flex flex-col px-6 pt-4 pb-8">
+        {/* Top-right logo */}
+        <div className="flex justify-end mb-2">
+          <img
+            src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.png`}
+            alt="ਗੁਰਮੁਖੀ ਵੇਹੜਾ"
+            className="w-14 h-14 rounded-full border-2 border-primary shadow-md"
+          />
+        </div>
+
         <div className="flex-1 flex flex-col items-center justify-center">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -15,9 +24,9 @@ export function Home() {
             className="mb-8 relative"
           >
             <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
-            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`} alt="Gurmukhi Vehda" className="w-48 h-48 drop-shadow-2xl relative z-10" />
+            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`} alt="ਗੁਰਮੁਖੀ ਵੇਹੜਾ" className="w-48 h-48 drop-shadow-2xl relative z-10" />
           </motion.div>
-          
+
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -25,11 +34,11 @@ export function Home() {
             className="text-center space-y-4 mb-12"
           >
             <h1 className="text-4xl font-black text-primary drop-shadow-sm tracking-tight leading-none">
-              Gurmukhi<br />
-              <span className="text-secondary">Vehda</span>
+              ਗੁਰਮੁਖੀ<br />
+              <span className="text-secondary">ਵੇਹੜਾ</span>
             </h1>
             <p className="text-lg text-muted-foreground font-medium px-4">
-              Learn, Play and Celebrate Punjabi Culture!
+              ਪੰਜਾਬੀ ਸਭਿਆਚਾਰ ਨੂੰ ਸਿੱਖੋ, ਖੇਡੋ ਅਤੇ ਮਨਾਓ!
             </p>
           </motion.div>
 

@@ -10,10 +10,10 @@ import { Brain, Trophy, Star, RotateCcw, Medal } from "lucide-react";
 type Phase = "idle" | "showing" | "hiding" | "correct" | "wrong" | "gameover";
 
 function getShowDuration(level: number): number {
+  // ≤3 digits: keep the original 2.5s show time
+  // >3 digits: show time = digits in seconds (4→4s, 5→5s, 6→6s…)
   if (level <= 3) return 2500;
-  if (level <= 6) return 2000;
-  if (level <= 9) return 1500;
-  return 1000;
+  return level * 1000;
 }
 
 const PUNJABI_DIGITS = ["੦","੧","੨","੩","੪","੫","੬","੭","੮","੯"];
@@ -57,7 +57,7 @@ export default function MemoryGame() {
   const [level, setLevel] = useState(1);
   const [currentNumber, setCurrentNumber] = useState("");
   const [userInput, setUserInput] = useState("");
-  const [inputDisplay, setInputDisplay] = useState(""); // Punjabi display
+  const inputDisplay = toPunjabi(userInput);
   const [totalPoints, setTotalPoints] = useState(0);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [progress, setProgress] = useState(100);
@@ -83,7 +83,6 @@ export default function MemoryGame() {
     const num = generateNumber(lvl);
     setCurrentNumber(num);
     setUserInput("");
-    setInputDisplay("");
     setProgress(100);
     setPhase("showing");
 
@@ -109,7 +108,6 @@ export default function MemoryGame() {
     setLevel(1);
     setTotalPoints(0);
     setUserInput("");
-    setInputDisplay("");
     startLevel(1);
   };
 
@@ -117,7 +115,6 @@ export default function MemoryGame() {
     if (phase !== "hiding") return;
     const next = userInput + arabicDigit;
     setUserInput(next);
-    setInputDisplay(toPunjabi(next));
     if (next.length >= currentNumber.length) {
       const t = Date.now() - hideStartRef.current;
       setElapsedMs(t);
@@ -130,7 +127,6 @@ export default function MemoryGame() {
     if (phase !== "hiding") return;
     const next = userInput.slice(0, -1);
     setUserInput(next);
-    setInputDisplay(toPunjabi(next));
   };
 
   const handleCheck = (input?: string, timeMs?: number) => {
@@ -298,22 +294,22 @@ export default function MemoryGame() {
                 {[1,2,3,4,5,6,7,8,9].map(i => (
                   <button
                     key={i}
-                    onClick={() => handleKeyPress(String(i))}
-                    className="h-16 bg-white border-2 border-[#d4c9a8] rounded-2xl text-3xl font-black text-primary shadow-sm active:bg-[#f5f0e0] active:scale-95 transition-all"
+                    onPointerDown={(e) => { e.preventDefault(); handleKeyPress(String(i)); }}
+                    className="h-16 bg-white border-2 border-[#d4c9a8] rounded-2xl text-3xl font-black text-primary shadow-sm active:bg-[#f5f0e0] active:scale-95 transition-all touch-manipulation select-none"
                   >
                     {PUNJABI_DIGITS[i]}
                   </button>
                 ))}
                 <div /> {/* empty cell */}
                 <button
-                  onClick={() => handleKeyPress("0")}
-                  className="h-16 bg-white border-2 border-[#d4c9a8] rounded-2xl text-3xl font-black text-primary shadow-sm active:bg-[#f5f0e0] active:scale-95 transition-all"
+                  onPointerDown={(e) => { e.preventDefault(); handleKeyPress("0"); }}
+                  className="h-16 bg-white border-2 border-[#d4c9a8] rounded-2xl text-3xl font-black text-primary shadow-sm active:bg-[#f5f0e0] active:scale-95 transition-all touch-manipulation select-none"
                 >
                   {PUNJABI_DIGITS[0]}
                 </button>
                 <button
-                  onClick={handleBackspace}
-                  className="h-16 bg-[#f5f0e0] border-2 border-[#d4c9a8] rounded-2xl text-lg font-bold text-primary shadow-sm active:bg-[#ebe5d0] active:scale-95 transition-all flex items-center justify-center"
+                  onPointerDown={(e) => { e.preventDefault(); handleBackspace(); }}
+                  className="h-16 bg-[#f5f0e0] border-2 border-[#d4c9a8] rounded-2xl text-lg font-bold text-primary shadow-sm active:bg-[#ebe5d0] active:scale-95 transition-all flex items-center justify-center touch-manipulation select-none"
                 >
                   ←
                 </button>

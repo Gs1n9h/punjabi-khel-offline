@@ -208,11 +208,11 @@ function FlashDisplay({ items, isSpinning, targetIndex }: { items: any[], isSpin
 }
 
 // ─── Shared result + button ───────────────────────────────────────
-function SpinResult({ result, isSpinning, onSpin, label }: { result: string | null, isSpinning: boolean, onSpin: () => void, label: string }) {
+function SpinResult({ result, isSpinning, onSpin, label, exhausted }: { result: string | null, isSpinning: boolean, onSpin: () => void, label: string, exhausted?: boolean }) {
   return (
     <div className="w-full max-w-sm space-y-4 px-4">
-      <Button onClick={onSpin} disabled={isSpinning} className="w-full h-16 text-xl rounded-2xl bg-primary hover:bg-[#141b4d] text-white shadow-lg shadow-[#1a237e]/20 border-b-4 border-[#0f1540] active:border-b-0 active:translate-y-1 transition-all">
-        {isSpinning ? "ਘੁੰਮ ਰਿਹਾ ਹੈ…" : label}
+      <Button onClick={onSpin} disabled={isSpinning || exhausted} className={`w-full h-16 text-xl rounded-2xl shadow-lg shadow-[#1a237e]/20 border-b-4 border-[#0f1540] active:border-b-0 active:translate-y-1 transition-all ${exhausted ? "bg-gray-400 text-white cursor-not-allowed" : "bg-primary hover:bg-[#141b4d] text-white"}`}>
+        {isSpinning ? "ਘੁੰਮ ਰਿਹਾ ਹੈ…" : exhausted ? "ਮੌਕੇ ਪੂਰੇ ਹੋ ਗਏ" : label}
       </Button>
       <div className="min-h-[120px] flex items-center justify-center">
         {result && !isSpinning && (
@@ -245,7 +245,7 @@ export default function SpinnerGame() {
   const displayMode = overrideDisplayMode ?? configDisplayMode;
 
   const handleSpin = () => {
-    if (!activeConfig || isSpinning || activeConfig.items.length === 0) return;
+    if (!activeConfig || isSpinning || activeConfig.items.length === 0 || progress?.isComplete) return;
     setIsSpinning(true);
     setResult(null);
     setRedirectTimer(null);
@@ -306,7 +306,7 @@ export default function SpinnerGame() {
 
   return (
     <MobileContainer className="bg-gradient-to-b from-[#FAF6EE] to-[#E8E0D0]">
-      <PageHeader title="ਚਰਖਾ" showBack />
+      <PageHeader title="ਚਰਖਾ" subtitle={`ਬਾਕੀ ਮੌਕੇ: ${progress?.remaining ?? 0}/${progress?.limit ?? 0}`} showBack />
 
       {/* Display mode selector — visible buttons */}
       <div className="flex justify-center gap-2 py-2 px-4">
@@ -332,7 +332,7 @@ export default function SpinnerGame() {
         {displayMode === "flash" && <FlashDisplay items={activeConfig.items as any[]} isSpinning={isSpinning} targetIndex={targetIndex} />}
       </div>
       <div className="pb-6 pt-2 flex justify-center flex-col items-center gap-3">
-        <SpinResult result={result} isSpinning={isSpinning} onSpin={handleSpin} label={displayMode === "wheel" ? "ਘੁੰਮਾਓ!" : displayMode === "slot-vertical" ? "▼ ਘੁੰਮਾਓ ▼" : displayMode === "slot-horizontal" ? "◄► ਘੁੰਮਾਓ" : "⚡ ਝਪਕੀ!"} />
+        <SpinResult result={result} isSpinning={isSpinning} onSpin={handleSpin} exhausted={progress?.isComplete} label={displayMode === "wheel" ? "ਘੁੰਮਾਓ!" : displayMode === "slot-vertical" ? "▼ ਘੁੰਮਾਓ ▼" : displayMode === "slot-horizontal" ? "◄► ਘੁੰਮਾਓ" : "⚡ ਝਪਕੀ!"} />
         {redirectTimer !== null && (
           <div className="text-center bg-yellow-50 border-2 border-yellow-200 rounded-xl px-4 py-2">
             <p className="text-sm font-bold text-yellow-800">ਮੌਕੇ ਪੂਰੇ! {redirectTimer} ਸਕਿੰਟਾਂ ਵਿੱਚ ਖੇਡਾਂ ਵੱਲ ਵਾਪਸ…</p>

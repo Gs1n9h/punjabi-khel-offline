@@ -126,6 +126,7 @@ export function useSubmitQuizAnswers() { return mutation<{ data: { answers: { qu
 export function useSubmitMemoryGameSession() { return mutation<{ data: { maxLevel: number; pointsEarned: number; bestTime?: number; avgTime?: number } }, Session>(({ data }) => saveSession({ type: "memory", ...data })); }
 export function useListPictureQuestions() { useVersion(); return { data: read<PictureQuestion[]>(keys.pictures, seedPictures).filter(q => q.isActive !== false), isLoading: false }; }
 export function useSubmitPictureAnswer() { return mutation<{ data: { questionId: number; selectedAnswer: string } }, { correct: boolean; pointsEarned: number; correctAnswer: string }>(({ data }) => { const q = read<PictureQuestion[]>(keys.pictures, seedPictures).find(x => x.id === data.questionId); const correct = q?.answer === data.selectedAnswer; const pointsEarned = correct ? 20 : 0; saveSession({ type: "picture", pointsEarned, questionId: data.questionId, selectedAnswer: data.selectedAnswer, correctAnswer: q?.answer, correct }); return { correct, pointsEarned, correctAnswer: q?.answer ?? "" }; }); }
+export function useForfeitPictureGame() { return mutation<{}, void>(() => { saveSession({ type: "picture", pointsEarned: 0, questionId: 0, selectedAnswer: "forfeit", correctAnswer: "", correct: false }); }); }
 export function useGetMemoryGameLeaderboard(_opts?: { params?: { limit?: number } }) {
   useVersion();
   const user = read<User>(keys.user, seedUser);

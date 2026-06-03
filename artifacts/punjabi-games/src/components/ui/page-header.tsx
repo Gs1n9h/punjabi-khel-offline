@@ -8,11 +8,12 @@ interface PageHeaderProps {
   subtitle?: string;
   showBack?: boolean;
   backHref?: string;
+  onBack?: () => void;
   action?: ReactNode;
   className?: string;
 }
 
-export function PageHeader({ title, subtitle, showBack, backHref, action, className = "" }: PageHeaderProps) {
+export function PageHeader({ title, subtitle, showBack, backHref, onBack, action, className = "" }: PageHeaderProps) {
   const [, setLocation] = useLocation();
 
   return (
@@ -20,11 +21,14 @@ export function PageHeader({ title, subtitle, showBack, backHref, action, classN
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-3">
           {showBack && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-10 w-10 rounded-full bg-[#f5f0e0] text-primary hover:bg-[#ebe5d0] hover:text-primary -ml-2 shrink-0"
-              onClick={() => backHref ? setLocation(backHref) : window.history.back()}
+              onClick={() => {
+                if (onBack) { onBack(); return; }
+                backHref ? setLocation(backHref) : window.history.back();
+              }}
             >
               <ChevronLeft className="w-6 h-6" />
             </Button>

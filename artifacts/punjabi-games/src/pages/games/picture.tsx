@@ -1,12 +1,13 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetGameProgress, useGetMyStats, useListPictureQuestions, useSubmitPictureAnswer } from "@/lib/offline-api";
+import { useGetGameProgress, useGetMyStats, useListPictureQuestions, useSubmitPictureAnswer, useForfeitPictureGame } from "@/lib/offline-api";
 import { AnimatePresence, motion } from "framer-motion";
 import confetti from "canvas-confetti";
+import { SkipForward } from "lucide-react";
 
 function playBuzz() {
   try {
@@ -26,16 +27,19 @@ function playBuzz() {
 }
 
 export default function PictureGame() {
+  const [, navigate] = useLocation();
   const { data: questions, isLoading } = useListPictureQuestions();
   const { data: progress } = useGetGameProgress("picture");
   const { data: stats } = useGetMyStats();
   const submitAnswer = useSubmitPictureAnswer();
+  const forfeitGame = useForfeitPictureGame();
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [result, setResult] = useState<{ correct: boolean; pointsEarned: number; correctAnswer: string } | null>(null);
   const [attemptsLeft, setAttemptsLeft] = useState(3);
   const [showGameOver, setShowGameOver] = useState(false);
   const [shakeKey, setShakeKey] = useState(0);
+  const [skippedIds, setSkippedIds] = useState<Set<number>>(new Set());
 
   const activeQuestions = questions ?? [];
   const currentQuestion = useMemo(() => activeQuestions[index % Math.max(1, activeQuestions.length)], [activeQuestions, index]);
@@ -84,10 +88,27 @@ export default function PictureGame() {
     });
   }, [currentQuestion, selected, showGameOver, attemptsLeft, submitAnswer]);
 
+  const handleSkip = useCallback(() => {
+    if (!currentQuestion || selected || showGameOver) return;
+    setSkippedIds((prev: Set<number>) => new Set(prev).add(currentQuestion.id));
+    if (index >= activeQuestions.length - 1) {
+      setShowGameOver(true);
+    } else {
+      setSelected(null);
+      setResult(null);
+      setIndex((prev: number) => prev + 1);
+    }
+  }, [currentQuestion, selected, showGameOver, index, activeQuestions.length]);
+
+  const handleBackForfeit = useCallback(() => {
+    forfeitGame.mutate({});
+    navigate("/games");
+  }, [forfeitGame, navigate]);
+
   if (isLoading) {
     return (
       <MobileContainer>
-        <PageHeader title="ਤਸਵੀਰ ਪਛਾਣ" showBack backHref="/games" />
+        <PageHeader title="ਤਸਵੀਰ ਪਛਾਣ" showBack onBack={handleBackForfeit} />
         <div className="flex-1 p-4 grid gap-4">
           <Skeleton className="h-72 rounded-[32px]" />
           <Skeleton className="h-20 rounded-2xl" />
@@ -101,7 +122,7 @@ export default function PictureGame() {
     const allCorrect = index >= activeQuestions.length - 1 && result?.correct;
     return (
       <MobileContainer className="bg-gradient-to-b from-[#FAF6EE] to-[#E8E0D0]">
-        <PageHeader title="ਤਸਵੀਰ ਪਛਾਣ" showBack backHref="/games" />
+        <PageHeader title="ਤਸਵੀਰ ਪਛਾਣ" showBack onBack={handleBackForfeit} />
         <div className="flex-1 flex items-center justify-center p-6 text-center">
           <div className="w-full max-w-xl bg-white rounded-[32px] border-4 border-[#e8e0d0] shadow-xl p-8 space-y-5">
             <div className="text-7xl">{allCorrect ? "🎉" : "🖼️"}</div>
@@ -123,7 +144,7 @@ export default function PictureGame() {
 
   return (
     <MobileContainer className="bg-[radial-gradient(circle_at_top,#ECFDF5_0%,#FAF6EE_48%,#E8E0D0_100%)]">
-      <PageHeader title="ਤਸਵੀਰ ਪਛਾਣ" subtitle={`ਬਾਕੀ ਕੋਸ਼ਿਸ਼ਾਂ: ${attemptsLeft}`} showBack backHref="/games" />
+      <PageHeader title="ਤਸਵੀਰ ਪਛਾਣ" subtitle={`ਬਾਕੀ ਕੋਸ਼ਿਸ਼ਾਂ: ${attemptsLeft}`} showBack onBack={handleBackForfeit} />
       <div className="flex-1 grid content-stretch gap-4 p-4 sm:p-6 md:grid-cols-[1.1fr_0.9fr] md:items-center">
         <motion.div
           key={`${currentQuestion.id}-${shakeKey}`}
@@ -182,6 +203,18 @@ export default function PictureGame() {
               <h2 className="text-xl font-black text-red-600">ਓਹੋ! ਗਲਤ ਜਵਾਬ</h2>
               <p className="text-sm font-bold text-muted-foreground mt-1">{attemptsLeft} ਕੋਸ਼ਿਸ਼ਾਂ ਬਾਕੀ — ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ!</p>
             </motion.div>
+          )}
+
+          {/* Skip button */}
+          {!selected && (
+            <button
+              onClick={handleSkip}
+              disabled={showGameOver}
+              className="w-full h-12 rounded-2xl border-2 border-dashed border-slate-300 text-slate-500 font-bold text-sm hover:border-slate-400 hover:text-slate-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              <SkipForward className="w-4 h-4" />
+              ਛੱਡੋ (ਕੋਈ ਅੰਕ ਨਹੀਂ)
+            </button>
           )}
         </div>
       </div>

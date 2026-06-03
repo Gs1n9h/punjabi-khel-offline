@@ -237,18 +237,21 @@ export default function SpinnerGame() {
   const [activeConfigId] = useState<number | null>(null);
   const [overrideDisplayMode, setOverrideDisplayMode] = useState<DisplayMode | null>(null);
   const [targetIndex, setTargetIndex] = useState(0);
-  const [redirectTimer, setRedirectTimer] = useState<number | null>(null);
+  const [spinsDone, setSpinsDone] = useState(0);
+  const [showScoreEntry, setShowScoreEntry] = useState(false);
+  const [adminPoints, setAdminPoints] = useState<number | null>(null);
+  const [gameSaved, setGameSaved] = useState(false);
 
+  const SPINS_PER_GAME = 3;
   const allConfigs = configs ?? [];
   const activeConfig = allConfigs.find(c => c.id === activeConfigId) || allConfigs.find(c => c.isActive) || allConfigs[0];
   const configDisplayMode: DisplayMode = (activeConfig?.displayMode as DisplayMode) || "wheel";
   const displayMode = overrideDisplayMode ?? configDisplayMode;
 
   const handleSpin = () => {
-    if (!activeConfig || isSpinning || activeConfig.items.length === 0 || progress?.isComplete) return;
+    if (!activeConfig || isSpinning || activeConfig.items.length === 0 || showScoreEntry || gameSaved) return;
     setIsSpinning(true);
     setResult(null);
-    setRedirectTimer(null);
 
     const items = activeConfig.items as any[];
     const totalWeight = items.reduce((s: number, i: any) => s + (i.weight || 1), 0);
@@ -262,29 +265,30 @@ export default function SpinnerGame() {
       setResult(selectedItem.label);
       setIsSpinning(false);
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ["#1a237e", "#ffd700", "#f4c430"] });
-      recordSpin.mutate({ data: { configId: activeConfig.id, resultLabel: selectedItem.label } });
+      setSpinsDone((prev: number) => {
+        const next = prev + 1;
+        if (next >= SPINS_PER_GAME) {
+          setShowScoreEntry(true);
+        }
+        return next;
+      });
     }, spinDuration);
   };
 
-  // Auto-redirect to games when spins are exhausted
-  useEffect(() => {
-    if (!result || isSpinning || redirectTimer !== null) return;
-    const used = (progress?.used ?? 0) + 1;
-    const limit = progress?.limit ?? 3;
-    if (used >= limit) {
-      setRedirectTimer(5);
-    }
-  }, [result, isSpinning, progress, redirectTimer]);
+  const handleAdminScore = (points: number) => {
+    if (!activeConfig || gameSaved) return;
+    setAdminPoints(points);
+    recordSpin.mutate({ data: { configId: activeConfig.id, resultLabel: result || "", pointsEarned: points } });
+    setGameSaved(true);
+  };
 
-  useEffect(() => {
-    if (redirectTimer === null) return;
-    if (redirectTimer <= 0) {
-      navigate("/games");
-      return;
-    }
-    const t = setTimeout(() => setRedirectTimer((v: number | null) => v !== null ? v - 1 : null), 1000);
-    return () => clearTimeout(t);
-  }, [redirectTimer, navigate]);
+  const handlePlayAgain = () => {
+    setSpinsDone(0);
+    setShowScoreEntry(false);
+    setAdminPoints(null);
+    setGameSaved(false);
+    setResult(null);
+  };
 
   if (isLoading) {
     return (
@@ -332,11 +336,52 @@ export default function SpinnerGame() {
         {displayMode === "flash" && <FlashDisplay items={activeConfig.items as any[]} isSpinning={isSpinning} targetIndex={targetIndex} />}
       </div>
       <div className="pb-6 pt-2 flex justify-center flex-col items-center gap-3">
-        <SpinResult result={result} isSpinning={isSpinning} onSpin={handleSpin} exhausted={progress?.isComplete} label={displayMode === "wheel" ? "ਘੁੰਮਾਓ!" : displayMode === "slot-vertical" ? "▼ ਘੁੰਮਾਓ ▼" : displayMode === "slot-horizontal" ? "◄► ਘੁੰਮਾਓ" : "⚡ ਝਪਕੀ!"} />
-        {redirectTimer !== null && (
-          <div className="text-center bg-yellow-50 border-2 border-yellow-200 rounded-xl px-4 py-2">
-            <p className="text-sm font-bold text-yellow-800">ਮੌਕੇ ਪੂਰੇ! {redirectTimer} ਸਕਿੰਟਾਂ ਵਿੱਚ ਖੇਡਾਂ ਵੱਲ ਵਾਪਸ…</p>
+        {/* Admin score entry after all spins */}
+        {showScoreEntry && !gameSaved && (
+          <div className="w-full max-w-sm px-4 space-y-4">
+            <div className="bg-white rounded-2xl border-4 border-[#e8e0d0] shadow-xl p-5 text-center">
+              <div className="text-5xl mb-2">⭐</div>
+              <h3 className="text-xl font-black text-primary mb-1">ਅੰਕ ਦਰਜ ਕਰੋ</h3>
+              <p className="text-sm text-muted-foreground font-bold mb-4">Admin: ਖਿਡਾਰੀ ਦੇ ਅੰਕ ਚੁਣੋ</p>
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                {[10, 20, 30, 40, 50].map((pts) => (
+                  <button
+                    key={pts}
+                    onClick={() => handleAdminScore(pts)}
+                    className="h-14 bg-primary/10 border-2 border-primary/30 rounded-xl text-lg font-black text-primary hover:bg-primary hover:text-white transition-all"
+                  >
+                    {pts}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
+        )}
+
+        {/* Game saved / done state */}
+        {gameSaved && (
+          <div className="w-full max-w-sm px-4 space-y-4">
+            <div className="bg-green-50 rounded-2xl border-4 border-green-200 shadow-xl p-5 text-center">
+              <div className="text-5xl mb-2">🎉</div>
+              <h3 className="text-xl font-black text-green-700 mb-1">ਸੇਵ ਹੋ ਗਏ!</h3>
+              <p className="text-2xl font-black text-primary mb-1">{adminPoints} ਅੰਕ</p>
+              <div className="flex gap-2 mt-4">
+                {!progress?.isComplete && (
+                  <Button onClick={handlePlayAgain} className="flex-1 h-12 rounded-xl bg-primary text-white">
+                    ਦੁਬਾਰਾ ਖੇਡੋ
+                  </Button>
+                )}
+                <Button onClick={() => navigate("/games")} variant="outline" className="flex-1 h-12 rounded-xl border-2 border-[#d4c9a8]">
+                  ਖੇਡਾਂ ਵੱਲ
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Normal spin button */}
+        {!showScoreEntry && !gameSaved && (
+          <SpinResult result={result} isSpinning={isSpinning} onSpin={handleSpin} exhausted={progress?.isComplete} label={displayMode === "wheel" ? "ਘੁੰਮਾਓ!" : displayMode === "slot-vertical" ? "▼ ਘੁੰਮਾਓ ▼" : displayMode === "slot-horizontal" ? "◄► ਘੁੰਮਾਓ" : "⚡ ਝਪਕੀ!"} />
         )}
       </div>
     </MobileContainer>

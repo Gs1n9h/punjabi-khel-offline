@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
-import { useListTongueTwisters, useSubmitTongueTwisterRecording } from "@/lib/offline-api";
+import { useListTongueTwisters, useSubmitTongueTwisterRecording, useGetGameProgress } from "@/lib/offline-api";
 import { Button } from "@/components/ui/button";
 import { Mic, Square, UploadCloud } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function TongueTwisterGame() {
   const { data: twisters, isLoading } = useListTongueTwisters();
   const submitRecording = useSubmitTongueTwisterRecording();
+  const { data: progress } = useGetGameProgress("tongue-twister");
   const { toast } = useToast();
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -19,15 +20,18 @@ export default function TongueTwisterGame() {
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [isFlashing, setIsFlashing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [showScoreEntry, setShowScoreEntry] = useState(false);
+  const [adminPoints, setAdminPoints] = useState<number | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
-  const activeTwister = twisters?.filter(t => t.isActive)?.[currentIndex];
+  const activeTwisters = twisters?.filter(t => t.isActive) ?? [];
+  const activeTwister = activeTwisters[currentIndex];
 
   const handleNext = () => {
-    if (twisters && currentIndex < twisters.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+    if (currentIndex < activeTwisters.length - 1) {
+      setCurrentIndex((prev: number) => prev + 1);
       resetState();
     }
   };
@@ -36,6 +40,8 @@ export default function TongueTwisterGame() {
     setAudioUrl(null);
     setAudioBlob(null);
     setIsRecording(false);
+    setShowScoreEntry(false);
+    setAdminPoints(null);
   };
 
   const startRecording = async () => {
@@ -77,17 +83,16 @@ export default function TongueTwisterGame() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleAdminScore = async (points: number) => {
     if (!audioBlob || !activeTwister) return;
-
+    setAdminPoints(points);
     setIsUploading(true);
     try {
       await submitRecording.mutateAsync({
         id: activeTwister.id,
-        data: { audioUrl: audioUrl || "", durationSeconds: 0 }
+        data: { audioUrl: audioUrl || "", durationSeconds: 0, pointsEarned: points }
       });
-
-      toast({ title: "ਸਥਾਨਕ ਤੌਰ 'ਤੇ ਸੰਭਾਲਿਆ! ਵਧੀਆ ਅਭਿਆਸ।" });
+      toast({ title: `${points} ਅੰਕ ਸੇਵ ਹੋ ਗਏ!` });
       handleNext();
     } catch (err) {
       toast({ title: "ਰਿਕਾਰਡਿੰਗ ਸੰਭਾਲ ਨਹੀਂ ਸਕੀ", variant: "destructive" });
@@ -107,12 +112,27 @@ export default function TongueTwisterGame() {
     );
   }
 
+  if (progress?.isComplete) {
+    return (
+      <MobileContainer className="bg-gradient-to-b from-[#FFF8F0] to-orange-50">
+        <PageHeader title="ਬੋਲੀ" subtitle="ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ" showBack />
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+          <div className="text-7xl mb-4">🎙️</div>
+          <h2 className="text-3xl font-black text-primary mb-2">ਮੌਕੇ ਪੂਰੇ ਹੋ ਗਏ!</h2>
+          <p className="text-muted-foreground font-bold">ਇਸ ਖਿਡਾਰੀ ਲਈ ਬੋਲੀ ਦੇ ਸਾਰੇ ਮੌਕੇ ਵਰਤੇ ਜਾ ਚੁੱਕੇ ਹਨ।</p>
+        </div>
+      </MobileContainer>
+    );
+  }
+
   if (!activeTwister) {
     return (
-      <MobileContainer>
-        <PageHeader title="ਬੋਲੀ" showBack />
-        <div className="p-4 flex flex-col items-center justify-center h-64 text-center">
-          <p className="font-bold text-muted-foreground text-xl">ਤੁਸੀਂ ਸਾਰੀਆਂ ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ ਕੀਤੀਆਂ!</p>
+      <MobileContainer className="bg-gradient-to-b from-[#FFF8F0] to-orange-50">
+        <PageHeader title="ਬੋਲੀ" subtitle={`ਬਾਕੀ ਮੌਕੇ: ${progress?.remaining ?? 0}/${progress?.limit ?? 0}`} showBack />
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+          <div className="text-7xl mb-4">🎙️</div>
+          <h2 className="text-3xl font-black text-primary mb-2">ਸਭ ਕੁਝ ਹੋ ਗਿਆ!</h2>
+          <p className="text-muted-foreground font-bold">ਤੁਸੀਂ ਸਾਰੀਆਂ ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ ਕੀਤੀਆਂ!</p>
         </div>
       </MobileContainer>
     );
@@ -120,7 +140,7 @@ export default function TongueTwisterGame() {
 
   return (
     <MobileContainer className="bg-gradient-to-b from-[#FFF8F0] to-orange-50">
-      <PageHeader title="ਬੋਲੀ" subtitle="ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ" showBack />
+      <PageHeader title="ਬੋਲੀ" subtitle={`ਬਾਕੀ ਮੌਕੇ: ${progress?.remaining ?? 0}/${progress?.limit ?? 0}`} showBack />
 
       <div className="flex-1 flex flex-col p-6">
         <motion.div 
@@ -156,8 +176,8 @@ export default function TongueTwisterGame() {
                 size="icon"
                 onClick={isRecording ? stopRecording : startRecording}
                 className={`w-24 h-24 rounded-full shadow-xl transition-all ${
-                  isRecording 
-                    ? "bg-red-500 hover:bg-red-600 animate-pulse border-4 border-red-200" 
+                  isRecording
+                    ? "bg-red-500 hover:bg-red-600 animate-pulse border-4 border-red-200"
                     : "bg-primary hover:bg-[#D4600E] border-4 border-orange-200"
                 }`}
               >
@@ -167,32 +187,46 @@ export default function TongueTwisterGame() {
                 {isRecording ? "ਰਿਕਾਰਡਿੰਗ…" : "ਰਿਕਾਰਡ ਕਰਨ ਲਈ ਛੂਹੋ"}
               </p>
             </div>
-          ) : (
+          ) : !showScoreEntry ? (
             <div className="space-y-4 bg-white p-4 rounded-2xl border-2 border-orange-100">
               <audio src={audioUrl} controls className="w-full" />
-              
+
               <div className="grid grid-cols-2 gap-3">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={resetState}
                   className="rounded-xl border-2 hover:bg-orange-50"
                   disabled={isUploading}
                 >
                   ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼
                 </Button>
-                <Button 
-                  onClick={handleSubmit}
+                <Button
+                  onClick={() => setShowScoreEntry(true)}
                   className="rounded-xl bg-primary text-white shadow-md"
-                  disabled={isUploading}
                 >
-                  {isUploading ? "ਜਮ੍ਹਾਂ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ…" : (
-                    <>
-                      <UploadCloud className="w-4 h-4 mr-2" />
-                      ਜਮ੍ਹਾਂ ਕਰੋ
-                    </>
-                  )}
+                  <UploadCloud className="w-4 h-4 mr-2" />
+                  ਅੰਕ ਦਰਜ ਕਰੋ
                 </Button>
               </div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl border-4 border-[#e8e0d0] shadow-xl p-5 text-center">
+              <div className="text-5xl mb-2">⭐</div>
+              <h3 className="text-xl font-black text-primary mb-1">ਅੰਕ ਦਰਜ ਕਰੋ</h3>
+              <p className="text-sm text-muted-foreground font-bold mb-4">Admin: ਖਿਡਾਰੀ ਦੇ ਅੰਕ ਚੁਣੋ</p>
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                {[10, 20, 30, 40, 50].map((pts) => (
+                  <button
+                    key={pts}
+                    onClick={() => handleAdminScore(pts)}
+                    disabled={isUploading}
+                    className="h-14 bg-primary/10 border-2 border-primary/30 rounded-xl text-lg font-black text-primary hover:bg-primary hover:text-white transition-all disabled:opacity-50"
+                  >
+                    {pts}
+                  </button>
+                ))}
+              </div>
+              {isUploading && <p className="text-sm text-muted-foreground">ਸੇਵ ਹੋ ਰਿਹਾ ਹੈ…</p>}
             </div>
           )}
         </div>

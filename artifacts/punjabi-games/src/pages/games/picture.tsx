@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { Link } from "wouter";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
@@ -8,6 +8,23 @@ import { useGetGameProgress, useGetMyStats, useListPictureQuestions, useSubmitPi
 import { AnimatePresence, motion } from "framer-motion";
 import confetti from "canvas-confetti";
 
+function playBuzz() {
+  try {
+    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "square";
+    osc.frequency.setValueAtTime(150, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.3);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.3);
+  } catch { /* ignore audio errors */ }
+}
+
 export default function PictureGame() {
   const { data: questions, isLoading } = useListPictureQuestions();
   const { data: progress } = useGetGameProgress("picture");
@@ -16,41 +33,56 @@ export default function PictureGame() {
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [result, setResult] = useState<{ correct: boolean; pointsEarned: number; correctAnswer: string } | null>(null);
-  const [submittedCount, setSubmittedCount] = useState(0);
+  const [attemptsLeft, setAttemptsLeft] = useState(3);
   const [showGameOver, setShowGameOver] = useState(false);
+  const [shakeKey, setShakeKey] = useState(0);
 
   const activeQuestions = questions ?? [];
   const currentQuestion = useMemo(() => activeQuestions[index % Math.max(1, activeQuestions.length)], [activeQuestions, index]);
 
-  // Auto-advance after showing result for 1.5s
+  // Auto-advance ONLY on correct answers
   useEffect(() => {
-    if (!result) return;
+    if (!result || !result.correct) return;
     const timer = setTimeout(() => {
-      const limit = progress?.limit ?? 1;
-      if (submittedCount >= limit || index >= activeQuestions.length - 1) {
+      if (index >= activeQuestions.length - 1) {
         setShowGameOver(true);
       } else {
         setSelected(null);
         setResult(null);
         setIndex((prev: number) => prev + 1);
       }
-    }, 1500);
+    }, 1200);
     return () => clearTimeout(timer);
-  }, [result, submittedCount, index, activeQuestions.length, progress?.limit]);
+  }, [result, index, activeQuestions.length]);
 
-  const handleSelect = (option: string) => {
-    if (!currentQuestion || selected || showGameOver) return;
+  const handleSelect = useCallback((option: string) => {
+    if (!currentQuestion || selected || showGameOver || attemptsLeft <= 0) return;
     setSelected(option);
     submitAnswer.mutate({ data: { questionId: currentQuestion.id, selectedAnswer: option } }, {
       onSuccess: (data) => {
-        setResult(data);
-        setSubmittedCount((c: number) => c + 1);
         if (data.correct) {
+          setResult(data);
           confetti({ particleCount: 90, spread: 70, origin: { y: 0.58 }, colors: ["#1a237e", "#ffd700", "#4CAF50"] });
+        } else {
+          // Wrong: consume attempt, shake+buzz, stay on same question
+          setAttemptsLeft((prev: number) => {
+            const next = prev - 1;
+            if (next <= 0) {
+              setTimeout(() => setShowGameOver(true), 800);
+            }
+            return next;
+          });
+          playBuzz();
+          setShakeKey((k: number) => k + 1);
+          // Clear selection after short delay so they can retry
+          setTimeout(() => {
+            setSelected(null);
+            setResult(null);
+          }, 800);
         }
       }
     });
-  };
+  }, [currentQuestion, selected, showGameOver, attemptsLeft, submitAnswer]);
 
   if (isLoading) {
     return (
@@ -66,13 +98,16 @@ export default function PictureGame() {
   }
 
   if (showGameOver || progress?.isComplete) {
+    const allCorrect = index >= activeQuestions.length - 1 && result?.correct;
     return (
       <MobileContainer className="bg-gradient-to-b from-[#FAF6EE] to-[#E8E0D0]">
         <PageHeader title="ਤਸਵੀਰ ਪਛਾਣ" showBack backHref="/games" />
         <div className="flex-1 flex items-center justify-center p-6 text-center">
           <div className="w-full max-w-xl bg-white rounded-[32px] border-4 border-[#e8e0d0] shadow-xl p-8 space-y-5">
-            <div className="text-7xl">🖼️</div>
-            <h2 className="text-3xl font-black text-primary">ਮੌਕੇ ਪੂਰੇ ਹੋ ਗਏ!</h2>
+            <div className="text-7xl">{allCorrect ? "🎉" : "🖼️"}</div>
+            <h2 className="text-3xl font-black text-primary">
+              {allCorrect ? "ਸਾਰੇ ਸਹੀ!" : "ਮੌਕੇ ਪੂਰੇ ਹੋ ਗਏ!"}
+            </h2>
             <div className="bg-primary/10 rounded-2xl p-4">
               <p className="text-sm font-bold text-muted-foreground">ਤੁਹਾਡੇ ਕੁੱਲ ਅੰਕ</p>
               <p className="text-5xl font-black text-primary">{stats?.totalPoints || 0}</p>
@@ -88,9 +123,15 @@ export default function PictureGame() {
 
   return (
     <MobileContainer className="bg-[radial-gradient(circle_at_top,#ECFDF5_0%,#FAF6EE_48%,#E8E0D0_100%)]">
-      <PageHeader title="ਤਸਵੀਰ ਪਛਾਣ" subtitle={`ਬਾਕੀ ਮੌਕੇ: ${progress?.remaining ?? 0}/${progress?.limit ?? 0}`} showBack backHref="/games" />
+      <PageHeader title="ਤਸਵੀਰ ਪਛਾਣ" subtitle={`ਬਾਕੀ ਕੋਸ਼ਿਸ਼ਾਂ: ${attemptsLeft}`} showBack backHref="/games" />
       <div className="flex-1 grid content-stretch gap-4 p-4 sm:p-6 md:grid-cols-[1.1fr_0.9fr] md:items-center">
-        <motion.div key={currentQuestion.id} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="bg-white/95 border-4 border-white rounded-[36px] shadow-xl p-4 sm:p-6 flex flex-col items-center justify-center min-h-[300px] md:min-h-[520px]">
+        <motion.div
+          key={`${currentQuestion.id}-${shakeKey}`}
+          initial={{ opacity: 0, scale: 0.96, x: 0 }}
+          animate={shakeKey > 0 && !result?.correct ? { opacity: 1, scale: 1, x: [0, -12, 12, -12, 12, 0] } : { opacity: 1, scale: 1, x: 0 }}
+          transition={shakeKey > 0 && !result?.correct ? { duration: 0.4 } : { duration: 0.3 }}
+          className="bg-white/95 border-4 border-white rounded-[36px] shadow-xl p-4 sm:p-6 flex flex-col items-center justify-center min-h-[300px] md:min-h-[520px]"
+        >
           <div className="w-full flex-1 rounded-[28px] bg-gradient-to-br from-green-50 to-yellow-50 border-4 border-green-100 flex items-center justify-center overflow-hidden">
             {currentQuestion.imageUrl ? (
               <img src={currentQuestion.imageUrl} alt="ਤਸਵੀਰ" className="w-full h-full object-cover" />
@@ -124,15 +165,24 @@ export default function PictureGame() {
           })}
 
           <AnimatePresence>
-            {result && (
-              <motion.div initial={{ opacity: 0, y: 12, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0 }} className={`rounded-[28px] border-4 p-5 text-center shadow-xl ${result.correct ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
-                <div className="text-6xl mb-2">{result.correct ? "🎉" : "😬"}</div>
-                <h2 className={`text-3xl font-black ${result.correct ? "text-green-700" : "text-red-600"}`}>{result.correct ? "ਸਹੀ!" : "ਓਹੋ!"}</h2>
+            {result && result.correct && (
+              <motion.div initial={{ opacity: 0, y: 12, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0 }} className="rounded-[28px] border-4 p-5 text-center shadow-xl bg-green-50 border-green-200">
+                <div className="text-6xl mb-2">🎉</div>
+                <h2 className="text-3xl font-black text-green-700">ਸਹੀ!</h2>
                 <p className="font-bold text-muted-foreground mt-1">ਸਹੀ ਜਵਾਬ: <span className="text-foreground text-xl font-black">{result.correctAnswer}</span></p>
                 <p className="font-black text-primary mt-2">+{result.pointsEarned} ਅੰਕ</p>
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Wrong answer inline feedback */}
+          {selected && !result?.correct && attemptsLeft > 0 && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-[28px] border-4 p-4 text-center shadow-xl bg-red-50 border-red-200">
+              <div className="text-4xl mb-1">😬</div>
+              <h2 className="text-xl font-black text-red-600">ਓਹੋ! ਗਲਤ ਜਵਾਬ</h2>
+              <p className="text-sm font-bold text-muted-foreground mt-1">{attemptsLeft} ਕੋਸ਼ਿਸ਼ਾਂ ਬਾਕੀ — ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ!</p>
+            </motion.div>
+          )}
         </div>
       </div>
     </MobileContainer>

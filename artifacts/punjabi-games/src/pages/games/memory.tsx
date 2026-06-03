@@ -11,9 +11,9 @@ type Phase = "idle" | "showing" | "hiding" | "correct" | "wrong" | "gameover";
 
 function getShowDuration(level: number): number {
   // ≤3 digits: keep the original 2.5s show time
-  // >3 digits: show time = digits in seconds (4→4s, 5→5s, 6→6s…)
+  // >3 digits: show time = (digits - 1) seconds (4→3s, 5→4s, 6→5s…)
   if (level <= 3) return 2500;
-  return level * 1000;
+  return (level - 1) * 1000;
 }
 
 const PUNJABI_DIGITS = ["੦","੧","੨","੩","੪","੫","੬","੭","੮","੯"];

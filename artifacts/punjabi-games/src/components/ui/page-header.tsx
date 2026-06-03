@@ -31,7 +31,15 @@ export function PageHeader({ title, subtitle, showBack, backHref, action, classN
           )}
           <h1 className="text-2xl font-black text-foreground tracking-tight">{title}</h1>
         </div>
-        {action && <div>{action}</div>}
+        <div className="shrink-0">
+          {action || (
+            <img
+              src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.png`}
+              alt="ਗੁਰਮੁਖੀ ਵੇਹੜਾ"
+              className="w-12 h-12 rounded-full border-2 border-primary shadow-sm bg-white relative z-20"
+            />
+          )}
+        </div>
       </div>
       {subtitle && (
         <p className="text-muted-foreground text-sm font-medium pl-1">{subtitle}</p>

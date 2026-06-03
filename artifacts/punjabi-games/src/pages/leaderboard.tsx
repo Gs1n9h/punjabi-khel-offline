@@ -49,8 +49,9 @@ export default function Leaderboard() {
                   <AvatarFallback className="font-bold">{entry.displayName?.charAt(0) || entry.username.charAt(0)}</AvatarFallback>
                 </Avatar>
 
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <p className="font-bold text-base line-clamp-1">{entry.displayName || entry.username}</p>
+                  {entry.place && <p className="text-xs text-muted-foreground font-bold line-clamp-1">{entry.place}</p>}
                 </div>
 
                 <div className="text-right">

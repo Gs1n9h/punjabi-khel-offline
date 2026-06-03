@@ -10,6 +10,7 @@ import SpinnerGame from "@/pages/games/spinner";
 import TongueTwisterGame from "@/pages/games/tongue-twister";
 import KnowledgeTest from "@/pages/games/knowledge-test";
 import MemoryGame from "@/pages/games/memory";
+import PictureGame from "@/pages/games/picture";
 import Leaderboard from "@/pages/leaderboard";
 import Profile from "@/pages/profile";
 import AdminDashboard from "@/pages/admin";
@@ -36,6 +37,7 @@ function Router() {
       <Route path="/games/tongue-twister" component={TongueTwisterGame} />
       <Route path="/games/knowledge-test" component={KnowledgeTest} />
       <Route path="/games/memory" component={MemoryGame} />
+      <Route path="/games/picture" component={PictureGame} />
       
       <Route path="/leaderboard" component={Leaderboard} />
       <Route path="/profile" component={Profile} />

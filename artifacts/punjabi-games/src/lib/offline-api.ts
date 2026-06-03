@@ -127,6 +127,8 @@ export function useSubmitMemoryGameSession() { return mutation<{ data: { maxLeve
 export function useListPictureQuestions() { useVersion(); return { data: read<PictureQuestion[]>(keys.pictures, seedPictures).filter(q => q.isActive !== false), isLoading: false }; }
 export function useSubmitPictureAnswer() { return mutation<{ data: { questionId: number; selectedAnswer: string } }, { correct: boolean; pointsEarned: number; correctAnswer: string }>(({ data }) => { const q = read<PictureQuestion[]>(keys.pictures, seedPictures).find(x => x.id === data.questionId); const correct = q?.answer === data.selectedAnswer; const pointsEarned = correct ? 20 : 0; saveSession({ type: "picture", pointsEarned, questionId: data.questionId, selectedAnswer: data.selectedAnswer, correctAnswer: q?.answer, correct }); return { correct, pointsEarned, correctAnswer: q?.answer ?? "" }; }); }
 export function useForfeitPictureGame() { return mutation<{}, void>(() => { saveSession({ type: "picture", pointsEarned: 0, questionId: 0, selectedAnswer: "forfeit", correctAnswer: "", correct: false }); }); }
+export function useForfeitTongueTwister() { return mutation<{}, void>(() => { saveSession({ type: "tongue-twister", pointsEarned: 0, audioUrl: "", durationSeconds: 0 }); }); }
+export function useForfeitSpin() { return mutation<{}, void>(() => { saveSession({ type: "spin", pointsEarned: 0, configId: 0, resultLabel: "forfeit" }); }); }
 export function useGetMemoryGameLeaderboard(_opts?: { params?: { limit?: number } }) {
   useVersion();
   const user = read<User>(keys.user, seedUser);

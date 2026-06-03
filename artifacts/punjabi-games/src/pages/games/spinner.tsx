@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
-import { useListSpinnerConfigs, useRecordSpin, useGetGameProgress } from "@/lib/offline-api";
+import { useListSpinnerConfigs, useRecordSpin, useGetGameProgress, useForfeitSpin } from "@/lib/offline-api";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { motion, useAnimationControls } from "framer-motion";
@@ -232,6 +232,7 @@ export default function SpinnerGame() {
   const { data: configs, isLoading } = useListSpinnerConfigs();
   const { data: progress } = useGetGameProgress("spin");
   const recordSpin = useRecordSpin();
+  const forfeitSpin = useForfeitSpin();
 
   type Phase = "idle" | "spinning" | "result" | "scoring" | "saved";
   const [phase, setPhase] = useState<Phase>("idle");
@@ -270,6 +271,8 @@ export default function SpinnerGame() {
       setResult(selectedItem.label);
       const newCount = spinsThisGame + 1;
       setSpinsThisGame(newCount);
+      // Record each individual spin so attempts are tracked even if user hits back
+      recordSpin.mutate({ data: { configId: activeConfig.id, resultLabel: selectedItem.label, pointsEarned: 0 } });
       if (newCount >= SPINS_PER_GAME) {
         setPhase("scoring");
       } else {
@@ -295,9 +298,14 @@ export default function SpinnerGame() {
     setPhase("idle");
   };
 
+  const handleBackForfeit = () => {
+    forfeitSpin.mutate({});
+    navigate("/games");
+  };
+
   if (isLoading) {
     return (
-      <MobileContainer><PageHeader title="ਚਰਖਾ" showBack />
+      <MobileContainer><PageHeader title="ਚਰਖਾ" showBack onBack={handleBackForfeit} />
         <div className="flex-1 flex items-center justify-center p-4"><Skeleton className="w-64 h-64 rounded-full" /></div>
       </MobileContainer>
     );
@@ -305,7 +313,7 @@ export default function SpinnerGame() {
 
   if (!activeConfig || activeConfig.items.length === 0) {
     return (
-      <MobileContainer><PageHeader title="ਚਰਖਾ" showBack />
+      <MobileContainer><PageHeader title="ਚਰਖਾ" showBack onBack={handleBackForfeit} />
         <div className="flex-1 flex items-center justify-center p-4"><p className="text-muted-foreground font-bold">ਕੋਈ ਚਰਖਾ ਸਥਾਪਤ ਨਹੀਂ।</p></div>
       </MobileContainer>
     );
@@ -320,7 +328,7 @@ export default function SpinnerGame() {
         phase === "spinning" || phase === "result" ? `ਇਸ ਖੇਡ ਵਿੱਚ: ${spinsThisGame}/${SPINS_PER_GAME} ਘੁੰਮਾਅ` :
         phase === "scoring" ? "ਅੰਕ ਦਰਜ ਕਰੋ" :
         "ਸੇਵ ਹੋ ਗਏ!"
-      } showBack />
+      } showBack onBack={handleBackForfeit} />
 
       {/* Display mode selector */}
       <div className="flex justify-center gap-2 py-2 px-4">

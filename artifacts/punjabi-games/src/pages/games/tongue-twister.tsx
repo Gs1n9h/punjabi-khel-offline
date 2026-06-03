@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
-import { useListTongueTwisters, useSubmitTongueTwisterRecording, useGetGameProgress } from "@/lib/offline-api";
+import { useListTongueTwisters, useSubmitTongueTwisterRecording, useGetGameProgress, useForfeitTongueTwister } from "@/lib/offline-api";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, SkipForward } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
@@ -21,6 +21,8 @@ export default function TongueTwisterGame() {
   const [adminPoints, setAdminPoints] = useState<number | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [gameSaved, setGameSaved] = useState(false);
+  const [skippedIds, setSkippedIds] = useState<Set<number>>(new Set());
+  const forfeitGame = useForfeitTongueTwister();
 
   const activeTwisters = twisters?.filter(t => t.isActive) ?? [];
   const activeTwister = activeTwisters[currentIndex];
@@ -32,6 +34,21 @@ export default function TongueTwisterGame() {
     } else {
       setCurrentIndex((prev: number) => prev + 1);
     }
+  };
+
+  const handleSkip = () => {
+    if (!activeTwister || showScoreEntry || gameSaved) return;
+    setSkippedIds((prev: Set<number>) => new Set(prev).add(activeTwister.id));
+    if (isLast) {
+      setShowScoreEntry(true);
+    } else {
+      setCurrentIndex((prev: number) => prev + 1);
+    }
+  };
+
+  const handleBackForfeit = () => {
+    forfeitGame.mutate({});
+    navigate("/games");
   };
 
   const handleAdminScore = async (points: number) => {
@@ -55,7 +72,7 @@ export default function TongueTwisterGame() {
   if (isLoading) {
     return (
       <MobileContainer>
-        <PageHeader title="ਬੋਲੀ" showBack />
+        <PageHeader title="ਆਖੀਂ ਪਰ ਅੜੀਂ ਨਾਂ" showBack onBack={handleBackForfeit} />
         <div className="p-4 space-y-4">
           <Skeleton className="h-40 w-full rounded-2xl" />
         </div>
@@ -66,7 +83,7 @@ export default function TongueTwisterGame() {
   if (progress?.isComplete) {
     return (
       <MobileContainer className="bg-gradient-to-b from-[#FFF8F0] to-orange-50">
-        <PageHeader title="ਆਖੀਂ ਪਰ ਅੜੀਂ ਨਾਂ" subtitle="ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ" showBack />
+        <PageHeader title="ਆਖੀਂ ਪਰ ਅੜੀਂ ਨਾਂ" subtitle="ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ" showBack onBack={handleBackForfeit} />
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
           <div className="text-7xl mb-4">🎙️</div>
           <h2 className="text-3xl font-black text-primary mb-2">ਮੌਕੇ ਪੂਰੇ ਹੋ ਗਏ!</h2>
@@ -79,7 +96,7 @@ export default function TongueTwisterGame() {
   if (!activeTwister) {
     return (
       <MobileContainer className="bg-gradient-to-b from-[#FFF8F0] to-orange-50">
-        <PageHeader title="ਆਖੀਂ ਪਰ ਅੜੀਂ ਨਾਂ" subtitle={`ਬਾਕੀ ਮੌਕੇ: ${progress?.remaining ?? 0}/${progress?.limit ?? 0}`} showBack />
+        <PageHeader title="ਆਖੀਂ ਪਰ ਅੜੀਂ ਨਾਂ" subtitle={`ਬਾਕੀ ਮੌਕੇ: ${progress?.remaining ?? 0}/${progress?.limit ?? 0}`} showBack onBack={handleBackForfeit} />
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
           <div className="text-7xl mb-4">🎙️</div>
           <h2 className="text-3xl font-black text-primary mb-2">ਸਭ ਕੁਝ ਹੋ ਗਿਆ!</h2>
@@ -99,6 +116,7 @@ export default function TongueTwisterGame() {
           `${currentIndex + 1}/${activeTwisters.length} — ਬਾਕੀ ਮੌਕੇ: ${progress?.remaining ?? 0}/${progress?.limit ?? 0}`
         }
         showBack
+        onBack={handleBackForfeit}
       />
 
       <div className="flex-1 flex flex-col p-6">
@@ -131,14 +149,22 @@ export default function TongueTwisterGame() {
               )}
             </motion.div>
 
-            <div className="mt-8">
+            <div className="mt-8 space-y-3">
               <Button
                 onClick={handleNext}
                 className="w-full h-16 text-xl rounded-2xl bg-primary hover:bg-[#D4600E] text-white shadow-lg border-b-4 border-[#0f1540] active:border-b-0 active:translate-y-1 transition-all"
               >
-                {isLast ? "ਅੰਕ ਦਰਜ ਕਰੋ →" : "ਅਗਲਾ →"}
+                {isLast ? "ਅੰਕ ਦਰਜ ਕਰੋ" : "ਅਗਲਾ"}
                 <ArrowRight className="w-6 h-6 ml-2" />
               </Button>
+              <button
+                onClick={handleSkip}
+                disabled={showScoreEntry || gameSaved}
+                className="w-full h-12 rounded-2xl border-2 border-dashed border-slate-300 text-slate-500 font-bold text-sm hover:border-slate-400 hover:text-slate-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                <SkipForward className="w-4 h-4" />
+                ਛੱਡੋ (ਕੋਈ ਅੰਕ ਨਹੀਂ)
+              </button>
             </div>
           </>
         )}

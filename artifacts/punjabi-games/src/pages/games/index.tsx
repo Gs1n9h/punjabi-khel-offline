@@ -29,7 +29,7 @@ const games = [
     title: "ਬੋਲੀ",
     subtitle: "ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ ਪੜ੍ਹੋ!",
     emoji: "🎙️",
-    color: "bg-orange-50 text-orange-600 border-orange-200",
+    color: "bg-yellow-50 text-yellow-700 border-yellow-200",
     href: "/games/tongue-twister"
   }
 ];
@@ -39,12 +39,12 @@ export default function GamesHub() {
   const resetScores = useResetScores();
 
   return (
-    <MobileContainer withBottomNav className="bg-[radial-gradient(circle_at_top,#FFE8B8_0%,#FFF8F0_42%,#FFE4D2_100%)]">
-      <PageHeader title="ਪੰਜਾਬੀ ਖੇਡ ਮੈਦਾਨ" subtitle="ਇੱਕ ਖੇਡ ਚੁਣੋ ਅਤੇ ਖੇਡਣਾ ਸ਼ੁਰੂ ਕਰੋ!" />
+    <MobileContainer withBottomNav className="bg-[radial-gradient(circle_at_top,#FFF8E1_0%,#FAF6EE_42%,#F0EBE0_100%)]">
+      <PageHeader title="Gurmukhi Vehda" subtitle="ਇੱਕ ਖੇਡ ਚੁਣੋ ਅਤੇ ਖੇਡਣਾ ਸ਼ੁਰੂ ਕਰੋ!" />
       
       <div className="p-4 space-y-6">
         {/* Stats Card */}
-        <div className="bg-gradient-to-br from-primary via-[#F59E0B] to-[#1A56E8] text-primary-foreground rounded-[32px] p-6 shadow-xl shadow-orange-200/70 relative overflow-hidden border-4 border-white">
+        <div className="bg-gradient-to-br from-primary via-secondary to-primary/80 text-primary-foreground rounded-[32px] p-6 shadow-xl shadow-[#1a237e]/20 relative overflow-hidden border-4 border-white">
           <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/20" />
           <div className="absolute -bottom-10 -left-10 w-36 h-36 rounded-full bg-yellow-300/20" />
           <div className="absolute top-0 right-0 p-4 opacity-25">
@@ -81,7 +81,7 @@ export default function GamesHub() {
               transition={{ delay: i * 0.08 }}
             >
               <Link href={game.href}>
-                <div className="bg-white/95 border-4 border-white hover:border-primary rounded-[28px] p-4 flex items-center gap-4 shadow-lg shadow-orange-100/70 hover:shadow-xl hover:-translate-y-1 active:translate-y-0 transition-all cursor-pointer">
+                <div className="bg-white/95 border-4 border-white hover:border-primary rounded-[28px] p-4 flex items-center gap-4 shadow-lg shadow-[#1a237e]/10 hover:shadow-xl hover:-translate-y-1 active:translate-y-0 transition-all cursor-pointer">
                   <div className={`w-20 h-20 rounded-[24px] flex items-center justify-center border-4 text-4xl shadow-inner ${game.color}`}>
                     {game.emoji}
                   </div>

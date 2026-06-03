@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export function Home() {
   return (
-    <MobileContainer className="bg-gradient-to-b from-[#FFF8F0] to-orange-100">
+    <MobileContainer className="bg-gradient-to-b from-[#FAF6EE] to-[#E8E0D0]">
       <div className="flex-1 flex flex-col px-6 pt-12 pb-8">
         <div className="flex-1 flex flex-col items-center justify-center">
           <motion.div
@@ -15,7 +15,7 @@ export function Home() {
             className="mb-8 relative"
           >
             <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
-            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`} alt="ਪੰਜਾਬੀ ਖੇਡ ਮੈਦਾਨ" className="w-48 h-48 drop-shadow-2xl relative z-10" />
+            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`} alt="Gurmukhi Vehda" className="w-48 h-48 drop-shadow-2xl relative z-10" />
           </motion.div>
           
           <motion.div
@@ -25,11 +25,11 @@ export function Home() {
             className="text-center space-y-4 mb-12"
           >
             <h1 className="text-4xl font-black text-primary drop-shadow-sm tracking-tight leading-none">
-              ਪੰਜਾਬੀ<br />
-              <span className="text-secondary">ਖੇਡ ਮੈਦਾਨ</span>
+              Gurmukhi<br />
+              <span className="text-secondary">Vehda</span>
             </h1>
             <p className="text-lg text-muted-foreground font-medium px-4">
-              ਪੰਜਾਬੀ ਸਭਿਆਚਾਰ ਨੂੰ ਸਿੱਖੋ, ਖੇਡੋ ਅਤੇ ਮਨਾਓ!
+              Learn, Play and Celebrate Punjabi Culture!
             </p>
           </motion.div>
 
@@ -40,12 +40,12 @@ export function Home() {
             className="w-full space-y-4 mt-auto"
           >
             <Link href="/sign-up">
-              <Button size="lg" className="w-full h-16 text-xl rounded-2xl bg-primary hover:bg-[#D4600E] text-white shadow-lg shadow-orange-200 border-b-4 border-[#C25000] active:border-b-0 active:translate-y-1 transition-all">
+              <Button size="lg" className="w-full h-16 text-xl rounded-2xl bg-primary hover:bg-[#141b4d] text-white shadow-lg shadow-[#1a237e]/20 border-b-4 border-[#0f1540] active:border-b-0 active:translate-y-1 transition-all">
                 ਖੇਡੋ
               </Button>
             </Link>
             <Link href="/sign-in">
-              <Button size="lg" variant="outline" className="w-full h-16 text-lg rounded-2xl bg-white text-primary border-2 border-orange-200 hover:bg-orange-50 hover:border-primary shadow-sm border-b-4 active:border-b-2 active:translate-y-0.5 transition-all">
+              <Button size="lg" variant="outline" className="w-full h-16 text-lg rounded-2xl bg-white text-primary border-2 border-[#d4c9a8] hover:bg-[#f5f0e0] hover:border-primary shadow-sm border-b-4 active:border-b-2 active:translate-y-0.5 transition-all">
                 ਮੇਰਾ ਖਾਤਾ ਹੈ
               </Button>
             </Link>

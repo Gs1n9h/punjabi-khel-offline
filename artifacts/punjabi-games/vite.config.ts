@@ -34,10 +34,10 @@ export default defineConfig({
         ]
       },
       manifest: {
-        name: 'ਪੰਜਾਬੀ ਖੇਡ ਮੈਦਾਨ',
-        short_name: 'PunjabiKhelMaidaan',
-        description: 'ਪੰਜਾਬੀ ਸਭਿਆਚਾਰ ਨੂੰ ਸਿੱਖੋ, ਖੇਡੋ ਅਤੇ ਮਨਾਓ!',
-        theme_color: '#E8721A',
+        name: 'Gurmukhi Vehda',
+        short_name: 'GurmukhiVehda',
+        description: 'Learn, Play and Celebrate Punjabi Culture!',
+        theme_color: '#1a237e',
         background_color: '#FFF8F0',
         display: 'standalone',
         orientation: 'portrait',

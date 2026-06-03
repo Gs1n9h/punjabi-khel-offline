@@ -75,49 +75,49 @@
   --elevate-1: rgba(0,0,0, .03);
   --elevate-2: rgba(0,0,0, .08);
 
-  /* Punjabi Khel Palette - Saffron, Gold, Orange, Blue */
-  --background: 32 100% 97%; /* #FFF8F0 */
-  --foreground: 26 75% 9%;   /* #2A1806 */
-  --border: 26 25% 85%;
+  /* Gurmukhi Vehda Palette - Navy Blue & Gold */
+  --background: 45 60% 96%; /* #FAF6EE warm cream */
+  --foreground: 232 50% 15%;   /* #141840 navy dark */
+  --border: 45 25% 85%;
   
   --card: 0 0% 100%;
-  --card-foreground: 26 75% 9%;
-  --card-border: 26 25% 90%;
+  --card-foreground: 232 50% 15%;
+  --card-border: 45 25% 90%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 26 75% 9%;
-  --popover-border: 26 25% 90%;
+  --popover-foreground: 232 50% 15%;
+  --popover-border: 45 25% 90%;
 
-  --primary: 26 81% 50%; /* #E8721A Saffron/Orange */
+  --primary: 232 65% 30%; /* #1a237e Navy Blue */
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 222 81% 50%; /* #1A56E8 Royal Blue */
-  --secondary-foreground: 0 0% 100%;
+  --secondary: 45 93% 55%; /* #f4c430 Gold */
+  --secondary-foreground: 232 50% 15%;
 
-  --muted: 32 50% 92%;
-  --muted-foreground: 26 30% 45%;
+  --muted: 45 30% 92%;
+  --muted-foreground: 232 20% 45%;
 
-  --accent: 45 93% 55%; /* Gold/Yellow */
-  --accent-foreground: 26 75% 9%;
+  --accent: 50 100% 50%; /* #ffd700 Bright Yellow */
+  --accent-foreground: 232 50% 15%;
 
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
 
-  --input: 26 25% 85%;
-  --ring: 26 81% 50%;
+  --input: 45 25% 85%;
+  --ring: 232 65% 30%;
 
-  --sidebar: 32 100% 97%;
-  --sidebar-foreground: 26 75% 9%;
-  --sidebar-border: 26 25% 85%;
-  --sidebar-primary: 26 81% 50%;
+  --sidebar: 45 60% 96%;
+  --sidebar-foreground: 232 50% 15%;
+  --sidebar-border: 45 25% 85%;
+  --sidebar-primary: 232 65% 30%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 45 93% 55%;
-  --sidebar-accent-foreground: 26 75% 9%;
-  --sidebar-ring: 26 81% 50%;
+  --sidebar-accent: 50 100% 50%;
+  --sidebar-accent-foreground: 232 50% 15%;
+  --sidebar-ring: 232 65% 30%;
 
-  --chart-1: 26 81% 50%;
-  --chart-2: 222 81% 50%;
-  --chart-3: 45 93% 55%;
+  --chart-1: 232 65% 30%;
+  --chart-2: 45 93% 55%;
+  --chart-3: 50 100% 50%;
   --chart-4: 142 71% 45%; /* Green */
   --chart-5: 330 81% 56%; /* Pink */
 
@@ -127,10 +127,10 @@
   
   --radius: 1rem;
   
-  --shadow-sm: 0 1px 2px 0 rgba(42, 24, 6, 0.05);
-  --shadow: 0 4px 6px -1px rgba(42, 24, 6, 0.1), 0 2px 4px -2px rgba(42, 24, 6, 0.05);
-  --shadow-md: 0 10px 15px -3px rgba(42, 24, 6, 0.1), 0 4px 6px -4px rgba(42, 24, 6, 0.05);
-  --shadow-lg: 0 20px 25px -5px rgba(42, 24, 6, 0.1), 0 8px 10px -6px rgba(42, 24, 6, 0.05);
+  --shadow-sm: 0 1px 2px 0 rgba(20, 24, 64, 0.05);
+  --shadow: 0 4px 6px -1px rgba(20, 24, 64, 0.1), 0 2px 4px -2px rgba(20, 24, 64, 0.05);
+  --shadow-md: 0 10px 15px -3px rgba(20, 24, 64, 0.1), 0 4px 6px -4px rgba(20, 24, 64, 0.05);
+  --shadow-lg: 0 20px 25px -5px rgba(20, 24, 64, 0.1), 0 8px 10px -6px rgba(20, 24, 64, 0.05);
   
   --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
@@ -143,38 +143,38 @@
 
 .dark {
   /* We don't strictly need dark mode for this app, but providing a mapping just in case */
-  --background: 26 75% 9%;
-  --foreground: 32 100% 97%;
-  --border: 26 30% 20%;
-  --card: 26 60% 12%;
-  --card-foreground: 32 100% 97%;
-  --card-border: 26 30% 20%;
-  --popover: 26 60% 12%;
-  --popover-foreground: 32 100% 97%;
-  --popover-border: 26 30% 20%;
-  --primary: 26 90% 60%;
-  --primary-foreground: 26 75% 9%;
-  --secondary: 222 90% 65%;
-  --secondary-foreground: 26 75% 9%;
-  --muted: 26 40% 15%;
-  --muted-foreground: 32 30% 70%;
-  --accent: 45 93% 65%;
-  --accent-foreground: 26 75% 9%;
+  --background: 232 50% 10%;
+  --foreground: 45 60% 96%;
+  --border: 232 30% 20%;
+  --card: 232 40% 12%;
+  --card-foreground: 45 60% 96%;
+  --card-border: 232 30% 20%;
+  --popover: 232 40% 12%;
+  --popover-foreground: 45 60% 96%;
+  --popover-border: 232 30% 20%;
+  --primary: 232 65% 45%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 45 93% 50%;
+  --secondary-foreground: 232 50% 15%;
+  --muted: 232 30% 18%;
+  --muted-foreground: 45 30% 70%;
+  --accent: 50 100% 50%;
+  --accent-foreground: 232 50% 15%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  --input: 26 30% 20%;
-  --ring: 26 90% 60%;
-  --sidebar: 26 60% 12%;
-  --sidebar-foreground: 32 100% 97%;
-  --sidebar-border: 26 30% 20%;
-  --sidebar-primary: 26 90% 60%;
-  --sidebar-primary-foreground: 26 75% 9%;
-  --sidebar-accent: 45 93% 65%;
-  --sidebar-accent-foreground: 26 75% 9%;
-  --sidebar-ring: 26 90% 60%;
-  --chart-1: 26 90% 60%;
-  --chart-2: 222 90% 65%;
-  --chart-3: 45 93% 65%;
+  --input: 232 30% 20%;
+  --ring: 232 65% 45%;
+  --sidebar: 232 40% 12%;
+  --sidebar-foreground: 45 60% 96%;
+  --sidebar-border: 232 30% 20%;
+  --sidebar-primary: 232 65% 45%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 50 100% 50%;
+  --sidebar-accent-foreground: 232 50% 15%;
+  --sidebar-ring: 232 65% 45%;
+  --chart-1: 232 65% 45%;
+  --chart-2: 45 93% 50%;
+  --chart-3: 50 100% 50%;
   --chart-4: 142 71% 55%;
   --chart-5: 330 81% 66%;
 }

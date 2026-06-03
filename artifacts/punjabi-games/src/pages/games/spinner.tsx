@@ -12,7 +12,7 @@ import { MoreVertical } from "lucide-react";
 
 type DisplayMode = "wheel" | "slot-vertical" | "slot-horizontal" | "flash";
 
-const DEFAULT_COLORS = ["#E8721A", "#1A56E8", "#FFB300", "#4CAF50", "#E91E63", "#9C27B0", "#00BCD4", "#FF5722"];
+const DEFAULT_COLORS = ["#1a237e", "#ffd700", "#f4c430", "#4CAF50", "#E91E63", "#9C27B0", "#00BCD4", "#FF5722"];
 
 // ─── Wheel Mode ───────────────────────────────────────────────────
 function WheelDisplay({ items, isSpinning, result, onSpin, targetIndex }: { items: any[], isSpinning: boolean, result: string | null, onSpin: () => void, targetIndex: number }) {
@@ -210,12 +210,12 @@ function FlashDisplay({ items, isSpinning, targetIndex }: { items: any[], isSpin
 function SpinResult({ result, isSpinning, onSpin, label }: { result: string | null, isSpinning: boolean, onSpin: () => void, label: string }) {
   return (
     <div className="w-full max-w-sm space-y-4 px-4">
-      <Button onClick={onSpin} disabled={isSpinning} className="w-full h-16 text-xl rounded-2xl bg-primary hover:bg-[#D4600E] text-white shadow-lg shadow-orange-200 border-b-4 border-[#C25000] active:border-b-0 active:translate-y-1 transition-all">
+      <Button onClick={onSpin} disabled={isSpinning} className="w-full h-16 text-xl rounded-2xl bg-primary hover:bg-[#141b4d] text-white shadow-lg shadow-[#1a237e]/20 border-b-4 border-[#0f1540] active:border-b-0 active:translate-y-1 transition-all">
         {isSpinning ? "ਘੁੰਮ ਰਿਹਾ ਹੈ…" : label}
       </Button>
       <div className="min-h-[120px] flex items-center justify-center">
         {result && !isSpinning && (
-          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-2xl p-6 text-center border-4 border-orange-100 shadow-xl w-full">
+          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-2xl p-6 text-center border-4 border-[#e8e0d0] shadow-xl w-full">
             <p className="text-sm font-bold text-muted-foreground uppercase mb-1">ਤੁਹਾਡਾ ਅੱਖਰ</p>
             <p className="text-3xl font-black text-primary">{result}</p>
           </motion.div>
@@ -256,7 +256,7 @@ export default function SpinnerGame() {
     setTimeout(() => {
       setResult(selectedItem.label);
       setIsSpinning(false);
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ["#E8721A", "#1A56E8", "#FFD700"] });
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ["#1a237e", "#ffd700", "#f4c430"] });
       recordSpin.mutate({ data: { configId: activeConfig.id, resultLabel: selectedItem.label } });
     }, spinDuration);
   };
@@ -280,7 +280,7 @@ export default function SpinnerGame() {
   const displayProps = { items: activeConfig.items as any[], isSpinning, result, onSpin: handleSpin, targetIndex };
 
   return (
-    <MobileContainer className="bg-gradient-to-b from-[#FFF8F0] to-orange-100">
+    <MobileContainer className="bg-gradient-to-b from-[#FAF6EE] to-[#E8E0D0]">
       <PageHeader title="ਚਰਖਾ" showBack />
 
       {/* Display mode selector — visible buttons */}
@@ -292,7 +292,7 @@ export default function SpinnerGame() {
             className={`flex-1 max-w-[140px] py-2 rounded-xl text-sm font-bold transition-all border-2 ${
               displayMode === mode
                 ? "bg-primary text-white border-primary shadow-md"
-                : "bg-white text-muted-foreground border-orange-200 hover:border-orange-300"
+                : "bg-white text-muted-foreground border-[#d4c9a8] hover:border-[#c4b898]"
             }`}
           >
             {mode === "wheel" ? "🎡 ਚਰਖਾ" : "⚡ ਝਪਕੀ"}

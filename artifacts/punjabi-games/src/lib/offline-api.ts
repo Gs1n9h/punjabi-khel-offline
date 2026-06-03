@@ -42,9 +42,13 @@ const seedSpinner: SpinnerConfig[] = [
   ]}
 ];
 const seedTwisters: TongueTwister[] = [
-  { id: 1, text: "ਕੱਚਾ ਪਾਪੜ ਪੱਕਾ ਪਾਪੜ", transliteration: "Kacha papad pakka papad", translation: "Raw papad, cooked papad", difficulty: "easy", isActive: true, createdAt: now() },
-  { id: 2, text: "ਚੰਦੂ ਦੇ ਚਾਚਾ ਨੇ ਚੰਦੂ ਦੀ ਚਾਚੀ ਨੂੰ", transliteration: "Chandu de chacha ne Chandu di chachi nu", translation: "A classic fast speaking challenge", difficulty: "medium", isActive: true, createdAt: now() },
-  { id: 3, text: "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ ਸਾਰਿਆਂ ਨੂੰ", transliteration: "Sat Sri Akal saareyan nu", translation: "Hello everyone", difficulty: "easy", isActive: true, createdAt: now() }
+  { id: 1, text: "ਕੱਚੀ ਭੁੱਧੇ ਪੱਕੀ ਭੁੱਧੇ", transliteration: null, translation: null, difficulty: "easy", isActive: true, createdAt: now() },
+  { id: 2, text: "ਕੱਟਾ ਸੱਜੀ ਚੱਕੀ ਛੱਟੇ\nਕੱਟਾ ਖੱਬੀ ਚੱਕੀ ਛੱਟੇ", transliteration: null, translation: null, difficulty: "medium", isActive: true, createdAt: now() },
+  { id: 3, text: "ਵੱਡਾ ਖੱਬੀ ਵੱਖੀ ਛੱਟੇ\nਵੱਡਾ ਸੱਜੀ ਵੱਖੀ ਛੱਟੇ", transliteration: null, translation: null, difficulty: "medium", isActive: true, createdAt: now() },
+  { id: 4, text: "ਛੱਬਾ ਟੱਪ ਕਾਲ ਟੱਪੇ\nਟੱਪ ਛੱਬੇ ਟੱਪੂਆ", transliteration: null, translation: null, difficulty: "medium", isActive: true, createdAt: now() },
+  { id: 5, text: "ਰਾਜਾ ਗੇਪ ਗੈਂਪੇਗਾਮ ਖਾਹ", transliteration: null, translation: null, difficulty: "hard", isActive: true, createdAt: now() },
+  { id: 6, text: "ਕੱਚਾ ਪਾਪੜ ਪੱਕਾ ਪਾਪੜ", transliteration: null, translation: null, difficulty: "easy", isActive: true, createdAt: now() },
+  { id: 7, text: "ਗਿੱਲੀ ਲੀਰ ਚੂਰੀ ਵਿੱਚ ਰੁਲਦੀ,\nਰੁਲ ਨੀ ਲੀਰੇ ਰੁਲ ਰੁਲ ਰੁਲ", transliteration: null, translation: null, difficulty: "hard", isActive: true, createdAt: now() }
 ];
 const seedQuestions: KnowledgeQuestion[] = [
   { id: 1, question: "Which letter is ਅ?", options: ["A", "B", "C", "D"], correctAnswer: "A", explanation: "ਅ is the first Gurmukhi vowel sound.", category: "Letters", difficulty: "easy", isActive: true, createdAt: now() },

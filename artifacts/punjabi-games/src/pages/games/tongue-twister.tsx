@@ -116,7 +116,7 @@ export default function TongueTwisterGame() {
                 </span>
               </div>
 
-              <h2 className="text-4xl sm:text-5xl font-black text-[#2A1806] leading-tight mb-6">
+              <h2 className="text-4xl sm:text-5xl font-black text-[#2A1806] leading-tight mb-6" style={{ whiteSpace: 'pre-line' }}>
                 {activeTwister.text}
               </h2>
               {activeTwister.transliteration && (

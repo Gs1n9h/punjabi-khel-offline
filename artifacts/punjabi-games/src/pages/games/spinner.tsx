@@ -315,7 +315,12 @@ export default function SpinnerGame() {
 
   return (
     <MobileContainer className="bg-gradient-to-b from-[#FAF6EE] to-[#E8E0D0]">
-      <PageHeader title="ਚਰਖਾ" subtitle={`ਬਾਕੀ ਮੌਕੇ: ${progress?.remaining ?? 0}/${progress?.limit ?? 0}`} showBack />
+      <PageHeader title="ਚਰਖਾ" subtitle={
+        phase === "idle" ? `ਬਾਕੀ ਮੌਕੇ: ${progress?.remaining ?? 0}/${progress?.limit ?? 0}` :
+        phase === "spinning" || phase === "result" ? `ਇਸ ਖੇਡ ਵਿੱਚ: ${spinsThisGame}/${SPINS_PER_GAME} ਘੁੰਮਾਅ` :
+        phase === "scoring" ? "ਅੰਕ ਦਰਜ ਕਰੋ" :
+        "ਸੇਵ ਹੋ ਗਏ!"
+      } showBack />
 
       {/* Display mode selector */}
       <div className="flex justify-center gap-2 py-2 px-4">
@@ -342,13 +347,6 @@ export default function SpinnerGame() {
       </div>
 
       <div className="pb-6 pt-2 flex justify-center flex-col items-center gap-3">
-        {/* Spin counter indicator during play */}
-        {(phase === "idle" || phase === "result" || phase === "spinning") && (
-          <p className="text-sm font-bold text-muted-foreground">
-            {spinsThisGame}/{SPINS_PER_GAME} ਘੁੰਮਾਅ
-          </p>
-        )}
-
         {/* Admin score entry after all spins */}
         {showScoreEntry && (
           <div className="w-full max-w-sm px-4 space-y-4">

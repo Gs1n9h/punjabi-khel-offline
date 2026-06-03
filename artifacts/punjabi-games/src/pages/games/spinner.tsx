@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
-import { useListSpinnerConfigs, useRecordSpin } from "@/lib/offline-api";
+import { useListSpinnerConfigs, useRecordSpin, useGetGameProgress } from "@/lib/offline-api";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { motion, useAnimationControls } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -227,13 +228,16 @@ function SpinResult({ result, isSpinning, onSpin, label }: { result: string | nu
 
 // ─── Main page ────────────────────────────────────────────────────
 export default function SpinnerGame() {
+  const [, navigate] = useLocation();
   const { data: configs, isLoading } = useListSpinnerConfigs();
+  const { data: progress } = useGetGameProgress("spin");
   const recordSpin = useRecordSpin();
   const [isSpinning, setIsSpinning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [activeConfigId] = useState<number | null>(null);
   const [overrideDisplayMode, setOverrideDisplayMode] = useState<DisplayMode | null>(null);
   const [targetIndex, setTargetIndex] = useState(0);
+  const [redirectTimer, setRedirectTimer] = useState<number | null>(null);
 
   const allConfigs = configs ?? [];
   const activeConfig = allConfigs.find(c => c.id === activeConfigId) || allConfigs.find(c => c.isActive) || allConfigs[0];
@@ -244,6 +248,7 @@ export default function SpinnerGame() {
     if (!activeConfig || isSpinning || activeConfig.items.length === 0) return;
     setIsSpinning(true);
     setResult(null);
+    setRedirectTimer(null);
 
     const items = activeConfig.items as any[];
     const totalWeight = items.reduce((s: number, i: any) => s + (i.weight || 1), 0);
@@ -260,6 +265,26 @@ export default function SpinnerGame() {
       recordSpin.mutate({ data: { configId: activeConfig.id, resultLabel: selectedItem.label } });
     }, spinDuration);
   };
+
+  // Auto-redirect to games when spins are exhausted
+  useEffect(() => {
+    if (!result || isSpinning || redirectTimer !== null) return;
+    const used = (progress?.used ?? 0) + 1;
+    const limit = progress?.limit ?? 3;
+    if (used >= limit) {
+      setRedirectTimer(5);
+    }
+  }, [result, isSpinning, progress, redirectTimer]);
+
+  useEffect(() => {
+    if (redirectTimer === null) return;
+    if (redirectTimer <= 0) {
+      navigate("/games");
+      return;
+    }
+    const t = setTimeout(() => setRedirectTimer((v: number | null) => v !== null ? v - 1 : null), 1000);
+    return () => clearTimeout(t);
+  }, [redirectTimer, navigate]);
 
   if (isLoading) {
     return (
@@ -306,8 +331,13 @@ export default function SpinnerGame() {
         {displayMode === "slot-horizontal" && <SlotHorizontalDisplay items={activeConfig.items as any[]} isSpinning={isSpinning} targetIndex={targetIndex} />}
         {displayMode === "flash" && <FlashDisplay items={activeConfig.items as any[]} isSpinning={isSpinning} targetIndex={targetIndex} />}
       </div>
-      <div className="pb-6 pt-2 flex justify-center">
+      <div className="pb-6 pt-2 flex justify-center flex-col items-center gap-3">
         <SpinResult result={result} isSpinning={isSpinning} onSpin={handleSpin} label={displayMode === "wheel" ? "ਘੁੰਮਾਓ!" : displayMode === "slot-vertical" ? "▼ ਘੁੰਮਾਓ ▼" : displayMode === "slot-horizontal" ? "◄► ਘੁੰਮਾਓ" : "⚡ ਝਪਕੀ!"} />
+        {redirectTimer !== null && (
+          <div className="text-center bg-yellow-50 border-2 border-yellow-200 rounded-xl px-4 py-2">
+            <p className="text-sm font-bold text-yellow-800">ਮੌਕੇ ਪੂਰੇ! {redirectTimer} ਸਕਿੰਟਾਂ ਵਿੱਚ ਖੇਡਾਂ ਵੱਲ ਵਾਪਸ…</p>
+          </div>
+        )}
       </div>
     </MobileContainer>
   );

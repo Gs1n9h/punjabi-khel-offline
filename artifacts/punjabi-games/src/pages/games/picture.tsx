@@ -1,42 +1,55 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link } from "wouter";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetGameProgress, useListPictureQuestions, useSubmitPictureAnswer } from "@/lib/offline-api";
+import { useGetGameProgress, useGetMyStats, useListPictureQuestions, useSubmitPictureAnswer } from "@/lib/offline-api";
 import { AnimatePresence, motion } from "framer-motion";
 import confetti from "canvas-confetti";
 
 export default function PictureGame() {
   const { data: questions, isLoading } = useListPictureQuestions();
   const { data: progress } = useGetGameProgress("picture");
+  const { data: stats } = useGetMyStats();
   const submitAnswer = useSubmitPictureAnswer();
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [result, setResult] = useState<{ correct: boolean; pointsEarned: number; correctAnswer: string } | null>(null);
+  const [submittedCount, setSubmittedCount] = useState(0);
+  const [showGameOver, setShowGameOver] = useState(false);
 
   const activeQuestions = questions ?? [];
   const currentQuestion = useMemo(() => activeQuestions[index % Math.max(1, activeQuestions.length)], [activeQuestions, index]);
-  const isComplete = progress?.isComplete || !currentQuestion;
+
+  // Auto-advance after showing result for 1.5s
+  useEffect(() => {
+    if (!result) return;
+    const timer = setTimeout(() => {
+      const limit = progress?.limit ?? 1;
+      if (submittedCount >= limit || index >= activeQuestions.length - 1) {
+        setShowGameOver(true);
+      } else {
+        setSelected(null);
+        setResult(null);
+        setIndex((prev: number) => prev + 1);
+      }
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [result, submittedCount, index, activeQuestions.length, progress?.limit]);
 
   const handleSelect = (option: string) => {
-    if (!currentQuestion || selected || isComplete) return;
+    if (!currentQuestion || selected || showGameOver) return;
     setSelected(option);
     submitAnswer.mutate({ data: { questionId: currentQuestion.id, selectedAnswer: option } }, {
       onSuccess: (data) => {
         setResult(data);
+        setSubmittedCount((c: number) => c + 1);
         if (data.correct) {
           confetti({ particleCount: 90, spread: 70, origin: { y: 0.58 }, colors: ["#1a237e", "#ffd700", "#4CAF50"] });
         }
       }
     });
-  };
-
-  const handleNext = () => {
-    setSelected(null);
-    setResult(null);
-    setIndex((value) => value + 1);
   };
 
   if (isLoading) {
@@ -52,7 +65,7 @@ export default function PictureGame() {
     );
   }
 
-  if (isComplete) {
+  if (showGameOver || progress?.isComplete) {
     return (
       <MobileContainer className="bg-gradient-to-b from-[#FAF6EE] to-[#E8E0D0]">
         <PageHeader title="ਤਸਵੀਰ ਪਛਾਣ" showBack backHref="/games" />
@@ -60,7 +73,10 @@ export default function PictureGame() {
           <div className="w-full max-w-xl bg-white rounded-[32px] border-4 border-[#e8e0d0] shadow-xl p-8 space-y-5">
             <div className="text-7xl">🖼️</div>
             <h2 className="text-3xl font-black text-primary">ਮੌਕੇ ਪੂਰੇ ਹੋ ਗਏ!</h2>
-            <p className="font-bold text-muted-foreground">ਇਸ ਖਿਡਾਰੀ ਲਈ ਤਸਵੀਰ ਪਛਾਣ ਦੇ ਸਾਰੇ ਮੌਕੇ ਵਰਤੇ ਜਾ ਚੁੱਕੇ ਹਨ।</p>
+            <div className="bg-primary/10 rounded-2xl p-4">
+              <p className="text-sm font-bold text-muted-foreground">ਤੁਹਾਡੇ ਕੁੱਲ ਅੰਕ</p>
+              <p className="text-5xl font-black text-primary">{stats?.totalPoints || 0}</p>
+            </div>
             <Link href="/games">
               <Button className="w-full h-14 rounded-2xl text-lg font-bold">ਖੇਡਾਂ ਵੱਲ ਵਾਪਸ</Button>
             </Link>
@@ -86,7 +102,7 @@ export default function PictureGame() {
         </motion.div>
 
         <div className="flex flex-col justify-center gap-3 sm:gap-4">
-          {currentQuestion.options.map((option, optionIndex) => {
+          {currentQuestion.options.map((option: string, optionIndex: number) => {
             const isSelected = selected === option;
             const isCorrect = result && option === result.correctAnswer;
             const isWrong = result && isSelected && !result.correct;
@@ -114,13 +130,6 @@ export default function PictureGame() {
                 <h2 className={`text-3xl font-black ${result.correct ? "text-green-700" : "text-red-600"}`}>{result.correct ? "ਸਹੀ!" : "ਓਹੋ!"}</h2>
                 <p className="font-bold text-muted-foreground mt-1">ਸਹੀ ਜਵਾਬ: <span className="text-foreground text-xl font-black">{result.correctAnswer}</span></p>
                 <p className="font-black text-primary mt-2">+{result.pointsEarned} ਅੰਕ</p>
-                {(progress?.remaining ?? 0) > 1 ? (
-                  <Button onClick={handleNext} className="mt-4 w-full h-14 rounded-2xl text-lg font-bold">ਅਗਲੀ ਤਸਵੀਰ</Button>
-                ) : (
-                  <Link href="/games">
-                    <Button className="mt-4 w-full h-14 rounded-2xl text-lg font-bold">ਖੇਡਾਂ ਵੱਲ ਵਾਪਸ</Button>
-                  </Link>
-                )}
               </motion.div>
             )}
           </AnimatePresence>

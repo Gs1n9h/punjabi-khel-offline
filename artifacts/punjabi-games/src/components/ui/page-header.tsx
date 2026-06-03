@@ -34,7 +34,7 @@ export function PageHeader({ title, subtitle, showBack, backHref, action, classN
         <div className="shrink-0">
           {action || (
             <img
-              src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.png`}
+              src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`}
               alt="ਗੁਰਮੁਖੀ ਵੇਹੜਾ"
               className="w-12 h-12 rounded-full border-2 border-primary shadow-sm bg-white relative z-20"
             />

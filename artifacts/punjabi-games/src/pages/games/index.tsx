@@ -40,11 +40,12 @@ const games = [
   {
     id: "picture",
     title: "ਤਸਵੀਰ ਪਛਾਣ",
-    subtitle: "ਤਸਵੀਰ ਵੇਖੋ ਤੇ ਸਹੀ ਨਾਮ ਚੁਣੋ!",
+    subtitle: "Tasveer Pachaan · ਤਸਵੀਰ ਵੇਖੋ ਤੇ ਸਹੀ ਨਾਮ ਚੁਣੋ!",
     emoji: "🖼️",
     color: "bg-green-50 text-green-700 border-green-200",
     href: "/games/picture",
-    progressKey: "picture"
+    progressKey: "picture",
+    isNew: true
   }
 ];
 
@@ -57,7 +58,10 @@ function GameCard({ game, index }: { game: typeof games[number]; index: number }
         {game.emoji}
       </div>
       <div className="flex-1 min-w-0">
-        <h3 className="text-2xl font-black text-foreground leading-tight">{game.title}</h3>
+        <div className="flex items-center gap-2 flex-wrap">
+          <h3 className="text-2xl font-black text-foreground leading-tight">{game.title}</h3>
+          {game.isNew && <span className="rounded-full bg-green-600 text-white px-3 py-1 text-[10px] font-black uppercase tracking-wide">New</span>}
+        </div>
         <p className="text-sm font-bold text-muted-foreground mt-1">{game.subtitle}</p>
         <p className="text-xs font-black text-primary mt-2">ਬਾਕੀ ਮੌਕੇ: {progress?.remaining ?? 0}/{progress?.limit ?? 0}</p>
       </div>
@@ -90,19 +94,19 @@ export default function GamesHub() {
       <MobileContainer className="bg-[radial-gradient(circle_at_top,#FFF8E1_0%,#FAF6EE_42%,#F0EBE0_100%)]">
         <div className="flex-1 flex flex-col px-6 py-6">
           <div className="flex justify-end">
-            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.png`} alt="ਗੁਰਮੁਖੀ ਵੇਹੜਾ" className="w-16 h-16 rounded-full border-2 border-primary shadow-md bg-white z-20" />
+            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`} alt="ਗੁਰਮੁਖੀ ਵੇਹੜਾ" className="w-16 h-16 rounded-full border-2 border-primary shadow-md bg-white z-20" />
           </div>
           <div className="flex-1 flex items-center justify-center">
             <div className="w-full max-w-xl bg-white/95 border-4 border-white rounded-[32px] p-6 sm:p-8 shadow-xl space-y-5">
               <div className="text-center">
                 <div className="text-6xl mb-3">🎪</div>
-                <h1 className="text-4xl font-black text-primary leading-tight">ਖਿਡਾਰੀ ਜਾਣਕਾਰੀ</h1>
-                <p className="text-muted-foreground font-bold mt-2">ਖੇਡ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਪਣਾ ਨਾਮ ਤੇ ਸ਼ਹਿਰ ਲਿਖੋ।</p>
+                <h1 className="text-4xl font-black text-primary leading-tight">ਨਵਾਂ ਸੈਸ਼ਨ</h1>
+                <p className="text-muted-foreground font-bold mt-2">ਐਥਲੀਟ/ਖਿਡਾਰੀ ਦਾ ਨਾਮ ਤੇ ਸ਼ਹਿਰ ਲਿਖੋ।</p>
               </div>
               <input value={name} onChange={(e) => setName(e.target.value)} placeholder="ਤੁਹਾਡਾ ਨਾਮ" className="w-full h-16 rounded-2xl border-2 border-[#d4c9a8] bg-[#FAF6EE] px-5 text-xl font-bold outline-none focus:border-primary" />
               <input value={place} onChange={(e) => setPlace(e.target.value)} placeholder="ਤੁਸੀਂ ਕਿੱਥੋਂ ਹੋ?" className="w-full h-16 rounded-2xl border-2 border-[#d4c9a8] bg-[#FAF6EE] px-5 text-xl font-bold outline-none focus:border-primary" />
               <Button onClick={handleStart} disabled={!name.trim() || !place.trim()} className="w-full h-16 text-xl rounded-2xl bg-primary hover:bg-[#141b4d] text-white shadow-lg border-b-4 border-[#0f1540]">
-                <UserPlus className="w-6 h-6 mr-2" /> ਖੇਡਾਂ ਸ਼ੁਰੂ ਕਰੋ
+                <UserPlus className="w-6 h-6 mr-2" /> ਸੈਸ਼ਨ ਸ਼ੁਰੂ ਕਰੋ
               </Button>
             </div>
           </div>
@@ -117,11 +121,16 @@ export default function GamesHub() {
         title="ਗੁਰਮੁਖੀ ਵੇਹੜਾ"
         subtitle={`${player.name} · ${player.place}`}
         action={
-          <img
-            src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.png`}
-            alt="ਗੁਰਮੁਖੀ ਵੇਹੜਾ"
-            className="w-12 h-12 rounded-full border-2 border-primary shadow-sm bg-white relative z-20"
-          />
+          <div className="flex items-center gap-2">
+            <button onClick={() => newPlayer.mutate({})} className="h-11 rounded-2xl bg-primary text-white px-4 text-sm font-black shadow-md border-b-4 border-[#0f1540] active:border-b-0">
+              ਨਵਾਂ ਸੈਸ਼ਨ
+            </button>
+            <img
+              src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`}
+              alt="ਗੁਰਮੁਖੀ ਵੇਹੜਾ"
+              className="w-12 h-12 rounded-full border-2 border-primary shadow-sm bg-white relative z-20"
+            />
+          </div>
         }
       />
       
@@ -151,8 +160,8 @@ export default function GamesHub() {
                 ਮੁੜ ਸੈਟ
               </button>
             </div>
-            <button onClick={() => newPlayer.mutate({})} className="mt-5 bg-white/20 hover:bg-white/30 text-white rounded-xl px-4 py-3 text-sm font-bold transition-all flex items-center gap-2">
-              <MapPin className="w-4 h-4" /> ਨਵਾਂ ਖਿਡਾਰੀ
+            <button onClick={() => newPlayer.mutate({})} className="mt-5 bg-white text-primary hover:bg-white/90 rounded-2xl px-5 py-4 text-base font-black transition-all flex items-center gap-2 shadow-lg">
+              <MapPin className="w-5 h-5" /> ਨਵਾਂ ਸੈਸ਼ਨ / New Session
             </button>
           </div>
         </div>

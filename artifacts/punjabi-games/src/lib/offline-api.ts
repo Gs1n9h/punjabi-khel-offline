@@ -90,7 +90,7 @@ function saveSession(session: Omit<Session, "id" | "createdAt">) {
   return newSession;
 }
 function syncUserPoints() { const user = read(keys.user, seedUser); user.totalPoints = sessions().reduce((sum, s) => sum + Number(s.pointsEarned || 0), 0); write(keys.user, user); }
-function gameCount(type: Session["type"], playerId?: number) { return sessions().filter(s => s.type === type && (!playerId || s.playerId === playerId)).length; }
+function gameCount(type: Session["type"], playerId?: number) { return sessions().filter(s => s.type === type && (!playerId || s.playerId === playerId) && (type !== "picture" || s.correct === false)).length; }
 function useVersion() { const [v, setV] = useState(0); useEffect(() => { const h = () => setV((x: number) => x + 1); window.addEventListener("pk-local-change", h); return () => window.removeEventListener("pk-local-change", h); }, []); return v; }
 function mutation<TArgs, TResult>(fn: (args: TArgs) => TResult) { return { isPending: false, mutate: (args: TArgs, opts?: { onSuccess?: (r: TResult) => void; onError?: () => void }) => { try { const r = fn(args); opts?.onSuccess?.(r); } catch { opts?.onError?.(); } }, mutateAsync: async (args: TArgs) => fn(args) }; }
 

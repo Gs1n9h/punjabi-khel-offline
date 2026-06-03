@@ -157,9 +157,9 @@ export default function MemoryGame() {
   };
 
   useEffect(() => {
-    if (phase === "gameover" && level > 1) {
+    if (phase === "gameover") {
       const avg = levelTimes.length ? Math.round(levelTimes.reduce((a: number, b: number) => a + b, 0) / levelTimes.length) : 0;
-      submitSession.mutate({ data: { maxLevel: level - 1, pointsEarned: totalPoints, bestTime, avgTime: avg } });
+      submitSession.mutate({ data: { maxLevel: Math.max(1, level - 1), pointsEarned: totalPoints, bestTime, avgTime: avg } });
     }
   }, [phase]);
 
@@ -254,18 +254,23 @@ export default function MemoryGame() {
                 <motion.div className="h-full bg-primary rounded-full" style={{ width: `${progress}%` }} />
               </div>
 
-              {/* Countdown above number */}
-              <motion.div
-                key={progress > 66 ? "3" : progress > 33 ? "2" : "1"}
-                initial={{ scale: 2, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.3 }}
-                className="flex items-center justify-center"
-              >
-                <div className="w-20 h-20 bg-red-500/90 rounded-full flex items-center justify-center text-4xl font-black text-white shadow-2xl border-4 border-white">
-                  {progress > 66 ? "3" : progress > 33 ? "2" : "1"}
-                </div>
-              </motion.div>
+              {/* Countdown above number — shows actual remaining seconds */}
+              {(() => {
+                const remainingSec = Math.max(1, Math.ceil(progress / 100 * getShowDuration(level) / 1000));
+                return (
+                  <motion.div
+                    key={remainingSec}
+                    initial={{ scale: 2, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex items-center justify-center"
+                  >
+                    <div className="w-20 h-20 bg-red-500/90 rounded-full flex items-center justify-center text-4xl font-black text-white shadow-2xl border-4 border-white">
+                      {remainingSec}
+                    </div>
+                  </motion.div>
+                );
+              })()}
 
               {/* Number display */}
               <div className="bg-white rounded-3xl border-4 border-[#d4c9a8] shadow-xl px-12 py-10 flex items-center justify-center min-h-[140px] w-full">
@@ -378,13 +383,16 @@ export default function MemoryGame() {
               </div>
 
               <div className="flex gap-3 w-full">
-                <Button onClick={handleStart} className="flex-1 h-14 rounded-2xl bg-primary hover:bg-[#141b4d] text-white shadow-lg border-b-4 border-[#0f1540]">
-                  <RotateCcw className="w-5 h-5 mr-2" /> ਦੁਬਾਰਾ ਖੇਡੋ
+                <Button onClick={handleStart} disabled={gameProgress?.isComplete} className={`flex-1 h-14 rounded-2xl shadow-lg border-b-4 border-[#0f1540] ${gameProgress?.isComplete ? "bg-gray-400 text-white cursor-not-allowed" : "bg-primary hover:bg-[#141b4d] text-white"}`}>
+                  <RotateCcw className="w-5 h-5 mr-2" /> {gameProgress?.isComplete ? "ਮੌਕੇ ਪੂਰੇ ਹੋ ਗਏ" : "ਦੁਬਾਰਾ ਖੇਡੋ"}
                 </Button>
                 <Button variant="outline" onClick={() => setShowLeaderboard(true)} className="h-14 w-14 rounded-2xl border-2 border-[#d4c9a8]">
                   <Trophy className="w-6 h-6 text-primary" />
                 </Button>
               </div>
+              {gameProgress?.isComplete && (
+                <p className="text-sm font-bold text-red-500 text-center">ਇਸ ਖਿਡਾਰੀ ਲਈ ਯਾਦ ਖੇਡ ਦੇ ਸਾਰੇ ਮੌਕੇ ਵਰਤੇ ਜਾ ਚੁੱਕੇ ਹਨ।</p>
+              )}
             </motion.div>
           )}
 

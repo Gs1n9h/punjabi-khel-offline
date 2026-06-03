@@ -42,13 +42,15 @@ const seedSpinner: SpinnerConfig[] = [
   ]}
 ];
 const seedTwisters: TongueTwister[] = [
-  { id: 1, text: "ਕੱਚੀ ਭੁੱਧੇ ਪੱਕੀ ਭੁੱਧੇ", transliteration: null, translation: null, difficulty: "easy", isActive: true, createdAt: now() },
-  { id: 2, text: "ਕੱਟਾ ਸੱਜੀ ਚੱਕੀ ਛੱਟੇ\nਕੱਟਾ ਖੱਬੀ ਚੱਕੀ ਛੱਟੇ", transliteration: null, translation: null, difficulty: "medium", isActive: true, createdAt: now() },
-  { id: 3, text: "ਵੱਡਾ ਖੱਬੀ ਵੱਖੀ ਛੱਟੇ\nਵੱਡਾ ਸੱਜੀ ਵੱਖੀ ਛੱਟੇ", transliteration: null, translation: null, difficulty: "medium", isActive: true, createdAt: now() },
-  { id: 4, text: "ਛੱਬਾ ਟੱਪ ਕਾਲ ਟੱਪੇ\nਟੱਪ ਛੱਬੇ ਟੱਪੂਆ", transliteration: null, translation: null, difficulty: "medium", isActive: true, createdAt: now() },
-  { id: 5, text: "ਰਾਜਾ ਗੇਪ ਗੈਂਪੇਗਾਮ ਖਾਹ", transliteration: null, translation: null, difficulty: "hard", isActive: true, createdAt: now() },
-  { id: 6, text: "ਕੱਚਾ ਪਾਪੜ ਪੱਕਾ ਪਾਪੜ", transliteration: null, translation: null, difficulty: "easy", isActive: true, createdAt: now() },
-  { id: 7, text: "ਗਿੱਲੀ ਲੀਰ ਚੂਰੀ ਵਿੱਚ ਰੁਲਦੀ,\nਰੁਲ ਨੀ ਲੀਰੇ ਰੁਲ ਰੁਲ ਰੁਲ", transliteration: null, translation: null, difficulty: "hard", isActive: true, createdAt: now() }
+  { id: 1, text: "ਕੱਚਾ ਪਾਪੜ ਪੱਕਾ ਪਾਪੜ", transliteration: null, translation: null, difficulty: "easy", isActive: true, createdAt: now() },
+  { id: 2, text: "ਰਾਜਾ ਗੋਪ ਗੰਪੰਗਮ ਖਾਹ", transliteration: null, translation: null, difficulty: "hard", isActive: true, createdAt: now() },
+  { id: 3, text: "ਕੱਚੀ ਭੁੱਚੋ ਪੱਕੀ ਭੁੱਚੋ", transliteration: null, translation: null, difficulty: "easy", isActive: true, createdAt: now() },
+  { id: 4, text: "ਉੱਚਾ ਉੱਚਾ ਊਠ ਏ, ਪੂਛ ਉੱਚੀ ਊਠ ਦੀ -", transliteration: null, translation: null, difficulty: "medium", isActive: true, createdAt: now() },
+  { id: 5, text: "ਖੜ੍ਹੇ-ਖੜੋਤੇ ਚੁੱਪ-ਚੁਪੀਤੇ ਖੜਕਾ ਖੜਕੇ ਖੜਾਵਾਂ ਪਾਕੇ", transliteration: null, translation: null, difficulty: "hard", isActive: true, createdAt: now() },
+  { id: 6, text: "ਡੱਬਾ ਟੱਪੂ ਖਾਲ ਟੱਪੇ, ਟੱਪ ਡੱਬੇ ਟੱਪੂਆ", transliteration: null, translation: null, difficulty: "medium", isActive: true, createdAt: now() },
+  { id: 7, text: "ਵੱਛਾ ਖੱਬੀ ਵੱਖੀ ਚੱਟੇ, ਵੱਛਾ ਸੱਜੀ ਵੱਖੀ ਚੱਟੇ", transliteration: null, translation: null, difficulty: "medium", isActive: true, createdAt: now() },
+  { id: 8, text: "ਗਿੱਲੀ ਲੀਰ ਰੂੜੀ ਵਿੱਚ ਰੁਲਦੀ, ਰੁਲ ਨੀ ਲੀਰੇ ਰੁਲ ਰੁਲ ਰੁਲ ਰੁਲ", transliteration: null, translation: null, difficulty: "hard", isActive: true, createdAt: now() },
+  { id: 9, text: "ਕੱਟਾ ਸੱਜੀ ਚੱਕੀ ਚੱਟੇ, ਕੱਟਾ ਖੱਬੀ ਚੱਕੀ ਚੱਟੇ", transliteration: null, translation: null, difficulty: "medium", isActive: true, createdAt: now() }
 ];
 const seedQuestions: KnowledgeQuestion[] = [
   { id: 1, question: "Which letter is ਅ?", options: ["A", "B", "C", "D"], correctAnswer: "A", explanation: "ਅ is the first Gurmukhi vowel sound.", category: "Letters", difficulty: "easy", isActive: true, createdAt: now() },

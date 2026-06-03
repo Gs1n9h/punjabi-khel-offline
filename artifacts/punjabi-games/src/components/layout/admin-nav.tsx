@@ -7,7 +7,7 @@ export function AdminNav() {
   const adminLinks = [
     { href: "/admin", label: "ਸਾਰਾਂਸ਼", icon: LayoutDashboard, exact: true },
     { href: "/admin/spinner", label: "ਚਰਖਾ", icon: Dices },
-    { href: "/admin/tongue-twisters", label: "ਬੋਲੀ", icon: Mic },
+    { href: "/admin/tongue-twisters", label: "ਆਖੀਂ ਪਰ ਅੜੀਂ ਨਾਂ", icon: Mic },
     { href: "/admin/submissions", label: "ਪੰਛੀਤੀ", icon: Headphones },
     { href: "/admin/users", label: "ਉਪਯੋਗਕਰਤਾ", icon: Users },
   ];

@@ -30,8 +30,8 @@ const games = [
   },
   {
     id: "tongue-twister",
-    title: "ਬੋਲੀ",
-    subtitle: "ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ ਪੜ੍ਹੋ!",
+    title: "ਆਖੀਂ ਪਰ ਅੜੀਂ ਨਾਂ",
+    subtitle: "ਆਓ ਆਪਣੀ ਜੀਭ ਦਾ ਜ਼ੋਰ ਅਜਮਾਓ!",
     emoji: "🎙️",
     color: "bg-yellow-50 text-yellow-700 border-yellow-200",
     href: "/games/tongue-twister",

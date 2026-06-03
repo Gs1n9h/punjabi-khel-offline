@@ -132,7 +132,7 @@ export default function AdminTongueTwisters() {
 
   return (
     <MobileContainer>
-      <PageHeader title="Admin" subtitle="Tongue Twisters" />
+      <PageHeader title="Admin" subtitle="ਆਖੀਂ ਪਰ ਅੜੀਂ ਨਾਂ" />
       <AdminNav />
 
       <div className="p-4 space-y-4">

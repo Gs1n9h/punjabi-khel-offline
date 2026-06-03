@@ -122,7 +122,7 @@ export default function Profile() {
               <span className="font-bold">{isStatsLoading ? <Skeleton className="h-5 w-8" /> : stats?.spinsPlayed}</span>
             </div>
             <div className="flex justify-between p-4">
-              <span className="font-medium text-muted-foreground">Tongue Twisters</span>
+              <span className="font-medium text-muted-foreground">ਆਖੀਂ ਪਰ ਅੜੀਂ ਨਾਂ</span>
               <span className="font-bold">{isStatsLoading ? <Skeleton className="h-5 w-8" /> : stats?.tongueTwisterSubmissions}</span>
             </div>
             <div className="flex justify-between p-4">

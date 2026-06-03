@@ -66,7 +66,7 @@ export default function TongueTwisterGame() {
   if (progress?.isComplete) {
     return (
       <MobileContainer className="bg-gradient-to-b from-[#FFF8F0] to-orange-50">
-        <PageHeader title="ਬੋਲੀ" subtitle="ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ" showBack />
+        <PageHeader title="ਆਖੀਂ ਪਰ ਅੜੀਂ ਨਾਂ" subtitle="ਜ਼ੁਬਾਨ ਚੁਸਤੀਆਂ" showBack />
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
           <div className="text-7xl mb-4">🎙️</div>
           <h2 className="text-3xl font-black text-primary mb-2">ਮੌਕੇ ਪੂਰੇ ਹੋ ਗਏ!</h2>
@@ -79,7 +79,7 @@ export default function TongueTwisterGame() {
   if (!activeTwister) {
     return (
       <MobileContainer className="bg-gradient-to-b from-[#FFF8F0] to-orange-50">
-        <PageHeader title="ਬੋਲੀ" subtitle={`ਬਾਕੀ ਮੌਕੇ: ${progress?.remaining ?? 0}/${progress?.limit ?? 0}`} showBack />
+        <PageHeader title="ਆਖੀਂ ਪਰ ਅੜੀਂ ਨਾਂ" subtitle={`ਬਾਕੀ ਮੌਕੇ: ${progress?.remaining ?? 0}/${progress?.limit ?? 0}`} showBack />
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
           <div className="text-7xl mb-4">🎙️</div>
           <h2 className="text-3xl font-black text-primary mb-2">ਸਭ ਕੁਝ ਹੋ ਗਿਆ!</h2>
@@ -92,7 +92,7 @@ export default function TongueTwisterGame() {
   return (
     <MobileContainer className="bg-gradient-to-b from-[#FFF8F0] to-orange-50">
       <PageHeader
-        title="ਬੋਲੀ"
+        title="ਆਖੀਂ ਪਰ ਅੜੀਂ ਨਾਂ"
         subtitle={
           showScoreEntry ? "ਅੰਕ ਦਰਜ ਕਰੋ" :
           gameSaved ? "ਸੇਵ ਹੋ ਗਏ!" :

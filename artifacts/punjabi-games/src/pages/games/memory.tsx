@@ -3,7 +3,7 @@ import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSubmitMemoryGameSession, useGetMemoryGameLeaderboard } from "@/lib/offline-api";
+import { useSubmitMemoryGameSession, useGetMemoryGameLeaderboard, useGetGameProgress } from "@/lib/offline-api";
 import confetti from "canvas-confetti";
 import { Brain, Trophy, Star, RotateCcw, Medal } from "lucide-react";
 
@@ -73,6 +73,7 @@ export default function MemoryGame() {
   const hideStartRef = useRef<number>(0);
   const submitSession = useSubmitMemoryGameSession();
   const { data: leaderboard } = useGetMemoryGameLeaderboard({ params: { limit: 10 } });
+  const { data: gameProgress } = useGetGameProgress("memory");
 
   const clearTimers = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -105,6 +106,7 @@ export default function MemoryGame() {
   }, []);
 
   const handleStart = () => {
+    if (gameProgress?.isComplete) return;
     setLevel(1);
     setTotalPoints(0);
     setUserInput("");
@@ -200,7 +202,7 @@ export default function MemoryGame() {
 
   return (
     <MobileContainer className="bg-gradient-to-b from-[#FAF6EE] to-[#E8E0D0]">
-      <PageHeader title="ਯਾਦ ਖੇਡ" subtitle="ਨੰਬਰ ਯਾਦ ਕਰਨ ਦੀ ਖੇਡ" showBack />
+      <PageHeader title="ਯਾਦ ਖੇਡ" subtitle={`ਬਾਕੀ ਮੌਕੇ: ${gameProgress?.remaining ?? 0}/${gameProgress?.limit ?? 0}`} showBack />
 
       <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
         <AnimatePresence mode="wait">
@@ -226,13 +228,16 @@ export default function MemoryGame() {
                 <p className="text-xs text-muted-foreground">• ਹਰ ਸਹੀ ਜਵਾਬ 'ਤੇ 10×ਪੱਧਰ ਅੰਕ</p>
               </div>
               <div className="flex gap-3 w-full">
-                <Button onClick={handleStart} className="flex-1 h-14 text-xl rounded-2xl bg-primary hover:bg-[#141b4d] text-white shadow-lg border-b-4 border-[#0f1540] active:border-b-0 active:translate-y-1 transition-all">
-                  ਸ਼ੁਰੂ ਕਰੋ!
+                <Button onClick={handleStart} disabled={gameProgress?.isComplete} className={`flex-1 h-14 text-xl rounded-2xl shadow-lg border-b-4 border-[#0f1540] active:border-b-0 active:translate-y-1 transition-all ${gameProgress?.isComplete ? "bg-gray-400 text-white cursor-not-allowed" : "bg-primary hover:bg-[#141b4d] text-white"}`}>
+                  {gameProgress?.isComplete ? "ਮੌਕੇ ਪੂਰੇ ਹੋ ਗਏ" : "ਸ਼ੁਰੂ ਕਰੋ!"}
                 </Button>
                 <Button variant="outline" onClick={() => setShowLeaderboard(true)} className="h-14 w-14 rounded-2xl border-2 border-[#d4c9a8]">
                   <Trophy className="w-6 h-6 text-primary" />
                 </Button>
               </div>
+              {gameProgress?.isComplete && (
+                <p className="text-sm font-bold text-red-500 text-center">ਇਸ ਖਿਡਾਰੀ ਲਈ ਯਾਦ ਖੇਡ ਦੇ ਸਾਰੇ ਮੌਕੇ ਵਰਤੇ ਜਾ ਚੁੱਕੇ ਹਨ।</p>
+              )}
             </motion.div>
           )}
 

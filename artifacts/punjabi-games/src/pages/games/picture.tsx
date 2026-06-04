@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useCallback } from "react";
+import { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
@@ -8,6 +8,15 @@ import { useGetGameProgress, useGetMyStats, useListPictureQuestions, useSubmitPi
 import { AnimatePresence, motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { SkipForward } from "lucide-react";
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 function playBuzz() {
   try {
@@ -41,8 +50,24 @@ export default function PictureGame() {
   const [shakeKey, setShakeKey] = useState(0);
   const [skippedIds, setSkippedIds] = useState<Set<number>>(new Set());
 
-  const activeQuestions = questions ?? [];
+  // Stable shuffle: only reshuffle when questions list changes length (initial load)
+  const shuffledQuestionsRef = useRef<typeof questions>(null);
+  const activeQuestions = useMemo(() => {
+    if (!questions) return [];
+    if (shuffledQuestionsRef.current && shuffledQuestionsRef.current.length === questions.length) {
+      return shuffledQuestionsRef.current;
+    }
+    const arr = shuffle(questions);
+    shuffledQuestionsRef.current = arr;
+    return arr;
+  }, [questions]);
   const currentQuestion = useMemo(() => activeQuestions[index % Math.max(1, activeQuestions.length)], [activeQuestions, index]);
+
+  // Shuffle options per question (stable while on same question)
+  const shuffledOptions = useMemo(() => {
+    if (!currentQuestion) return [];
+    return shuffle(currentQuestion.options);
+  }, [currentQuestion?.id]);
 
   // Auto-advance ONLY on correct answers
   useEffect(() => {
@@ -164,7 +189,7 @@ export default function PictureGame() {
         </motion.div>
 
         <div className="flex flex-col justify-center gap-3 sm:gap-4">
-          {currentQuestion.options.map((option: string, optionIndex: number) => {
+          {shuffledOptions.map((option: string, optionIndex: number) => {
             const isSelected = selected === option;
             const isCorrect = result && option === result.correctAnswer;
             const isWrong = result && isSelected && !result.correct;

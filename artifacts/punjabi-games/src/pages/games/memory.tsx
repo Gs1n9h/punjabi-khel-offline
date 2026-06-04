@@ -12,10 +12,10 @@ import { playCorrect, playWrong } from "@/lib/sounds";
 type Phase = "idle" | "showing" | "hiding" | "correct" | "wrong" | "gameover";
 
 function getShowDuration(level: number): number {
-  // ≤3 digits: keep the original 2.5s show time
-  // >3 digits: show time = (digits - 1) seconds (4→3s, 5→4s, 6→5s…)
-  if (level <= 3) return 2500;
-  return (level - 1) * 1000;
+  // ≤5 digits → 3 s; each extra digit adds 0.5 s
+  // 1-5 → 3000ms, 6 → 3500ms, 7 → 4000ms, 8 → 4500ms …
+  if (level <= 5) return 3000;
+  return 3000 + (level - 5) * 500;
 }
 
 const PUNJABI_DIGITS = ["੦","੧","੨","੩","੪","੫","੬","੭","੮","੯"];
@@ -47,9 +47,9 @@ function ElapsedTimer({ active, hideStartRef }: { active: boolean; hideStartRef:
 
   const s = (ms / 1000).toFixed(2);
   return (
-    <div className="bg-white border-2 border-[#d4c9a8] rounded-2xl px-6 py-2 shadow-sm">
-      <p className="text-[10px] text-muted-foreground font-bold uppercase text-center">Time</p>
-      <p className="text-2xl font-black text-primary tabular-nums text-center">{s}s</p>
+    <div className="bg-white border border-[#d4c9a8] rounded-xl px-4 py-1 shadow-sm flex items-center gap-2">
+      <p className="text-[9px] text-muted-foreground font-bold uppercase">Time</p>
+      <p className="text-base font-black text-primary tabular-nums">{s}s</p>
     </div>
   );
 }
@@ -62,6 +62,7 @@ export default function MemoryGame() {
   const [userInput, setUserInput] = useState("");
   const inputDisplay = toPunjabi(userInput);
   const [totalPoints, setTotalPoints] = useState(0);
+  const totalPointsRef = useRef(0); // always-current ref to avoid stale closures
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [progress, setProgress] = useState(100);
   const [elapsedMs, setElapsedMs] = useState(0);
@@ -74,6 +75,10 @@ export default function MemoryGame() {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const progressRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const hideStartRef = useRef<number>(0);
+  const processingRef = useRef(false); // prevent double-tap on keypad
+  const levelTimesRef = useRef<number[]>([]); // always-current ref
+  // initialize bestTimeRef from localStorage so it matches the state initial value
+  const bestTimeRef = useRef<number>(Number(localStorage.getItem("yaad-best-time") || 0));
   const submitSession = useSubmitMemoryGameSession();
   const { data: leaderboard } = useGetMemoryGameLeaderboard({ params: { limit: 10 } });
   const { data: gameProgress } = useGetGameProgress("memory");
@@ -112,26 +117,35 @@ export default function MemoryGame() {
     if (gameProgress?.isComplete) return;
     setLevel(1);
     setTotalPoints(0);
+    totalPointsRef.current = 0;
     setUserInput("");
+    setLevelTimes([]);
+    levelTimesRef.current = [];
+    processingRef.current = false;
     startLevel(1);
   };
 
   const handleKeyPress = (arabicDigit: string) => {
     if (phase !== "hiding") return;
-    const next = userInput + arabicDigit;
-    setUserInput(next);
-    if (next.length >= currentNumber.length) {
-      const t = Date.now() - hideStartRef.current;
-      setElapsedMs(t);
-      // small delay so the last digit is visible before animation
-      setTimeout(() => handleCheck(next, t), 300);
-    }
+    if (processingRef.current) return; // prevent double-tap
+    setUserInput(prev => {
+      if (prev.length >= currentNumber.length) return prev; // already full
+      const next = prev + arabicDigit;
+      if (next.length >= currentNumber.length) {
+        processingRef.current = true;
+        const t = Date.now() - hideStartRef.current;
+        setElapsedMs(t);
+        // small delay so the last digit is visible before animation
+        setTimeout(() => handleCheck(next, t), 300);
+      }
+      return next;
+    });
   };
 
   const handleBackspace = () => {
     if (phase !== "hiding") return;
-    const next = userInput.slice(0, -1);
-    setUserInput(next);
+    if (processingRef.current) return;
+    setUserInput(prev => prev.slice(0, -1));
   };
 
   const handleCheck = (input?: string, timeMs?: number) => {
@@ -139,14 +153,20 @@ export default function MemoryGame() {
     const val = input ?? userInput;
     if (val.trim() === currentNumber) {
       const t = timeMs ?? elapsedMs;
-      const newTimes = [...levelTimes, t];
+      const newTimes = [...levelTimesRef.current, t];
+      levelTimesRef.current = newTimes;
       setLevelTimes(newTimes);
-      const newBest = bestTime === 0 ? t : Math.min(bestTime, t);
+      const prevBest = bestTimeRef.current;
+      const newBest = prevBest === 0 ? t : Math.min(prevBest, t);
+      bestTimeRef.current = newBest;
       setBestTime(newBest);
       localStorage.setItem("yaad-best-time", String(newBest));
       setLastTime(t);
       const pts = level * 10;
-      setTotalPoints((p: number) => p + pts);
+      const newTotal = totalPointsRef.current + pts;
+      totalPointsRef.current = newTotal;
+      setTotalPoints(newTotal);
+      processingRef.current = false;
       setPhase("correct");
       playCorrect();
       confetti({ particleCount: 60, spread: 60, origin: { y: 0.6 }, colors: ["#1a237e", "#ffd700", "#4CAF50"] });
@@ -155,6 +175,7 @@ export default function MemoryGame() {
         startLevel(level + 1);
       }, 1200);
     } else {
+      processingRef.current = false;
       setPhase("wrong");
       playWrong();
       setTimeout(() => setPhase("gameover"), 1000);
@@ -163,8 +184,10 @@ export default function MemoryGame() {
 
   useEffect(() => {
     if (phase === "gameover") {
-      const avg = levelTimes.length ? Math.round(levelTimes.reduce((a: number, b: number) => a + b, 0) / levelTimes.length) : 0;
-      submitSession.mutate({ data: { maxLevel: Math.max(1, level - 1), pointsEarned: totalPoints, bestTime, avgTime: avg } });
+      // Use refs so we always get the latest values, not stale closures
+      const times = levelTimesRef.current;
+      const avg = times.length ? Math.round(times.reduce((a: number, b: number) => a + b, 0) / times.length) : 0;
+      submitSession.mutate({ data: { maxLevel: Math.max(1, level - 1), pointsEarned: totalPointsRef.current, bestTime: bestTimeRef.current, avgTime: avg } });
     }
   }, [phase]);
 
@@ -265,21 +288,33 @@ export default function MemoryGame() {
                 return (
                   <motion.div
                     key={remainingSec}
-                    initial={{ scale: 2, opacity: 0 }}
+                    initial={{ scale: 1.6, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.25 }}
                     className="flex items-center justify-center"
                   >
-                    <div className="w-20 h-20 bg-red-500/90 rounded-full flex items-center justify-center text-4xl font-black text-white shadow-2xl border-4 border-white">
+                    <div className="w-12 h-12 bg-red-500/90 rounded-full flex items-center justify-center text-xl font-black text-white shadow-lg border-2 border-white">
                       {toPunjabi(String(remainingSec))}
                     </div>
                   </motion.div>
                 );
               })()}
 
-              {/* Number display */}
-              <div className="bg-white rounded-3xl border-4 border-[#d4c9a8] shadow-xl px-12 py-10 flex items-center justify-center min-h-[140px] w-full">
-                <span className="text-6xl font-black tracking-widest text-primary select-none">{toPunjabi(currentNumber)}</span>
+              {/* Number display — font scales down when many digits so it always fits */}
+              <div className="bg-white rounded-3xl border-4 border-[#d4c9a8] shadow-xl px-6 py-8 flex items-center justify-center min-h-[140px] w-full overflow-hidden">
+                <span
+                  className="font-black tracking-widest text-primary select-none text-center leading-none"
+                  style={{
+                    fontSize: level <= 4 ? "4.5rem"
+                           : level === 5 ? "4rem"
+                           : level === 6 ? "3.5rem"
+                           : level === 7 ? "3rem"
+                           : level === 8 ? "2.5rem"
+                           : "2rem"
+                  }}
+                >
+                  {toPunjabi(currentNumber)}
+                </span>
               </div>
 
               <p className="text-sm text-muted-foreground font-medium">ਇਹ ਨੰਬਰ ਯਾਦ ਕਰੋ!</p>

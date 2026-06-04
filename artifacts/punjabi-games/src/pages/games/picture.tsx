@@ -39,13 +39,16 @@ export default function PictureGame() {
 
   // Stable shuffle: only reshuffle when questions list changes length (initial load)
   const shuffledQuestionsRef = useRef<typeof questions>(null);
+  const usedIdsRef = useRef<Set<number>>(new Set()); // track seen IDs to prevent repeats
   const activeQuestions = useMemo(() => {
     if (!questions) return [];
     if (shuffledQuestionsRef.current && shuffledQuestionsRef.current.length === questions.length) {
       return shuffledQuestionsRef.current;
     }
+    // Shuffle so questions appear in random order, but won't repeat (we traverse the shuffled array)
     const arr = shuffle(questions);
     shuffledQuestionsRef.current = arr;
+    usedIdsRef.current = new Set();
     return arr;
   }, [questions]);
   const currentQuestion = useMemo(() => activeQuestions[index % Math.max(1, activeQuestions.length)], [activeQuestions, index]);
@@ -63,16 +66,23 @@ export default function PictureGame() {
     }
   }, [showGameOver]);
 
-  // Auto-advance ONLY on correct answers
+  // Auto-advance ONLY on correct answers — advance to next UNSEEN question
   useEffect(() => {
     if (!result || !result.correct) return;
     const timer = setTimeout(() => {
-      if (index >= activeQuestions.length - 1) {
+      // Mark current question as used
+      if (currentQuestion) usedIdsRef.current.add(currentQuestion.id);
+      // Find next unseen question index
+      let nextIndex = index + 1;
+      while (nextIndex < activeQuestions.length && usedIdsRef.current.has(activeQuestions[nextIndex].id)) {
+        nextIndex++;
+      }
+      if (nextIndex >= activeQuestions.length) {
         setShowGameOver(true);
       } else {
         setSelected(null);
         setResult(null);
-        setIndex((prev: number) => prev + 1);
+        setIndex(nextIndex);
       }
     }, 1200);
     return () => clearTimeout(timer);
@@ -110,15 +120,21 @@ export default function PictureGame() {
 
   const handleSkip = useCallback(() => {
     if (!currentQuestion || selected || showGameOver) return;
+    if (currentQuestion) usedIdsRef.current.add(currentQuestion.id);
     setSkippedIds((prev: Set<number>) => new Set(prev).add(currentQuestion.id));
-    if (index >= activeQuestions.length - 1) {
+    // Find next unseen question
+    let nextIndex = index + 1;
+    while (nextIndex < activeQuestions.length && usedIdsRef.current.has(activeQuestions[nextIndex].id)) {
+      nextIndex++;
+    }
+    if (nextIndex >= activeQuestions.length) {
       setShowGameOver(true);
     } else {
       setSelected(null);
       setResult(null);
-      setIndex((prev: number) => prev + 1);
+      setIndex(nextIndex);
     }
-  }, [currentQuestion, selected, showGameOver, index, activeQuestions.length]);
+  }, [currentQuestion, selected, showGameOver, index, activeQuestions]);
 
   // Lock out if global picture attempts already exhausted
   useEffect(() => {
@@ -180,7 +196,7 @@ export default function PictureGame() {
           transition={shakeKey > 0 && !result?.correct ? { duration: 0.4 } : { duration: 0.3 }}
           className="bg-white/95 border-4 border-white rounded-[36px] shadow-xl p-4 sm:p-6 flex flex-col items-center justify-center min-h-[420px] md:min-h-[680px]"
         >
-          <div className="w-full h-72 sm:h-96 md:h-[32rem] rounded-[28px] bg-gradient-to-br from-green-50 to-yellow-50 border-4 border-green-100 flex items-center justify-center overflow-hidden">
+          <div className="w-full h-96 sm:h-[30rem] md:h-[42rem] rounded-[28px] bg-gradient-to-br from-green-50 to-yellow-50 border-4 border-green-100 flex items-center justify-center overflow-hidden">
             {currentQuestion.imageUrl ? (
               <img src={currentQuestion.imageUrl} alt="ਤਸਵੀਰ" className="w-full h-full object-cover" />
             ) : (

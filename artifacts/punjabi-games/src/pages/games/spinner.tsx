@@ -2,11 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
 import { useListSpinnerConfigs, useRecordSpin, useGetGameProgress, useForfeitSpin } from "@/lib/offline-api";
-import { useLocation } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { motion, useAnimationControls } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Skeleton } from "@/components/ui/skeleton";
+import { playSpin } from "@/lib/sounds";
 import { queryClient } from "@/lib/queryClient";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { MoreVertical } from "lucide-react";
@@ -214,6 +215,13 @@ function SpinResult({ result, isSpinning, onSpin, label, exhausted }: { result: 
       <Button onClick={onSpin} disabled={isSpinning || exhausted} className={`w-full h-16 text-xl rounded-2xl shadow-lg shadow-[#1a237e]/20 border-b-4 border-[#0f1540] active:border-b-0 active:translate-y-1 transition-all ${exhausted ? "bg-gray-400 text-white cursor-not-allowed" : "bg-primary hover:bg-[#141b4d] text-white"}`}>
         {isSpinning ? "ਘੁੰਮ ਰਿਹਾ ਹੈ…" : exhausted ? "ਮੌਕੇ ਪੂਰੇ ਹੋ ਗਏ" : label}
       </Button>
+      {exhausted && (
+        <Link href="/games">
+          <Button variant="outline" className="w-full h-12 rounded-2xl border-2 border-[#d4c9a8] text-lg font-bold">
+            ਖੇਡਾਂ ਵੱਲ ਵਾਪਸ
+          </Button>
+        </Link>
+      )}
       <div className="min-h-[120px] flex items-center justify-center">
         {result && !isSpinning && (
           <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-2xl p-6 text-center border-4 border-[#e8e0d0] shadow-xl w-full">
@@ -253,11 +261,19 @@ export default function SpinnerGame() {
   const showScoreEntry = phase === "scoring";
   const gameSaved = phase === "saved";
 
+  // Mount-time lockout: if globally exhausted, show locked state
+  useEffect(() => {
+    if (progress?.isComplete) {
+      setPhase("saved");
+    }
+  }, [progress?.isComplete]);
+
   const handleSpin = () => {
     if (!activeConfig || phase === "spinning" || activeConfig.items.length === 0 || phase === "scoring" || phase === "saved") return;
     if (progress?.isComplete) return;
     setPhase("spinning");
     setResult(null);
+    playSpin();
 
     const items = activeConfig.items as any[];
     const totalWeight = items.reduce((s: number, i: any) => s + (i.weight || 1), 0);
@@ -292,6 +308,7 @@ export default function SpinnerGame() {
   };
 
   const handlePlayAgain = () => {
+    if (progress?.isComplete) return;
     setSpinsThisGame(0);
     setAdminPoints(null);
     setResult(null);
@@ -324,7 +341,7 @@ export default function SpinnerGame() {
   return (
     <MobileContainer className="bg-gradient-to-b from-[#FAF6EE] to-[#E8E0D0]">
       <PageHeader title="ਚਰਖਾ" subtitle={
-        phase === "idle" ? `ਬਾਕੀ ਮੌਕੇ: ${progress?.remaining ?? 0}/${progress?.limit ?? 0}` :
+        phase === "idle" ? `ਮੌਕੇ ਵਰਤੇ: ${progress?.used ?? 0}/${progress?.limit ?? 0}` :
         phase === "spinning" || phase === "result" ? `ਇਸ ਖੇਡ ਵਿੱਚ: ${spinsThisGame}/${SPINS_PER_GAME} ਘੁੰਮਾਅ` :
         phase === "scoring" ? "ਅੰਕ ਦਰਜ ਕਰੋ" :
         "ਸੇਵ ਹੋ ਗਏ!"
@@ -374,6 +391,11 @@ export default function SpinnerGame() {
                 ))}
               </div>
             </div>
+            <Link href="/games">
+              <Button variant="outline" className="w-full h-12 rounded-2xl border-2 border-[#d4c9a8] text-lg font-bold">
+                ਖੇਡਾਂ ਵੱਲ ਵਾਪਸ
+              </Button>
+            </Link>
           </div>
         )}
 
@@ -383,7 +405,9 @@ export default function SpinnerGame() {
             <div className="bg-green-50 rounded-2xl border-4 border-green-200 shadow-xl p-5 text-center">
               <div className="text-5xl mb-2">🎉</div>
               <h3 className="text-xl font-black text-green-700 mb-1">ਸੇਵ ਹੋ ਗਏ!</h3>
-              <p className="text-2xl font-black text-primary mb-1">{adminPoints} ਅੰਕ</p>
+              {adminPoints !== null && (
+                <p className="text-2xl font-black text-primary mb-1">{adminPoints} ਅੰਕ</p>
+              )}
               <p className="text-sm text-muted-foreground">ਖੇਡਾਂ ਵੱਲ ਵਾਪਸ ਜਾ ਰਹੇ ਹਾਂ…</p>
               <div className="flex gap-2 mt-4">
                 {!progress?.isComplete && (

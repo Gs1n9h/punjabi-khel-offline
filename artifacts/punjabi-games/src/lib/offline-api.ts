@@ -16,7 +16,7 @@ type Session = { id: number; type: "spin" | "quiz" | "memory" | "tongue-twister"
 type Submission = { id: number; tongueTwisterId: number; userId: number; username?: string; audioUrl: string; status: "pending" | "approved" | "rejected"; score?: number | null; feedback?: string | null; pointsEarned?: number | null; createdAt: string; reviewedAt?: string | null };
 
 const now = () => new Date().toISOString();
-const keys = { user: "pk_user", players: "pk_players", currentPlayer: "pk_current_player", settings: "pk_event_settings", spinner: "pk_spinner", twisters: "pk_twisters", questions: "pk_questions", pictures: "pk_picture_questions", sessions: "pk_sessions", submissions: "pk_submissions" };
+const keys = { user: "pk_user", players: "pk_players", currentPlayer: "pk_current_player", settings: "pk_event_settings", spinner: "pk_spinner", twisters: "pk_twisters", questions: "pk_questions", pictures: "pk_picture_questions_v2", sessions: "pk_sessions", submissions: "pk_submissions" };
 
 const seedUser: User = { id: 1, clerkId: "local", username: "little-player", displayName: "Little Player", avatarUrl: null, role: "admin", totalPoints: 0, createdAt: now() };
 const PUNJABI_35_COLORS = [
@@ -60,12 +60,26 @@ const seedQuestions: KnowledgeQuestion[] = [
   { id: 5, question: "Which script is used for Punjabi in Punjab, India?", options: ["Gurmukhi", "Latin", "Greek", "Cyrillic"], correctAnswer: "Gurmukhi", category: "Culture", difficulty: "medium", isActive: true, createdAt: now() }
 ];
 const seedPictures: PictureQuestion[] = [
-  { id: 1, imageUrl: "", imageEmoji: "🍎", answer: "ਸੇਬ", options: ["ਸੇਬ", "ਕੇਲਾ", "ਅੰਬ", "ਅੰਗੂਰ"], isActive: true, createdAt: now() },
-  { id: 2, imageUrl: "", imageEmoji: "🐘", answer: "ਹਾਥੀ", options: ["ਸ਼ੇਰ", "ਹਾਥੀ", "ਘੋੜਾ", "ਕੁੱਤਾ"], isActive: true, createdAt: now() },
-  { id: 3, imageUrl: "", imageEmoji: "🌻", answer: "ਫੁੱਲ", options: ["ਰੁੱਖ", "ਪੱਤਾ", "ਫੁੱਲ", "ਘਾਹ"], isActive: true, createdAt: now() },
-  { id: 4, imageUrl: "", imageEmoji: "🏠", answer: "ਘਰ", options: ["ਸਕੂਲ", "ਘਰ", "ਦੁਕਾਨ", "ਖੇਤ"], isActive: true, createdAt: now() }
+  // Singh images — all options are Singh names
+  { id: 1, imageUrl: "/Sant_Jarnail_Singh_Ji_Khalsa_Bhindranwale.jpeg", imageEmoji: "", answer: "ਸੰਤ ਜਰਨੈਲ ਸਿੰਘ ਜੀ ਖਾਲਸਾ ਭਿੰਡਰਾਂਵਾਲੇ", options: ["ਸੰਤ ਜਰਨੈਲ ਸਿੰਘ ਜੀ ਖਾਲਸਾ ਭਿੰਡਰਾਂਵਾਲੇ", "ਸ਼ਹੀਦ ਬਾਬਾ ਗੁਰਬਚਨ ਸਿੰਘ ਮਾਨੋਚਾਹਲ", "ਸ਼ਹੀਦ ਭਾਈ ਸੁਖਦੇਵ ਸਿੰਘ ਬੱਬਰ", "ਸ਼ਹੀਦ ਭਾਈ ਲਾਭ ਸਿੰਘ"], isActive: true, createdAt: now() },
+  { id: 2, imageUrl: "/Shaheed_Baba_Gurbachan_Singh_Manochahal.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਬਾਬਾ ਗੁਰਬਚਨ ਸਿੰਘ ਮਾਨੋਚਾਹਲ", options: ["ਸ਼ਹੀਦ ਬਾਬਾ ਗੁਰਬਚਨ ਸਿੰਘ ਮਾਨੋਚਾਹਲ", "ਸ਼ਹੀਦ ਭਾਈ ਗੁਰਜੰਟ ਸਿੰਘ ਬੁੱਧ ਸਿੰਘ ਵਾਲਾ", "ਸ਼ਹੀਦ ਭਾਈ ਹਰਜਿੰਦਰ ਸਿੰਘ ਜਿੰਦਾ", "ਸ਼ਹੀਦ ਭਾਈ ਬੇਅੰਤ ਸਿੰਘ ਜੀ"], isActive: true, createdAt: now() },
+  { id: 3, imageUrl: "/Shaheed_Bhai_Amreek_Singh_Ji.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਭਾਈ ਅਮਰੀਕ ਸਿੰਘ ਜੀ", options: ["ਸ਼ਹੀਦ ਭਾਈ ਅਮਰੀਕ ਸਿੰਘ ਜੀ", "ਸ਼ਹੀਦ ਭਾਈ ਸਤਵੰਤ ਸਿੰਘ ਜੀ", "ਸ਼ਹੀਦ ਭਾਈ ਬਖ਼ਸ਼ੀਸ਼ ਸਿੰਘ ਜੀ", "ਸ਼ਹੀਦ ਭਾਈ ਮਨਵੀਰ ਸਿੰਘ ਚਹੇੜੂ"], isActive: true, createdAt: now() },
+  { id: 4, imageUrl: "/Shaheed_Bhai_Bakhshish_Singh_Ji.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਭਾਈ ਬਖ਼ਸ਼ੀਸ਼ ਸਿੰਘ ਜੀ", options: ["ਸ਼ਹੀਦ ਭਾਈ ਬਖ਼ਸ਼ੀਸ਼ ਸਿੰਘ ਜੀ", "ਸ਼ਹੀਦ ਭਾਈ ਮਹਿੰਗਾ ਸਿੰਘ ਬੱਬਰ", "ਸ਼ਹੀਦ ਭਾਈ ਸੁਖਦੇਵ ਸਿੰਘ ਸੁੱਖਾ", "ਸ਼ਹੀਦ ਗਥੇਦਾਰ ਗੁਰਦੇਵ ਸਿੰਘ ਜੀ ਕਾਂਉਕੇ"], isActive: true, createdAt: now() },
+  { id: 5, imageUrl: "/Shaheed_Bhai_Beant_Singh_Ji.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਭਾਈ ਬੇਅੰਤ ਸਿੰਘ ਜੀ", options: ["ਸ਼ਹੀਦ ਭਾਈ ਬੇਅੰਤ ਸਿੰਘ ਜੀ", "ਸ਼ਹੀਦ ਭਾਈ ਸਤਵੰਤ ਸਿੰਘ ਜੀ", "ਸ਼ਹੀਦ ਭਾਈ ਸੁਖਦੇਵ ਸਿੰਘ ਬੱਬਰ", "ਸ਼ਹੀਦ ਭਾਈ ਹਰਜਿੰਦਰ ਸਿੰਘ ਜਿੰਦਾ"], isActive: true, createdAt: now() },
+  { id: 6, imageUrl: "/Shaheed_Bhai_Gurjant_Singh_Budhsinghwala.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਭਾਈ ਗੁਰਜੰਟ ਸਿੰਘ ਬੁੱਧ ਸਿੰਘ ਵਾਲਾ", options: ["ਸ਼ਹੀਦ ਭਾਈ ਗੁਰਜੰਟ ਸਿੰਘ ਬੁੱਧ ਸਿੰਘ ਵਾਲਾ", "ਸ਼ਹੀਦ ਬਾਬਾ ਗੁਰਬਚਨ ਸਿੰਘ ਮਾਨੋਚਾਹਲ", "ਸ਼ਹੀਦ ਭਾਈ ਮਨਵੀਰ ਸਿੰਘ ਚਹੇੜੂ", "ਸ਼ਹੀਦ ਭਾਈ ਮਹਿੰਗਾ ਸਿੰਘ ਬੱਬਰ"], isActive: true, createdAt: now() },
+  { id: 7, imageUrl: "/Shaheed_Bhai_Harjinder_Singh_Jinda.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਭਾਈ ਹਰਜਿੰਦਰ ਸਿੰਘ ਜਿੰਦਾ", options: ["ਸ਼ਹੀਦ ਭਾਈ ਹਰਜਿੰਦਰ ਸਿੰਘ ਜਿੰਦਾ", "ਸ਼ਹੀਦ ਭਾਈ ਸੁਖਦੇਵ ਸਿੰਘ ਸੁੱਖਾ", "ਸ਼ਹੀਦ ਭਾਈ ਲਾਭ ਸਿੰਘ", "ਸ਼ਹੀਦ ਭਾਈ ਬੇਅੰਤ ਸਿੰਘ ਜੀ"], isActive: true, createdAt: now() },
+  { id: 8, imageUrl: "/Shaheed_Bhai_Labh_Singh.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਭਾਈ ਲਾਭ ਸਿੰਘ", options: ["ਸ਼ਹੀਦ ਭਾਈ ਲਾਭ ਸਿੰਘ", "ਸ਼ਹੀਦ ਭਾਈ ਅਮਰੀਕ ਸਿੰਘ ਜੀ", "ਸ਼ਹੀਦ ਭਾਈ ਸਤਵੰਤ ਸਿੰਘ ਜੀ", "ਸ਼ਹੀਦ ਗਥੇਦਾਰ ਗੁਰਦੇਵ ਸਿੰਘ ਜੀ ਕਾਂਉਕੇ"], isActive: true, createdAt: now() },
+  { id: 9, imageUrl: "/Shaheed_Bhai_Manvir_Singh_Chaheru.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਭਾਈ ਮਨਵੀਰ ਸਿੰਘ ਚਹੇੜੂ", options: ["ਸ਼ਹੀਦ ਭਾਈ ਮਨਵੀਰ ਸਿੰਘ ਚਹੇੜੂ", "ਸ਼ਹੀਦ ਭਾਈ ਗੁਰਜੰਟ ਸਿੰਘ ਬੁੱਧ ਸਿੰਘ ਵਾਲਾ", "ਸ਼ਹੀਦ ਭਾਈ ਸੁਖਦੇਵ ਸਿੰਘ ਬੱਬਰ", "ਸ਼ਹੀਦ ਭਾਈ ਬਖ਼ਸ਼ੀਸ਼ ਸਿੰਘ ਜੀ"], isActive: true, createdAt: now() },
+  { id: 10, imageUrl: "/Shaheed_Bhai_Mehnga_Singh_Babbar.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਭਾਈ ਮਹਿੰਗਾ ਸਿੰਘ ਬੱਬਰ", options: ["ਸ਼ਹੀਦ ਭਾਈ ਮਹਿੰਗਾ ਸਿੰਘ ਬੱਬਰ", "ਸ਼ਹੀਦ ਭਾਈ ਸੁਖਦੇਵ ਸਿੰਘ ਬੱਬਰ", "ਸ਼ਹੀਦ ਭਾਈ ਹਰਜਿੰਦਰ ਸਿੰਘ ਜਿੰਦਾ", "ਸ਼ਹੀਦ ਭਾਈ ਮਨਵੀਰ ਸਿੰਘ ਚਹੇੜੂ"], isActive: true, createdAt: now() },
+  { id: 11, imageUrl: "/Shaheed_Bhai_Satwant_Singh_Ji.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਭਾਈ ਸਤਵੰਤ ਸਿੰਘ ਜੀ", options: ["ਸ਼ਹੀਦ ਭਾਈ ਸਤਵੰਤ ਸਿੰਘ ਜੀ", "ਸ਼ਹੀਦ ਭਾਈ ਬੇਅੰਤ ਸਿੰਘ ਜੀ", "ਸ਼ਹੀਦ ਭਾਈ ਲਾਭ ਸਿੰਘ", "ਸ਼ਹੀਦ ਭਾਈ ਅਮਰੀਕ ਸਿੰਘ ਜੀ"], isActive: true, createdAt: now() },
+  { id: 12, imageUrl: "/Shaheed_Bhai_Sukhdev_Singh_Babbar.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਭਾਈ ਸੁਖਦੇਵ ਸਿੰਘ ਬੱਬਰ", options: ["ਸ਼ਹੀਦ ਭਾਈ ਸੁਖਦੇਵ ਸਿੰਘ ਬੱਬਰ", "ਸ਼ਹੀਦ ਭਾਈ ਮਹਿੰਗਾ ਸਿੰਘ ਬੱਬਰ", "ਸ਼ਹੀਦ ਭਾਈ ਗੁਰਜੰਟ ਸਿੰਘ ਬੁੱਧ ਸਿੰਘ ਵਾਲਾ", "ਸ਼ਹੀਦ ਬਾਬਾ ਗੁਰਬਚਨ ਸਿੰਘ ਮਾਨੋਚਾਹਲ"], isActive: true, createdAt: now() },
+  { id: 13, imageUrl: "/Shaheed_Bhai_Sukhdev_Singh_Sukha.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਭਾਈ ਸੁਖਦੇਵ ਸਿੰਘ ਸੁੱਖਾ", options: ["ਸ਼ਹੀਦ ਭਾਈ ਸੁਖਦੇਵ ਸਿੰਘ ਸੁੱਖਾ", "ਸ਼ਹੀਦ ਭਾਈ ਹਰਜਿੰਦਰ ਸਿੰਘ ਜਿੰਦਾ", "ਸ਼ਹੀਦ ਭਾਈ ਬਖ਼ਸ਼ੀਸ਼ ਸਿੰਘ ਜੀ", "ਸ਼ਹੀਦ ਭਾਈ ਮਨਵੀਰ ਸਿੰਘ ਚਹੇੜੂ"], isActive: true, createdAt: now() },
+  { id: 14, imageUrl: "/Shaheed_Gathedar_Gurdev_Singh_Ji_Kaonke.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਗਥੇਦਾਰ ਗੁਰਦੇਵ ਸਿੰਘ ਜੀ ਕਾਂਉਕੇ", options: ["ਸ਼ਹੀਦ ਗਥੇਦਾਰ ਗੁਰਦੇਵ ਸਿੰਘ ਜੀ ਕਾਂਉਕੇ", "ਸ਼ਹੀਦ ਬਾਬਾ ਗੁਰਬਚਨ ਸਿੰਘ ਮਾਨੋਚਾਹਲ", "ਸ਼ਹੀਦ ਭਾਈ ਲਾਭ ਸਿੰਘ", "ਸ਼ਹੀਦ ਭਾਈ ਸਤਵੰਤ ਸਿੰਘ ਜੀ"], isActive: true, createdAt: now() },
+  // Kaur images — all options are Kaur names
+  { id: 15, imageUrl: "/Shaheed_Bibi_Manjeet_Kaur.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਬੀਬੀ ਮਨਜੀਤ ਕੌਰ", options: ["ਸ਼ਹੀਦ ਬੀਬੀ ਮਨਜੀਤ ਕੌਰ", "ਸ਼ਹੀਦ ਬੀਬੀ ਉਪਕਾਰ ਕੌਰ", "ਸ਼ਹੀਦ ਬੀਬੀ ਪਰਮਜੀਤ ਕੌਰ", "ਸ਼ਹੀਦ ਬੀਬੀ ਹਰਸ਼ਰਨ ਕੌਰ"], isActive: true, createdAt: now() },
+  { id: 16, imageUrl: "/Shaheed_Bibi_Upkar_Kaur.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਬੀਬੀ ਉਪਕਾਰ ਕੌਰ", options: ["ਸ਼ਹੀਦ ਬੀਬੀ ਉਪਕਾਰ ਕੌਰ", "ਸ਼ਹੀਦ ਬੀਬੀ ਮਨਜੀਤ ਕੌਰ", "ਸ਼ਹੀਦ ਬੀਬੀ ਅਮਰਜੀਤ ਕੌਰ", "ਸ਼ਹੀਦ ਬੀਬੀ ਪਰਮਜੀਤ ਕੌਰ"], isActive: true, createdAt: now() }
 ];
-const seedSettings: EventSettings = { attempts: { spin: 3, memory: 3, "tongue-twister": 1, picture: 3, quiz: 3 } };
+const seedSettings: EventSettings = { attempts: { spin: 3, memory: 3, "tongue-twister": 1, picture: 1, quiz: 3 } };
 
 function read<T>(key: string, fallback: T): T {
   try {
@@ -92,7 +106,7 @@ function saveSession(session: Omit<Session, "id" | "createdAt">) {
   return newSession;
 }
 function syncUserPoints() { const user = read(keys.user, seedUser); user.totalPoints = sessions().reduce((sum, s) => sum + Number(s.pointsEarned || 0), 0); write(keys.user, user); }
-function gameCount(type: Session["type"], playerId?: number) { return sessions().filter(s => s.type === type && (!playerId || s.playerId === playerId) && (type !== "picture" || s.correct === false)).length; }
+function gameCount(type: Session["type"], playerId?: number) { return sessions().filter(s => s.type === type && (!playerId || s.playerId === playerId)).length; }
 function useVersion() { const [v, setV] = useState(0); useEffect(() => { const h = () => setV((x: number) => x + 1); window.addEventListener("pk-local-change", h); return () => window.removeEventListener("pk-local-change", h); }, []); return v; }
 function mutation<TArgs, TResult>(fn: (args: TArgs) => TResult) { return { isPending: false, mutate: (args: TArgs, opts?: { onSuccess?: (r: TResult) => void; onError?: () => void }) => { try { const r = fn(args); opts?.onSuccess?.(r); } catch { opts?.onError?.(); } }, mutateAsync: async (args: TArgs) => fn(args) }; }
 
@@ -125,8 +139,8 @@ export function useGetRandomQuiz(opts?: { query?: { count?: number; difficulty?:
 export function useSubmitQuizAnswers() { return mutation<{ data: { answers: { questionId: number; selectedAnswer: string }[] } }, { score: number; totalQuestions: number; correctAnswers: number; pointsEarned: number; breakdown: unknown[] }>(({ data }) => { const qs = read<KnowledgeQuestion[]>(keys.questions, seedQuestions); const breakdown = data.answers.map(a => { const q = qs.find(x => x.id === a.questionId); return { questionId: a.questionId, correct: q?.correctAnswer === a.selectedAnswer, selectedAnswer: a.selectedAnswer, correctAnswer: q?.correctAnswer ?? "" }; }); const correctAnswers = breakdown.filter(b => b.correct).length; const totalQuestions = data.answers.length; const score = totalQuestions ? Math.round((correctAnswers / totalQuestions) * 100) : 0; const pointsEarned = correctAnswers * 20; saveSession({ type: "quiz", pointsEarned, score, correctAnswers, totalQuestions }); return { score, totalQuestions, correctAnswers, pointsEarned, breakdown }; }); }
 export function useSubmitMemoryGameSession() { return mutation<{ data: { maxLevel: number; pointsEarned: number; bestTime?: number; avgTime?: number } }, Session>(({ data }) => saveSession({ type: "memory", ...data })); }
 export function useListPictureQuestions() { useVersion(); return { data: read<PictureQuestion[]>(keys.pictures, seedPictures).filter(q => q.isActive !== false), isLoading: false }; }
-export function useSubmitPictureAnswer() { return mutation<{ data: { questionId: number; selectedAnswer: string } }, { correct: boolean; pointsEarned: number; correctAnswer: string }>(({ data }) => { const q = read<PictureQuestion[]>(keys.pictures, seedPictures).find(x => x.id === data.questionId); const correct = q?.answer === data.selectedAnswer; const pointsEarned = correct ? 20 : 0; saveSession({ type: "picture", pointsEarned, questionId: data.questionId, selectedAnswer: data.selectedAnswer, correctAnswer: q?.answer, correct }); return { correct, pointsEarned, correctAnswer: q?.answer ?? "" }; }); }
-export function useForfeitPictureGame() { return mutation<{}, void>(() => { saveSession({ type: "picture", pointsEarned: 0, questionId: 0, selectedAnswer: "forfeit", correctAnswer: "", correct: false }); }); }
+export function useSubmitPictureSession() { return mutation<{ data: { correct: boolean; pointsEarned: number; questionsAnswered: number } }, Session>(({ data }) => saveSession({ type: "picture", ...data })); }
+export function useForfeitPictureGame() { return mutation<{}, void>(() => { saveSession({ type: "picture", pointsEarned: 0, questionsAnswered: 0, correct: false }); }); }
 export function useForfeitTongueTwister() { return mutation<{}, void>(() => { saveSession({ type: "tongue-twister", pointsEarned: 0, audioUrl: "", durationSeconds: 0 }); }); }
 export function useForfeitSpin() { return mutation<{}, void>(() => { saveSession({ type: "spin", pointsEarned: 0, configId: 0, resultLabel: "forfeit" }); }); }
 export function useGetMemoryGameLeaderboard(_opts?: { params?: { limit?: number } }) {

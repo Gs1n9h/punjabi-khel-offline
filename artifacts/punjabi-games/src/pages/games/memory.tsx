@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSubmitMemoryGameSession, useGetMemoryGameLeaderboard, useGetGameProgress } from "@/lib/offline-api";
 import confetti from "canvas-confetti";
-import { Brain, Trophy, Star, RotateCcw, Medal } from "lucide-react";
+import { Brain, Trophy, Star, RotateCcw, Medal, ArrowLeft } from "lucide-react";
+import { useLocation } from "wouter";
+import { playCorrect, playWrong } from "@/lib/sounds";
 
 type Phase = "idle" | "showing" | "hiding" | "correct" | "wrong" | "gameover";
 
@@ -53,6 +55,7 @@ function ElapsedTimer({ active, hideStartRef }: { active: boolean; hideStartRef:
 }
 
 export default function MemoryGame() {
+  const [, navigate] = useLocation();
   const [phase, setPhase] = useState<Phase>("idle");
   const [level, setLevel] = useState(1);
   const [currentNumber, setCurrentNumber] = useState("");
@@ -145,6 +148,7 @@ export default function MemoryGame() {
       const pts = level * 10;
       setTotalPoints((p: number) => p + pts);
       setPhase("correct");
+      playCorrect();
       confetti({ particleCount: 60, spread: 60, origin: { y: 0.6 }, colors: ["#1a237e", "#ffd700", "#4CAF50"] });
       setTimeout(() => {
         setLevel((l: number) => l + 1);
@@ -152,6 +156,7 @@ export default function MemoryGame() {
       }, 1200);
     } else {
       setPhase("wrong");
+      playWrong();
       setTimeout(() => setPhase("gameover"), 1000);
     }
   };
@@ -202,7 +207,7 @@ export default function MemoryGame() {
 
   return (
     <MobileContainer className="bg-gradient-to-b from-[#FAF6EE] to-[#E8E0D0]">
-      <PageHeader title="ਯਾਦ ਖੇਡ" subtitle={`ਬਾਕੀ ਮੌਕੇ: ${gameProgress?.remaining ?? 0}/${gameProgress?.limit ?? 0}`} showBack />
+      <PageHeader title="ਯਾਦ ਖੇਡ" showBack />
 
       <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
         <AnimatePresence mode="wait">
@@ -390,6 +395,9 @@ export default function MemoryGame() {
                   <Trophy className="w-6 h-6 text-primary" />
                 </Button>
               </div>
+              <Button variant="outline" onClick={() => navigate("/games")} className="w-full h-12 rounded-2xl border-2 border-[#d4c9a8] text-lg font-bold">
+                <ArrowLeft className="w-5 h-5 mr-2" /> ਖੇਡਾਂ ਵੱਲ ਵਾਪਸ
+              </Button>
               {gameProgress?.isComplete && (
                 <p className="text-sm font-bold text-red-500 text-center">ਇਸ ਖਿਡਾਰੀ ਲਈ ਯਾਦ ਖੇਡ ਦੇ ਸਾਰੇ ਮੌਕੇ ਵਰਤੇ ਜਾ ਚੁੱਕੇ ਹਨ।</p>
               )}

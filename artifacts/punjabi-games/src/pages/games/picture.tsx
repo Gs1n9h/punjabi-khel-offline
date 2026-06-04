@@ -4,10 +4,11 @@ import { MobileContainer } from "@/components/layout/mobile-container";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetGameProgress, useGetMyStats, useListPictureQuestions, useSubmitPictureAnswer, useForfeitPictureGame } from "@/lib/offline-api";
+import { useGetGameProgress, useGetMyStats, useListPictureQuestions, useSubmitPictureSession, useForfeitPictureGame } from "@/lib/offline-api";
 import { AnimatePresence, motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { SkipForward } from "lucide-react";
+import { playCorrect, playWrong } from "@/lib/sounds";
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -18,29 +19,13 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-function playBuzz() {
-  try {
-    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.type = "square";
-    osc.frequency.setValueAtTime(150, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.3);
-    gain.gain.setValueAtTime(0.3, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.3);
-  } catch { /* ignore audio errors */ }
-}
 
 export default function PictureGame() {
   const [, navigate] = useLocation();
   const { data: questions, isLoading } = useListPictureQuestions();
   const { data: progress } = useGetGameProgress("picture");
   const { data: stats } = useGetMyStats();
-  const submitAnswer = useSubmitPictureAnswer();
+  const submitSession = useSubmitPictureSession();
   const forfeitGame = useForfeitPictureGame();
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
@@ -49,6 +34,8 @@ export default function PictureGame() {
   const [showGameOver, setShowGameOver] = useState(false);
   const [shakeKey, setShakeKey] = useState(0);
   const [skippedIds, setSkippedIds] = useState<Set<number>>(new Set());
+  const [totalScore, setTotalScore] = useState(0);
+  const [questionsAnswered, setQuestionsAnswered] = useState(0);
 
   // Stable shuffle: only reshuffle when questions list changes length (initial load)
   const shuffledQuestionsRef = useRef<typeof questions>(null);
@@ -69,6 +56,13 @@ export default function PictureGame() {
     return shuffle(currentQuestion.options);
   }, [currentQuestion?.id]);
 
+  // Submit session when game over triggers
+  useEffect(() => {
+    if (showGameOver) {
+      submitSession.mutate({ data: { correct: result?.correct ?? false, pointsEarned: totalScore, questionsAnswered } });
+    }
+  }, [showGameOver]);
+
   // Auto-advance ONLY on correct answers
   useEffect(() => {
     if (!result || !result.correct) return;
@@ -87,31 +81,32 @@ export default function PictureGame() {
   const handleSelect = useCallback((option: string) => {
     if (!currentQuestion || selected || showGameOver || attemptsLeft <= 0) return;
     setSelected(option);
-    submitAnswer.mutate({ data: { questionId: currentQuestion.id, selectedAnswer: option } }, {
-      onSuccess: (data) => {
-        if (data.correct) {
-          setResult(data);
-          confetti({ particleCount: 90, spread: 70, origin: { y: 0.58 }, colors: ["#1a237e", "#ffd700", "#4CAF50"] });
-        } else {
-          // Wrong: consume attempt, shake+buzz, stay on same question
-          setAttemptsLeft((prev: number) => {
-            const next = prev - 1;
-            if (next <= 0) {
-              setTimeout(() => setShowGameOver(true), 800);
-            }
-            return next;
-          });
-          playBuzz();
-          setShakeKey((k: number) => k + 1);
-          // Clear selection after short delay so they can retry
-          setTimeout(() => {
-            setSelected(null);
-            setResult(null);
-          }, 800);
+    const correct = currentQuestion.answer === option;
+    if (correct) {
+      setQuestionsAnswered((prev: number) => prev + 1);
+      setTotalScore((prev: number) => prev + 20);
+      setResult({ correct: true, pointsEarned: 20, correctAnswer: currentQuestion.answer });
+      playCorrect();
+      confetti({ particleCount: 90, spread: 70, origin: { y: 0.58 }, colors: ["#1a237e", "#ffd700", "#4CAF50"] });
+    } else {
+      // Wrong: consume attempt, shake+buzz, stay on same question
+      setAttemptsLeft((prev: number) => {
+        const next = prev - 1;
+        if (next <= 0) {
+          setTimeout(() => setShowGameOver(true), 800);
         }
-      }
-    });
-  }, [currentQuestion, selected, showGameOver, attemptsLeft, submitAnswer]);
+        return next;
+      });
+      playWrong();
+      setShakeKey((k: number) => k + 1);
+      setResult({ correct: false, pointsEarned: 0, correctAnswer: currentQuestion.answer });
+      // Clear selection after short delay so they can retry
+      setTimeout(() => {
+        setSelected(null);
+        setResult(null);
+      }, 800);
+    }
+  }, [currentQuestion, selected, showGameOver, attemptsLeft]);
 
   const handleSkip = useCallback(() => {
     if (!currentQuestion || selected || showGameOver) return;
@@ -124,6 +119,13 @@ export default function PictureGame() {
       setIndex((prev: number) => prev + 1);
     }
   }, [currentQuestion, selected, showGameOver, index, activeQuestions.length]);
+
+  // Lock out if global picture attempts already exhausted
+  useEffect(() => {
+    if (progress?.isComplete) {
+      setShowGameOver(true);
+    }
+  }, [progress?.isComplete]);
 
   const handleBackForfeit = useCallback(() => {
     forfeitGame.mutate({});
@@ -143,7 +145,7 @@ export default function PictureGame() {
     );
   }
 
-  if (showGameOver || progress?.isComplete) {
+  if (showGameOver) {
     const allCorrect = index >= activeQuestions.length - 1 && result?.correct;
     return (
       <MobileContainer className="bg-gradient-to-b from-[#FAF6EE] to-[#E8E0D0]">
@@ -185,13 +187,13 @@ export default function PictureGame() {
               <span className="text-[9rem] sm:text-[12rem] leading-none drop-shadow-sm">{currentQuestion.imageEmoji}</span>
             )}
           </div>
-          <p className="mt-4 text-center text-xl sm:text-2xl font-black text-primary">ਇਹ ਕੀ ਹੈ?</p>
+          <p className="mt-4 text-center text-xl sm:text-2xl font-black text-primary">ਇਹ ਕੌਣ ਹੈ?</p>
         </motion.div>
 
         <div className="flex flex-col justify-center gap-3 sm:gap-4">
           {shuffledOptions.map((option: string, optionIndex: number) => {
             const isSelected = selected === option;
-            const isCorrect = result && option === result.correctAnswer;
+            const isCorrect = result?.correct && option === result.correctAnswer;
             const isWrong = result && isSelected && !result.correct;
             return (
               <button

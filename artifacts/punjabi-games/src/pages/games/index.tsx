@@ -94,7 +94,7 @@ export default function GamesHub() {
       <MobileContainer className="bg-[radial-gradient(circle_at_top,#FFF8E1_0%,#FAF6EE_42%,#F0EBE0_100%)]">
         <div className="flex-1 flex flex-col px-6 py-6">
           <div className="flex justify-end">
-            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`} alt="ਗੁਰਮੁਖੀ ਵੇਹੜਾ" className="w-16 h-16 rounded-full border-2 border-primary shadow-md bg-white z-20" />
+            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.jpeg`} alt="ਗੁਰਮੁਖੀ ਵੇਹੜਾ" className="w-16 h-16 rounded-full border-2 border-primary shadow-md bg-white z-20" />
           </div>
           <div className="flex-1 flex items-center justify-center">
             <div className="w-full max-w-xl bg-white/95 border-4 border-white rounded-[32px] p-6 sm:p-8 shadow-xl space-y-5">
@@ -126,7 +126,7 @@ export default function GamesHub() {
               ਨਵਾਂ ਸੈਸ਼ਨ
             </button>
             <img
-              src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`}
+              src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.jpeg`}
               alt="ਗੁਰਮੁਖੀ ਵੇਹੜਾ"
               className="w-12 h-12 rounded-full border-2 border-primary shadow-sm bg-white relative z-20"
             />

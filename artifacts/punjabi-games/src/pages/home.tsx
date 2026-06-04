@@ -10,7 +10,7 @@ export function Home() {
         {/* Top-right logo */}
         <div className="flex justify-end mb-2">
           <img
-            src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.png`}
+            src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.jpeg`}
             alt="ਗੁਰਮੁਖੀ ਵੇਹੜਾ"
             className="w-14 h-14 rounded-full border-2 border-primary shadow-md"
           />
@@ -24,7 +24,7 @@ export function Home() {
             className="mb-8 relative"
           >
             <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
-            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.svg`} alt="ਗੁਰਮੁਖੀ ਵੇਹੜਾ" className="w-48 h-48 drop-shadow-2xl relative z-10" />
+            <img src={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/logo.jpeg`} alt="ਗੁਰਮੁਖੀ ਵੇਹੜਾ" className="w-48 h-48 drop-shadow-2xl relative z-10" />
           </motion.div>
 
           <motion.div

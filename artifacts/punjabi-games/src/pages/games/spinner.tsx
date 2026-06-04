@@ -261,11 +261,13 @@ export default function SpinnerGame() {
   const showScoreEntry = phase === "scoring";
   const gameSaved = phase === "saved";
 
-  // Mount-time lockout: if globally exhausted, show locked state
+  // Mount-time lockout: if globally exhausted on load, show locked state
+  const hasCheckedProgress = useRef(false);
   useEffect(() => {
-    if (progress?.isComplete) {
+    if (!hasCheckedProgress.current && progress?.isComplete) {
       setPhase("saved");
     }
+    hasCheckedProgress.current = true;
   }, [progress?.isComplete]);
 
   const handleSpin = () => {

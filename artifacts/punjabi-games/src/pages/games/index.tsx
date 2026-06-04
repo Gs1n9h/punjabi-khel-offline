@@ -64,7 +64,9 @@ function GameCard({ game, index }: { game: typeof games[number]; index: number }
           {game.isNew && <span className="rounded-full bg-green-600 text-white px-3 py-1 text-[10px] font-black uppercase tracking-wide">New</span>}
         </div>
         <p className="text-sm font-bold text-muted-foreground mt-1">{game.subtitle}</p>
-        <p className="text-xs font-black text-primary mt-2">ਮੌਕੇ ਵਰਤੇ: {progress?.used ?? 0}/{progress?.limit ?? 0}</p>
+        <p className="text-xs font-black text-primary mt-2">
+          {disabled ? "ਮੌਕੇ ਪੂਰੇ ਹੋ ਗਏ" : `ਮੌਕੇ ਵਰਤੇ: ${progress?.used ?? 0}/${progress?.limit ?? 0}`}
+        </p>
       </div>
     </div>
   );

@@ -79,7 +79,19 @@ const seedPictures: PictureQuestion[] = [
   { id: 15, imageUrl: "/Shaheed_Bibi_Manjeet_Kaur.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਬੀਬੀ ਮਨਜੀਤ ਕੌਰ", options: ["ਸ਼ਹੀਦ ਬੀਬੀ ਮਨਜੀਤ ਕੌਰ", "ਸ਼ਹੀਦ ਬੀਬੀ ਉਪਕਾਰ ਕੌਰ", "ਸ਼ਹੀਦ ਬੀਬੀ ਪਰਮਜੀਤ ਕੌਰ", "ਸ਼ਹੀਦ ਬੀਬੀ ਹਰਸ਼ਰਨ ਕੌਰ"], isActive: true, createdAt: now() },
   { id: 16, imageUrl: "/Shaheed_Bibi_Upkar_Kaur.jpeg", imageEmoji: "", answer: "ਸ਼ਹੀਦ ਬੀਬੀ ਉਪਕਾਰ ਕੌਰ", options: ["ਸ਼ਹੀਦ ਬੀਬੀ ਉਪਕਾਰ ਕੌਰ", "ਸ਼ਹੀਦ ਬੀਬੀ ਮਨਜੀਤ ਕੌਰ", "ਸ਼ਹੀਦ ਬੀਬੀ ਅਮਰਜੀਤ ਕੌਰ", "ਸ਼ਹੀਦ ਬੀਬੀ ਪਰਮਜੀਤ ਕੌਰ"], isActive: true, createdAt: now() }
 ];
-const seedSettings: EventSettings = { attempts: { spin: 3, memory: 3, "tongue-twister": 1, picture: 3, quiz: 3 } };
+const seedSettings: EventSettings = { attempts: { spin: 3, memory: 3, "tongue-twister": 1, picture: 1, quiz: 3 } };
+
+// Migration: reduce tasveer pechaan limit from 3 to 1
+try {
+  const raw = localStorage.getItem(keys.settings);
+  if (raw) {
+    const s = JSON.parse(raw);
+    if (s.attempts?.picture === 3) {
+      s.attempts.picture = 1;
+      localStorage.setItem(keys.settings, JSON.stringify(s));
+    }
+  }
+} catch {}
 
 function read<T>(key: string, fallback: T): T {
   try {

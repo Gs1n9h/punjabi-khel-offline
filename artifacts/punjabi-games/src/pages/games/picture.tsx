@@ -178,9 +178,9 @@ export default function PictureGame() {
           initial={{ opacity: 0, scale: 0.96, x: 0 }}
           animate={shakeKey > 0 && !result?.correct ? { opacity: 1, scale: 1, x: [0, -12, 12, -12, 12, 0] } : { opacity: 1, scale: 1, x: 0 }}
           transition={shakeKey > 0 && !result?.correct ? { duration: 0.4 } : { duration: 0.3 }}
-          className="bg-white/95 border-4 border-white rounded-[36px] shadow-xl p-4 sm:p-6 flex flex-col items-center justify-center min-h-[360px] md:min-h-[600px]"
+          className="bg-white/95 border-4 border-white rounded-[36px] shadow-xl p-4 sm:p-6 flex flex-col items-center justify-center min-h-[420px] md:min-h-[680px]"
         >
-          <div className="w-full h-64 sm:h-80 md:h-[28rem] rounded-[28px] bg-gradient-to-br from-green-50 to-yellow-50 border-4 border-green-100 flex items-center justify-center overflow-hidden">
+          <div className="w-full h-72 sm:h-96 md:h-[32rem] rounded-[28px] bg-gradient-to-br from-green-50 to-yellow-50 border-4 border-green-100 flex items-center justify-center overflow-hidden">
             {currentQuestion.imageUrl ? (
               <img src={currentQuestion.imageUrl} alt="ਤਸਵੀਰ" className="w-full h-full object-cover" />
             ) : (

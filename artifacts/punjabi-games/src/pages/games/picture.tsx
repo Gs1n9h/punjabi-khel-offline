@@ -187,7 +187,7 @@ export default function PictureGame() {
               <span className="text-[6rem] sm:text-[8rem] md:text-[10rem] leading-none drop-shadow-sm">{currentQuestion.imageEmoji}</span>
             )}
           </div>
-          <p className="mt-4 text-center text-xl sm:text-2xl font-black text-primary">ਇਹ ਕੌਣ ਹੈ?</p>
+          <p className="mt-4 text-center text-xl sm:text-2xl font-black text-primary">ਇਹ ਕੌਣ ਹਨ?</p>
         </motion.div>
 
         <div className="flex flex-col justify-center gap-3 sm:gap-4">

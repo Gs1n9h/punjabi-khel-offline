@@ -23,6 +23,15 @@ function play(name: string) {
   }
 }
 
-export function playSpin() { play("spin"); }
+function stop(name: string) {
+  const audio = cache[`${SOUND_PATH}/${name}.mp3`];
+  if (audio) {
+    audio.pause();
+    audio.currentTime = 0;
+  }
+}
+
+export function playSpin() { play("nagara-drum-clip"); }
+export function stopSpin() { stop("nagara-drum-clip"); }
 export function playCorrect() { play("correct"); }
 export function playWrong() { play("wrong"); }

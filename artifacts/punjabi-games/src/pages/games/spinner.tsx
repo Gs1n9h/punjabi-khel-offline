@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { motion, useAnimationControls } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Skeleton } from "@/components/ui/skeleton";
-import { playSpin } from "@/lib/sounds";
+import { playSpin, stopSpin } from "@/lib/sounds";
 import { queryClient } from "@/lib/queryClient";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { MoreVertical } from "lucide-react";
@@ -284,6 +284,7 @@ export default function SpinnerGame() {
 
     const spinDuration = (displayMode === "wheel") ? 4200 : 3700;
     setTimeout(() => {
+      stopSpin();
       setResult(selectedItem.label);
       const newCount = spinsThisGame + 1;
       setSpinsThisGame(newCount);

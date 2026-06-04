@@ -271,7 +271,7 @@ export default function MemoryGame() {
                     className="flex items-center justify-center"
                   >
                     <div className="w-20 h-20 bg-red-500/90 rounded-full flex items-center justify-center text-4xl font-black text-white shadow-2xl border-4 border-white">
-                      {remainingSec}
+                      {toPunjabi(String(remainingSec))}
                     </div>
                   </motion.div>
                 );
@@ -309,7 +309,7 @@ export default function MemoryGame() {
                 {[1,2,3,4,5,6,7,8,9].map(i => (
                   <button
                     key={i}
-                    onPointerDown={(e) => { e.preventDefault(); handleKeyPress(String(i)); }}
+                    onPointerDown={() => handleKeyPress(String(i))}
                     className="h-16 bg-white border-2 border-[#d4c9a8] rounded-2xl text-3xl font-black text-primary shadow-sm active:bg-[#f5f0e0] active:scale-95 transition-all touch-manipulation select-none"
                   >
                     {PUNJABI_DIGITS[i]}
@@ -317,13 +317,13 @@ export default function MemoryGame() {
                 ))}
                 <div /> {/* empty cell */}
                 <button
-                  onPointerDown={(e) => { e.preventDefault(); handleKeyPress("0"); }}
+                  onPointerDown={() => handleKeyPress("0")}
                   className="h-16 bg-white border-2 border-[#d4c9a8] rounded-2xl text-3xl font-black text-primary shadow-sm active:bg-[#f5f0e0] active:scale-95 transition-all touch-manipulation select-none"
                 >
                   {PUNJABI_DIGITS[0]}
                 </button>
                 <button
-                  onPointerDown={(e) => { e.preventDefault(); handleBackspace(); }}
+                  onPointerDown={() => handleBackspace()}
                   className="h-16 bg-[#f5f0e0] border-2 border-[#d4c9a8] rounded-2xl text-lg font-bold text-primary shadow-sm active:bg-[#ebe5d0] active:scale-95 transition-all flex items-center justify-center touch-manipulation select-none"
                 >
                   ←

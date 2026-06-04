@@ -171,7 +171,7 @@ export default function PictureGame() {
 
   return (
     <MobileContainer className="bg-[radial-gradient(circle_at_top,#ECFDF5_0%,#FAF6EE_48%,#E8E0D0_100%)]">
-      <PageHeader title="ਤਸਵੀਰ ਪਛਾਣ" subtitle={`ਬਾਕੀ ਕੋਸ਼ਿਸ਼ਾਂ: ${attemptsLeft}`} showBack onBack={handleBackForfeit} />
+      <PageHeader title="ਤਸਵੀਰ ਪਛਾਣ" subtitle={`ਮੌਕੇ: ${progress?.used ?? 0}/${progress?.limit ?? 0} — ਬਾਕੀ ਕੋਸ਼ਿਸ਼ਾਂ: ${attemptsLeft}`} showBack onBack={handleBackForfeit} />
       <div className="flex-1 grid content-stretch gap-4 p-4 sm:p-6 md:grid-cols-[1.1fr_0.9fr] md:items-center">
         <motion.div
           key={`${currentQuestion.id}-${shakeKey}`}

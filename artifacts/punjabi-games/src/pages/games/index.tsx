@@ -1,12 +1,13 @@
 import { Link } from "wouter";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MobileContainer } from "@/components/layout/mobile-container";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
-import { useGetCurrentPlayer, useGetGameProgress, useGetMyStats, useNewEventPlayer, useResetCurrentPlayer, useStartEventPlayer } from "@/lib/offline-api";
+import { useGetCurrentPlayer, useGetGameProgress, useGetMyStats, useGetLeaderboard, useNewEventPlayer, useResetCurrentPlayer, useStartEventPlayer } from "@/lib/offline-api";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, RotateCcw, Trophy, UserPlus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { MapPin, RotateCcw, Trophy, UserPlus, Crown, Medal } from "lucide-react";
 import { motion } from "framer-motion";
 
 const games = [
@@ -83,6 +84,29 @@ export default function GamesHub() {
   const newPlayer = useNewEventPlayer();
   const [name, setName] = useState("");
   const [place, setPlace] = useState("");
+
+  // Check progress across all games
+  const { data: spinProgress } = useGetGameProgress("spin");
+  const { data: memoryProgress } = useGetGameProgress("memory");
+  const { data: tongueProgress } = useGetGameProgress("tongue-twister");
+  const { data: pictureProgress } = useGetGameProgress("picture");
+  const allGamesComplete = Boolean(
+    spinProgress?.isComplete &&
+    memoryProgress?.isComplete &&
+    tongueProgress?.isComplete &&
+    pictureProgress?.isComplete
+  );
+
+  const { data: leaderboard } = useGetLeaderboard();
+  const currentPlayerEntry = player
+    ? leaderboard?.find((entry: any) => entry.userId === player.id)
+    : null;
+  const [showAllDonePopup, setShowAllDonePopup] = useState(false);
+
+  // Auto-show popup when all games become complete; allow user to close
+  useEffect(() => {
+    if (allGamesComplete) setShowAllDonePopup(true);
+  }, [allGamesComplete]);
 
   const handleStart = () => {
     if (!name.trim() || !place.trim()) return;
@@ -173,6 +197,69 @@ export default function GamesHub() {
       </div>
 
       <BottomNav />
+
+      {/* All games complete popup */}
+      <Dialog open={showAllDonePopup} onOpenChange={setShowAllDonePopup}>
+        <DialogContent className="max-w-sm rounded-[28px] border-4 border-[#e8e0d0] bg-gradient-to-b from-[#FAF6EE] to-[#E8E0D0] p-0 overflow-hidden">
+          <div className="p-6 text-center space-y-5">
+            <div className="text-6xl">🏆</div>
+            <DialogHeader className="space-y-2">
+              <DialogTitle className="text-2xl font-black text-primary">ਸਾਰੇ ਖੇਡ ਮੁਕੰਮਲ!</DialogTitle>
+              <DialogDescription className="text-sm font-bold text-muted-foreground">
+                ਤੁਸੀਂ ਸਾਰੇ ਖੇਡਾਂ ਦੇ ਮੌਕੇ ਵਰਤੇ ਹਨ।
+              </DialogDescription>
+            </DialogHeader>
+
+            {currentPlayerEntry && (
+              <div className="bg-white rounded-2xl border-2 border-[#d4c9a8] p-4 shadow-sm">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  {currentPlayerEntry.rank === 1 ? (
+                    <Crown className="w-6 h-6 text-yellow-500" />
+                  ) : currentPlayerEntry.rank && currentPlayerEntry.rank <= 3 ? (
+                    <Medal className="w-6 h-6 text-amber-600" />
+                  ) : (
+                    <Trophy className="w-6 h-6 text-primary" />
+                  )}
+                  <span className="text-lg font-black text-primary">
+                    #{currentPlayerEntry.rank}
+                  </span>
+                </div>
+                <p className="font-bold text-sm text-foreground">{currentPlayerEntry.displayName || currentPlayerEntry.username}</p>
+                <div className="mt-3 bg-primary/10 rounded-xl p-3">
+                  <p className="text-xs font-bold text-muted-foreground uppercase">ਕੁੱਲ ਅੰਕ</p>
+                  <p className="text-4xl font-black text-primary">{currentPlayerEntry.totalPoints}</p>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2 font-bold">{currentPlayerEntry.gamesPlayed} ਖੇਡਾਂ ਖੇਡੀਆਂ</p>
+              </div>
+            )}
+
+            {!currentPlayerEntry && stats && (
+              <div className="bg-white rounded-2xl border-2 border-[#d4c9a8] p-4 shadow-sm">
+                <div className="mt-3 bg-primary/10 rounded-xl p-3">
+                  <p className="text-xs font-bold text-muted-foreground uppercase">ਕੁੱਲ ਅੰਕ</p>
+                  <p className="text-4xl font-black text-primary">{stats.totalPoints}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-3">
+              <Button
+                onClick={() => newPlayer.mutate({})}
+                className="w-full h-14 text-xl rounded-2xl bg-primary hover:bg-[#141b4d] text-white shadow-lg border-b-4 border-[#0f1540] active:border-b-0 active:translate-y-1 transition-all"
+              >
+                <UserPlus className="w-6 h-6 mr-2" /> ਨਵਾਂ ਸੈਸ਼ਨ ਸ਼ੁਰੂ ਕਰੋ
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowAllDonePopup(false)}
+                className="w-full h-12 rounded-2xl border-2 border-[#d4c9a8] text-lg font-bold"
+              >
+                ਬੰਦ ਕਰੋ
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </MobileContainer>
   );
 }

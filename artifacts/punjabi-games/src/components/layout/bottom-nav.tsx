@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Home, LayoutDashboard, User, Trophy, Shield } from "lucide-react";
+import { Home, Trophy, Shield } from "lucide-react";
 import { useGetMe } from "@/lib/offline-api";
 
 export function BottomNav() {
@@ -9,7 +9,6 @@ export function BottomNav() {
   const navItems = [
     { href: "/games", icon: Home, label: "ਖੇਡਾਂ" },
     { href: "/leaderboard", icon: Trophy, label: "ਦਰਜਾਬੰਦੀ" },
-    { href: "/profile", icon: User, label: "ਪ੍ਰੋਫਾਈਲ" },
   ];
 
   if (user?.role === "admin" || user?.role === "moderator") {

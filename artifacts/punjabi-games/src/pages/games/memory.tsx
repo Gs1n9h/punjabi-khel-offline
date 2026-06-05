@@ -237,23 +237,29 @@ export default function MemoryGame() {
 
           {/* IDLE */}
           {phase === "idle" && (
-            <motion.div key="idle" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-8 text-center w-full max-w-xs">
+            <motion.div key="idle" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-6 text-center w-full max-w-sm">
               <div className="relative">
                 <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
-                <div className="w-32 h-32 bg-white rounded-3xl border-4 border-[#d4c9a8] flex items-center justify-center shadow-xl relative z-10">
-                  <Brain className="w-16 h-16 text-primary" />
+                <div className="w-28 h-28 bg-white rounded-3xl border-4 border-[#d4c9a8] flex items-center justify-center shadow-xl relative z-10">
+                  <Brain className="w-14 h-14 text-primary" />
                 </div>
               </div>
               <div>
                 <h2 className="text-3xl font-black text-primary mb-2">ਯਾਦ ਖੇਡ</h2>
                 <p className="text-muted-foreground font-medium">ਇੱਕ ਨੰਬਰ ਥੋੜ੍ਹੀ ਦੇਰ ਲਈ ਦਿਖਾਈ ਦਿੰਦਾ ਹੈ — ਇਸ ਨੂੰ ਯਾਦ ਰੱਖੋ!</p>
               </div>
-              <div className="bg-white rounded-2xl p-4 border-2 border-[#e8e0d0] w-full text-left space-y-2 shadow-sm">
-                <p className="font-bold text-sm text-primary">ਇਹ ਕਿਵੇਂ ਕੰਮ ਕਰਦਾ ਹੈ:</p>
-                <p className="text-xs text-muted-foreground">• ਇੱਕ ਨੰਬਰ ਸਕ੍ਰੀਨ 'ਤੇ ਥੋੜ੍ਹੀ ਦੇਰ ਲਈ ਆਉਂਦਾ ਹੈ</p>
-                <p className="text-xs text-muted-foreground">• ਇਸ ਨੂੰ ਯਾਦ ਰੱਖੋ — ਫਿਰ ਦਾਖਲ ਕਰੋ</p>
-                <p className="text-xs text-muted-foreground">• ਹਰ ਪੱਧਰ ਵਿੱਚ ਇੱਕ ਹੋਰ ਅੰਕ ਜੁੜਦਾ ਹੈ</p>
-                <p className="text-xs text-muted-foreground">• ਹਰ ਸਹੀ ਜਵਾਬ 'ਤੇ 10×ਪੱਧਰ ਅੰਕ</p>
+              <div className="bg-white rounded-2xl p-5 border-2 border-[#e8e0d0] w-full text-left space-y-3 shadow-sm">
+                <p className="font-black text-base text-primary">ਇਹ ਕਿਵੇਂ ਕੰਮ ਕਰਦਾ ਹੈ:</p>
+                <p className="text-sm text-muted-foreground">• ਇੱਕ ਨੰਬਰ ਸਕ੍ਰੀਨ 'ਤੇ ਥੋੜ੍ਹੀ ਦੇਰ ਲਈ ਆਉਂਦਾ ਹੈ</p>
+                <p className="text-sm text-muted-foreground">• ਇਸ ਨੂੰ ਯਾਦ ਰੱਖੋ — ਫਿਰ ਦਾਖਲ ਕਰੋ</p>
+                <p className="text-sm text-muted-foreground">• ਹਰ ਪੱਧਰ ਵਿੱਚ ਇੱਕ ਹੋਰ ਅੰਕ ਜੁੜਦਾ ਹੈ</p>
+                <div className="bg-primary/8 rounded-xl p-3 border border-primary/20 space-y-1">
+                  <p className="font-bold text-sm text-primary">🏆 ਅੰਕ ਕਿਵੇਂ ਮਿਲਦੇ ਹਨ:</p>
+                  <p className="text-sm text-muted-foreground">• ਪੱਧਰ 1 ਸਹੀ → <span className="font-black text-primary">10 ਅੰਕ</span></p>
+                  <p className="text-sm text-muted-foreground">• ਪੱਧਰ 2 ਸਹੀ → ਪਹਿਲਾਂ ਦੇ + <span className="font-black text-primary">20 ਅੰਕ</span></p>
+                  <p className="text-sm text-muted-foreground">• ਪੱਧਰ 3 ਸਹੀ → ਪਹਿਲਾਂ ਦੇ + <span className="font-black text-primary">30 ਅੰਕ</span></p>
+                  <p className="text-xs text-muted-foreground pt-1 border-t border-primary/10">ਹਰ ਸਹੀ ਜਵਾਬ = ਪੱਧਰ × 10 ਅੰਕ ਕੁੱਲ ਵਿੱਚ ਜੁੜਦੇ ਹਨ</p>
+                </div>
               </div>
               <div className="flex gap-3 w-full">
                 <Button onClick={handleStart} disabled={gameProgress?.isComplete} className={`flex-1 h-14 text-xl rounded-2xl shadow-lg border-b-4 border-[#0f1540] active:border-b-0 active:translate-y-1 transition-all ${gameProgress?.isComplete ? "bg-gray-400 text-white cursor-not-allowed" : "bg-primary hover:bg-[#141b4d] text-white"}`}>
@@ -282,35 +288,36 @@ export default function MemoryGame() {
                 <motion.div className="h-full bg-primary rounded-full" style={{ width: `${progress}%` }} />
               </div>
 
-              {/* Countdown above number — shows actual remaining seconds */}
+              {/* Countdown above number — shows actual remaining seconds (30% smaller) */}
               {(() => {
                 const remainingSec = Math.max(1, Math.ceil(progress / 100 * getShowDuration(level) / 1000));
                 return (
                   <motion.div
                     key={remainingSec}
-                    initial={{ scale: 1.6, opacity: 0 }}
+                    initial={{ scale: 1.4, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.25 }}
                     className="flex items-center justify-center"
                   >
-                    <div className="w-12 h-12 bg-red-500/90 rounded-full flex items-center justify-center text-xl font-black text-white shadow-lg border-2 border-white">
+                    <div className="w-8 h-8 bg-red-500/90 rounded-full flex items-center justify-center text-sm font-black text-white shadow-md border-2 border-white">
                       {toPunjabi(String(remainingSec))}
                     </div>
                   </motion.div>
                 );
               })()}
 
-              {/* Number display — font scales down when many digits so it always fits */}
-              <div className="bg-white rounded-3xl border-4 border-[#d4c9a8] shadow-xl px-6 py-8 flex items-center justify-center min-h-[140px] w-full overflow-hidden">
+              {/* Number display — 20% bigger, responsive to large digit counts */}
+              <div className="bg-white rounded-3xl border-4 border-[#d4c9a8] shadow-xl px-4 py-6 flex items-center justify-center min-h-[168px] w-full overflow-hidden">
                 <span
-                  className="font-black tracking-widest text-primary select-none text-center leading-none"
+                  className="font-black text-primary select-none text-center leading-none w-full break-all"
                   style={{
-                    fontSize: level <= 4 ? "4.5rem"
-                           : level === 5 ? "4rem"
-                           : level === 6 ? "3.5rem"
-                           : level === 7 ? "3rem"
-                           : level === 8 ? "2.5rem"
-                           : "2rem"
+                    fontSize: level <= 4 ? "5.4rem"
+                           : level === 5 ? "4.8rem"
+                           : level === 6 ? "4.2rem"
+                           : level === 7 ? "3.6rem"
+                           : level === 8 ? "3rem"
+                           : level === 9 ? "2.6rem"
+                           : "2.2rem"
                   }}
                 >
                   {toPunjabi(currentNumber)}

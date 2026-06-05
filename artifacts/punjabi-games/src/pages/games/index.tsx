@@ -129,8 +129,20 @@ export default function GamesHub() {
                 <h1 className="text-4xl font-black text-primary leading-tight">ਨਵਾਂ ਸੈਸ਼ਨ</h1>
                 <p className="text-muted-foreground font-bold mt-2">ਐਥਲੀਟ/ਖਿਡਾਰੀ ਦਾ ਨਾਮ ਤੇ ਸ਼ਹਿਰ ਲਿਖੋ।</p>
               </div>
-              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="ਤੁਹਾਡਾ ਨਾਮ" className="w-full h-16 rounded-2xl border-2 border-[#d4c9a8] bg-[#FAF6EE] px-5 text-xl font-bold outline-none focus:border-primary" />
-              <input value={place} onChange={(e) => setPlace(e.target.value)} placeholder="ਤੁਸੀਂ ਕਿੱਥੋਂ ਹੋ?" className="w-full h-16 rounded-2xl border-2 border-[#d4c9a8] bg-[#FAF6EE] px-5 text-xl font-bold outline-none focus:border-primary" />
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onFocus={(e) => setTimeout(() => e.target.scrollIntoView({ behavior: "smooth", block: "center" }), 350)}
+                placeholder="ਤੁਹਾਡਾ ਨਾਮ"
+                className="w-full h-16 rounded-2xl border-2 border-[#d4c9a8] bg-[#FAF6EE] px-5 text-xl font-bold outline-none focus:border-primary"
+              />
+              <input
+                value={place}
+                onChange={(e) => setPlace(e.target.value)}
+                onFocus={(e) => setTimeout(() => e.target.scrollIntoView({ behavior: "smooth", block: "center" }), 350)}
+                placeholder="ਤੁਸੀਂ ਕਿੱਥੋਂ ਹੋ?"
+                className="w-full h-16 rounded-2xl border-2 border-[#d4c9a8] bg-[#FAF6EE] px-5 text-xl font-bold outline-none focus:border-primary"
+              />
               <Button onClick={handleStart} disabled={!name.trim() || !place.trim()} className="w-full h-16 text-xl rounded-2xl bg-primary hover:bg-[#141b4d] text-white shadow-lg border-b-4 border-[#0f1540]">
                 <UserPlus className="w-6 h-6 mr-2" /> ਸੈਸ਼ਨ ਸ਼ੁਰੂ ਕਰੋ
               </Button>

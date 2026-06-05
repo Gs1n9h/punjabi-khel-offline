@@ -319,6 +319,7 @@ export default function SpinnerGame() {
   };
 
   const handleBackForfeit = () => {
+    stopSpin(); // stop audio immediately if spinning when navigating back
     forfeitSpin.mutate({});
     navigate("/games");
   };

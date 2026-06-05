@@ -203,7 +203,24 @@ export default function PictureGame() {
               <span className="text-[6rem] sm:text-[8rem] md:text-[10rem] leading-none drop-shadow-sm">{currentQuestion.imageEmoji}</span>
             )}
           </div>
-          <p className="mt-4 text-center text-xl sm:text-2xl font-black text-primary">ਇਹ ਕੌਣ ਹਨ?</p>
+          <AnimatePresence mode="wait">
+            {result && result.correct ? (
+              <motion.div key="correct" initial={{ opacity: 0, y: 12, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0 }} className="mt-4 rounded-[28px] border-4 p-5 text-center shadow-xl bg-green-50 border-green-200 w-full">
+                <div className="text-6xl mb-2">🎉</div>
+                <h2 className="text-3xl font-black text-green-700">ਸਹੀ!</h2>
+                <p className="font-bold text-muted-foreground mt-1">ਸਹੀ ਜਵਾਬ: <span className="text-foreground text-xl font-black">{result.correctAnswer}</span></p>
+                <p className="font-black text-primary mt-2">+{result.pointsEarned} ਅੰਕ</p>
+              </motion.div>
+            ) : selected && !result?.correct && attemptsLeft > 0 ? (
+              <motion.div key="wrong" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-4 rounded-[28px] border-4 p-4 text-center shadow-xl bg-red-50 border-red-200 w-full">
+                <div className="text-4xl mb-1">😬</div>
+                <h2 className="text-xl font-black text-red-600">ਓਹੋ! ਗਲਤ ਜਵਾਬ</h2>
+                <p className="text-sm font-bold text-muted-foreground mt-1">{attemptsLeft} ਕੋਸ਼ਿਸ਼ਾਂ ਬਾਕੀ — ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ!</p>
+              </motion.div>
+            ) : (
+              <motion.p key="question" className="mt-4 text-center text-xl sm:text-2xl font-black text-primary">ਇਹ ਕੌਣ ਹਨ?</motion.p>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         <div className="flex flex-col justify-center gap-3 sm:gap-4">
@@ -227,26 +244,6 @@ export default function PictureGame() {
               </button>
             );
           })}
-
-          <AnimatePresence>
-            {result && result.correct && (
-              <motion.div initial={{ opacity: 0, y: 12, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0 }} className="rounded-[28px] border-4 p-5 text-center shadow-xl bg-green-50 border-green-200">
-                <div className="text-6xl mb-2">🎉</div>
-                <h2 className="text-3xl font-black text-green-700">ਸਹੀ!</h2>
-                <p className="font-bold text-muted-foreground mt-1">ਸਹੀ ਜਵਾਬ: <span className="text-foreground text-xl font-black">{result.correctAnswer}</span></p>
-                <p className="font-black text-primary mt-2">+{result.pointsEarned} ਅੰਕ</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Wrong answer inline feedback */}
-          {selected && !result?.correct && attemptsLeft > 0 && (
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-[28px] border-4 p-4 text-center shadow-xl bg-red-50 border-red-200">
-              <div className="text-4xl mb-1">😬</div>
-              <h2 className="text-xl font-black text-red-600">ਓਹੋ! ਗਲਤ ਜਵਾਬ</h2>
-              <p className="text-sm font-bold text-muted-foreground mt-1">{attemptsLeft} ਕੋਸ਼ਿਸ਼ਾਂ ਬਾਕੀ — ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ!</p>
-            </motion.div>
-          )}
 
           {/* Skip button */}
           {!selected && (
